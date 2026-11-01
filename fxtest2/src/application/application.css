@@ -1,0 +1,95 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root{
+	-fx-font-family: "monospace";
+	-fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+.table-view {
+    -fx-background-color: #890E38;
+    -fx-base: #890E38; 
+}
+
+.table-view .table-row-cell:odd { /*Every odd row */
+    -fx-background-color: #fafafa;
+}
+.table-view .table-row-cell:even { /*Every even row, counting starts at 0 */
+    -fx-background-color: #D3D3D3;
+}
+
+.table-view .column-header { /* The column headers */
+    -fx-background-color: #890E38;
+    -fx-size: 40;
+}
+
+.table-view .column-header .label { /* The column header's label */
+    -fx-text-fill: #FFB819;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.table-view:focused .table-row-cell:filled:selected { /* Clicked on */
+    -fx-background-color: #015640;
+    -fx-text-fill: #FFB819; /*This doesn't seem to work and I don't know why */
+}
+
+.table-view .table-row-cell:filled:selected { /* Clicked on then clicked off */
+    -fx-background-color: #57776F;
+    -fx-text-fill: #FFB819;
+}
+
+.button {
+    -fx-background-color: #890E38;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px; /*Makes it rounder */
+    -fx-padding: 8px 16px; /*Better margins*/
+}
+
+.button:hover {
+    -fx-background-color: #015640;
+    -fx-text-fill: #FFB819;
+}
+
+.button:armed { /* Pressed */
+    -fx-background-color: #6B1026;
+}
+
+.button:focused { /*Pressed or selected by pressing tab */
+	-fx-border-color: #FFB819;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 10px;
+}
+
+
+.combo-box {
+	-fx-background-color: #890E38;
+	-fx-background-radius: 10px;
+	-fx-text-fill: white; /*This doesn't seem to work for some reason?? */
+    -fx-padding: 5px 5px;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: #890E38;
+    -fx-text-fill: white;
+    -fx-padding: 8px 12px;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #000000;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #000000;
+}
+
+.text-field {
+	-fx-border-color: #890E38;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5px;
+}
