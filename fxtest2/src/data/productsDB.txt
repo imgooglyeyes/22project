@@ -1,0 +1,5 @@
+0|Example|This is an example to show off what the finale product could possibly look like. If I make the text long enough, will it wrap around? I don't know yet. Let's find out together, shall we?|100.0
+1|Another product|here's a decription|200.0
+2|Number3|third product|333.0
+3|4|four|44.0
+4|twenty9|jjj|99.0
