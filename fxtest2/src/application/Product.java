@@ -1,18 +1,11 @@
 package application;
 
 public class Product {
-	private int id;
+	private int id; // this will be used to make sure we don't lose track of an item after the user edits its name
     private String name;
     private String desc;
     private double price;
     private int stock;
-    
-    // Login fields kept for the old test window.
-    private String username = "";
-    private String password = "";
-    private String firstName = "";
-    private String lastName = "";
-    private String userType = "";
     
     public static int AVAILABLE_ID = 0; // makes sure no item has the same ID
 
@@ -30,11 +23,6 @@ public class Product {
     public String getDescription()		{ return desc; }
     public double getPrice()			{ return price; }
     public int getStock()				{ return stock; }
-    public String getUsername()		{ return username; }
-    public String getPassword()		{ return password; }
-    public String getFirstName()		{ return firstName; }
-    public String getLastName()		{ return lastName; }
-    public String getUserType()		{ return userType; }
     
     public void setStock(int stock)		{ this.stock = stock;}
 }
