@@ -25,7 +25,7 @@ public class ProductCreationWindow {
 	private Scene createScene;
 	private Stage createWindow;
 	
-	public ProductCreationWindow(Stage stage, ObservableList<Product> database) {
+	public ProductCreationWindow(Stage stage, ObservableList<Product> database, TableView<Product> table) {
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
 		this.priceField = new LabelledTextField("Price:", true);
@@ -34,15 +34,6 @@ public class ProductCreationWindow {
         
         // PLEASE PLEASE MAKE IT SO THAT PRICE FIELD CAN ONLY ACCEPT DOUBLE AS AN INPUT
         // RIGHT NOW IT WILL BREAK IF THE INPUT IS NOT A DOUBLE
-
-        // this isn't used anywhere but I'm gonna forget how to make this
-        // so just ignore it
-        // I'll recycle it eventually
-        
-//        BooleanBinding userTypeEmpty = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the usertype box has anything selected or not
-//	        if (this.userTypeBox.getValue() == null) return true;
-//	        else return false;
-//	    }, this.userTypeBox.valueProperty());
         
         // NOTE: It is apparently already given that any future reference to a variable will be "this." if it was initialized with it
         create.disableProperty().bind(nameField.empty.or(descriptionField.empty).or(priceField.empty)); // submit button being disabled is binded to the boolean binding made earlier
@@ -61,6 +52,7 @@ public class ProductCreationWindow {
         create.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
 				database.add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0));
+				table.setItems(database); // update table
 				createWindow.close();
 			}
 		});

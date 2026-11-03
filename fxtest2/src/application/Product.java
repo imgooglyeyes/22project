@@ -18,7 +18,7 @@ public class Product {
         AVAILABLE_ID += 1; // the next product to be created will not share the id of the last product
     }
 
-    public int getID()					{ return id; }
+    public int getId()					{ return id; }
     public String getName()				{ return name; }
     public String getDescription()		{ return desc; }
     public double getPrice()			{ return price; }
