@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ui.TestLoginWindow;
 import ui.AddProductWindow;
+import ui.DatabaseScene;
 import ui.ProductCreationWindow;
 
 import java.io.BufferedWriter;
@@ -51,44 +52,68 @@ public class Main extends Application {
             colName, colDesc, colPrice, colStock
         );
 
-        ArrayList<Product> sampleList = new ArrayList<>();
-        sampleList.add(new Product("Example",  "This is an example to show off what the finale product could possibly look like. If I make the text long enough, will it wrap around? I don't know yet. Let's find out together, shall we?",  100.0, 20));
-        sampleList.add(new Product("Another product", "here's a decription", 200, 100));
+        ArrayList<Product> hardcodedData = new ArrayList<>();
+        hardcodedData.add(new Product("Corn",  "A staple food in many regions of the world. Can be used for starch, syrup, oil, and more.",  25.0, 20));
+        hardcodedData.add(new Product("Coconut", "From the tree of life, this fruit comes with multiple culinary and nonculinary use.", 40.0, 15));
         
-        ObservableList<Product> tableData = FXCollections.observableArrayList(sampleList);
-        ObservableList<Product> database = FXCollections.observableArrayList(sampleList);
-        table.setItems(tableData);
+        ObservableList<Product> shelfData = FXCollections.observableArrayList(hardcodedData); // products on sale (must exist in inventory)
+       
+        // Currently not implemented:
+        //ObservableList<Product> inventoryData = FXCollections.observableArrayList(hardcodedData); // products in storage (must exist in database)
+        
+        hardcodedData.add(new Product("1kg Rice",  "Perfect alongside any meal. It can even become a meal itself.",  100.0, 20));
+        
+        ObservableList<Product> database = FXCollections.observableArrayList(hardcodedData); // universal set of existing products
+        table.setItems(shelfData);
         
 		BorderPane root = new BorderPane(table);
 		
 		// ===== END OF TEMPLATE ====
 		
-		Button createProduct = new Button("Create New Product In Database");
-		Button addProduct = new Button("Add Product From Inventory");
-		Button deleteSelected = new Button("Delete Selected");
-		Button exportBtn = new Button("Save Data");
-		Button quit = new Button("Save and Quit");
-		Button login = new Button("Test Login");
-		HBox moreButtons = new HBox(10, createProduct, addProduct, deleteSelected, exportBtn, quit, login); // creates an hbox with a 10px spacing and these 4 buttons as children
+		Button addProduct = new Button("Add Product From Inventory"); // currently adds from the database while the inventory is not yet implemented
+		Button viewDatabase = new Button("View Database");
+		Button deleteSelected = new Button("Delete Selected"); // temp
+		Button exportBtn = new Button("Manual Save");
+		Button quit = new Button("Quit");
+		Button login = new Button("Login");
+		HBox moreButtons = new HBox(10, viewDatabase, addProduct, deleteSelected, exportBtn, quit, login); // creates an hbox with a 10px spacing and these 4 buttons as children
 		moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
-		ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
+		//ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
 		
-		createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			public void handle (MouseEvent event) {
-				ProductCreationWindow creationWindow = new ProductCreationWindow(stage, database); // I had to make it a new class to shorten the code, also more modular that way
-				creationWindow.show();
-		}});
+		root.setTop(moreButtons);
+		root.setStyle("-fx-padding: 12;");
+		Scene mainScene = new Scene(root, 900, 500);
+		stage.setScene(mainScene);
+		stage.setTitle("proof of concept");
+		stage.show();
+
 		
 		addProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				AddProductWindow creationWindow = new AddProductWindow(stage, table, tableData, database); // I had to make it a new class to shorten the code, also more modular that way
-				creationWindow.show();
+				// temporarily uses database instead of inventoryData, inventory is not yet implemented
+				AddProductWindow addWindow = new AddProductWindow(stage, table, shelfData, database); // I had to make it a new class to shorten the code, also more modular that way
+				addWindow.show();
 		}});
 		
-		deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				tableData.remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
-				table.setItems(tableData); // update items
+				// temporarily uses database instead of inventoryData, inventory is not yet implemented
+				DatabaseScene databaseScene = new DatabaseScene(stage, database, mainScene);
+				stage.setScene(databaseScene);
+				stage.setTitle("Database");
+		}});
+		
+		login.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			public void handle (MouseEvent event) {
+				System.out.println("This button isn't working yet. There still needs to be a user database. TestLoginWindow is a leftover from my last exercise.");
+//				TestLoginWindow loginWindow = new TestLoginWindow(stage, database);
+//				loginWindow.show();
+		}});
+		
+		deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
+			public void handle (MouseEvent event) {
+				shelfData.remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
+				table.setItems(shelfData); // update items
 		}});
 		
 		
@@ -102,7 +127,7 @@ public class Main extends Application {
 				try {
 					BufferedWriter writer = Files.newBufferedWriter(dbSavePath);
 					for(Product p : database) { // go through every product in the database (not to be confused by the data in the table)
-						writer.write(p.getID() + "|" + p.getName() + "|" + p.getDescription() + "|" + p.getPrice());
+						writer.write(p.getId() + "|" + p.getName() + "|" + p.getDescription() + "|" + p.getPrice());
 						writer.newLine();
 					}
 					// data is formatted by id|name|description|price
@@ -118,8 +143,8 @@ public class Main extends Application {
 				System.out.println("Saving database...");
 				try {
 					BufferedWriter writer = Files.newBufferedWriter(tableSavePath);
-					for(Product p : tableData) { // go through every product in the table
-						writer.write(p.getID() + "|" + p.getStock());
+					for(Product p : shelfData) { // go through every product in the table
+						writer.write(p.getId() + "|" + p.getStock());
 						writer.newLine();
 					}
 					// data is formatted by id|stock
@@ -138,13 +163,6 @@ public class Main extends Application {
 				Platform.exit();
 			}
 		});
-		
-		root.setTop(moreButtons);
-		root.setStyle("-fx-padding: 12;");
-		Scene mainScene = new Scene(root, 900, 500);
-		stage.setScene(mainScene);
-		stage.setTitle("proof of concept");
-		stage.show();
 	}
 
 	public static void main(String[] args) { 
