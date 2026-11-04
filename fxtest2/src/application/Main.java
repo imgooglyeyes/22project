@@ -57,6 +57,7 @@ public class Main extends Application {
         hardcodedData.add(new Product("Coconut", "From the tree of life, this fruit comes with multiple culinary and nonculinary use.", 40.0, 15));
         
         ObservableList<Product> shelfData = FXCollections.observableArrayList(hardcodedData); // products on sale (must exist in inventory)
+        ObservableList<Product> inventoryData = FXCollections.observableArrayList(hardcodedData); // products not on sale (must exist in database)
        
         // Currently not implemented:
         //ObservableList<Product> inventoryData = FXCollections.observableArrayList(hardcodedData); // products in storage (must exist in database)
@@ -131,7 +132,7 @@ public class Main extends Application {
 						writer.newLine();
 					}
 					// data is formatted by id|name|description|price
-					System.out.println("Saving complete.");
+					System.out.println("Saving universal database.");
 					writer.close();
 				} catch (IOException e) {
 					System.out.println("Something went wrong.");
@@ -139,11 +140,28 @@ public class Main extends Application {
 				}
 				
 				// this is saving the products on sale
-				Path tableSavePath = Paths.get("src/data/shelf.txt");
-				System.out.println("Saving database...");
+				Path shelfSavePath = Paths.get("src/data/shelf.txt");
+				System.out.println("Saving marketplace data...");
 				try {
-					BufferedWriter writer = Files.newBufferedWriter(tableSavePath);
+					BufferedWriter writer = Files.newBufferedWriter(shelfSavePath);
 					for(Product p : shelfData) { // go through every product in the table
+						writer.write(p.getId() + "|" + p.getStock());
+						writer.newLine();
+					}
+					// data is formatted by id|stock
+					System.out.println("Saving complete.");
+					writer.close();
+				} catch (IOException e) {
+					System.out.println("Something went wrong.");
+					e.printStackTrace();
+				}
+				
+				// this is saving the products not on sale
+				Path inventorySavePath = Paths.get("src/data/inventory.txt");
+				System.out.println("Saving inventory data...");
+				try {
+					BufferedWriter writer = Files.newBufferedWriter(inventorySavePath);
+					for(Product p : inventoryData) { // go through every product in the table
 						writer.write(p.getId() + "|" + p.getStock());
 						writer.newLine();
 					}
