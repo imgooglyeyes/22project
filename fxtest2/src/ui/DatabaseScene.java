@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import application.ImportExportHandler;
 import application.Product;
+import application.ProductContainer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +28,7 @@ public class DatabaseScene extends Scene{
 	// ======= TEMPLATE ========
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public DatabaseScene(Stage stage, ObservableList<Product> database, Scene mainScene){
+	public DatabaseScene(Stage stage, ProductContainer database, Scene mainScene){
 			TableView<Product> table = new TableView<>();
 	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -46,7 +47,7 @@ public class DatabaseScene extends Scene{
 	        );
 
 	        
-	        table.setItems(database);
+	        table.setItems(database.getObservableList());
 	        
 			BorderPane root = new BorderPane(table);
 			
