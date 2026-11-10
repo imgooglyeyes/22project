@@ -12,6 +12,7 @@ public class User {
     public final static String MANAGER = "Manager";
     public final static String CLERK = "Clerk";
     public final static String CUSTOMER = "Customer";
+    public final static String GUEST = "Guest"; // no account
     
     public User(String username, String password, String firstName, String lastName, String userType) {
     	this.username = username;
