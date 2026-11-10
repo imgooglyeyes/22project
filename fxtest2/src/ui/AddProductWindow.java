@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.HashMap;
+
 import application.Product;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -9,6 +11,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -30,19 +35,59 @@ public class AddProductWindow {
 	private Scene addScene;
 	private Stage addWindow;
 	
-	public AddProductWindow(Stage stage, TableView<Product> table, ObservableList<Product> tableData, ObservableList<Product> database) {
-		String[] pNames = new String[Product.AVAILABLE_ID]; // available ID here is being used as a way to track the size of the database
-		int i = 0;
+	public AddProductWindow(Stage stage, TableView<Product> table, ObservableList<Product> tableData, ObservableList<Product> database, Boolean limited) {
+		HashMap<String, Integer> products = new HashMap<>();
 		for (Product p : database) { // go through every product in the database
-			pNames[i] = p.getName(); // add their names to the array
-			i++;
+			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
 		}
 		
-		ObservableList<String> productNames = FXCollections.observableArrayList(pNames); // convert to an observable list so that the combo box can use it
-		
+		ObservableList<String> productNames = FXCollections.observableArrayList(products.keySet()); // convert the key set (product names) to an observable list so that the combo box can use it
 		this.productBox = new ComboBox<>(productNames);
+		
+		productBox.getSelectionModel().selectFirst(); // to make sure something is already selected
+        
+        
+		// Create an integer Spinner
+		Spinner<Integer> spinner = new Spinner<>();
+		if(limited) { // the stocks are limited to how many are in the database
+			IntegerSpinnerValueFactory valueFactory = new IntegerSpinnerValueFactory(0, 0, 0, 1); // min, max, initial value, step
+			spinner.setValueFactory(valueFactory);
+			
+			productBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+	            if (newVal != null) {
+	            	int maxStock = database.get(products.get(newVal)).getStock();
+	                // to explain piece by piece:
+	                // newVal = name of the product the user just chose
+	                // products.get(newVal) = the internal ID of the chosen product
+	                // database.get(...) = the full product information of the chosen product
+	                // (...).getStock() = the stock of the chosen product, taken from the full information
+
+	                // Dynamically update the factory max limit
+	                valueFactory.setMax(maxStock);
+
+	                
+	                if (spinner.getValue() > maxStock) { // current value of the spinner is greater than the new max
+	                    valueFactory.setValue(maxStock); // cap the current value to the new max
+	                }
+	            }
+	        });
+			
+		} else {
+			SpinnerValueFactory<Integer> valueFactory = 
+					new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1); // min, max, initial value, step
+			spinner.setValueFactory(valueFactory);
+		}
+        
+		spinner.setEditable(true); // allows the user to put their own number
+        // TELL ME IF THIS CAN GO OVER THE MAX
+		
+		
         this.add = new Button("Add");
         this.exit = new Button("Cancel");
+        
+        
+
+        // Set a default initial selection
         
         
        BooleanBinding productBoxEmpty = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the usertype box has anything selected or not
@@ -50,7 +95,6 @@ public class AddProductWindow {
 	        else return false;
 	    }, this.productBox.valueProperty());
         
-        // NOTE: It is apparently already given that any future reference to a variable will be "this." if it was initialized with it
         add.disableProperty().bind(productBoxEmpty); // submit button being disabled is binded to the boolean binding made earlier
         
         this.buttonsHBox = new HBox(10, exit, add);
@@ -66,8 +110,13 @@ public class AddProductWindow {
         // Handle submission / closing
         add.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				Product addedProduct = database.get(productBox.getSelectionModel().getSelectedIndex()); // grabs the product from the database
-				addedProduct.setStock(100); // temp until I add a way to let the user set their own stock
+				Product addedProduct = database.get(products.get(productBox.getValue())); // grabs the product from the database
+				addedProduct.setStock(spinner.getValue());
+				if (limited) {
+					database.get(products.get(productBox.getValue())).setStock(database.get(products.get(productBox.getValue())).getStock() - spinner.getValue());
+					// this is too much to explain
+					// I will refine product databases into a class
+				}
 				tableData.add(addedProduct); 
 				table.setItems(tableData);
 				addWindow.close();

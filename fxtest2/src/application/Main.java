@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import ui.TestLoginWindow;
 import ui.AddProductWindow;
 import ui.DatabaseScene;
+import ui.InventoryScene;
 import ui.ProductCreationWindow;
 
 import java.io.BufferedWriter;
@@ -105,19 +106,30 @@ public class Main extends Application {
 		stage.show();
 
 		
+		// add product and view inventory button
 		if (currentUser.getUserType().equals(User.MANAGER) || currentUser.getUserType().equals(User.CLERK)) {
 			Button addProduct = new Button("Add Product From Inventory"); // currently adds from the database while the inventory is not yet implemented
 			
 			addProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
 					// temporarily uses database instead of inventoryData, inventory is not yet implemented
-					AddProductWindow addWindow = new AddProductWindow(stage, table, shelfData, database); // I had to make it a new class to shorten the code, also more modular that way
+					AddProductWindow addWindow = new AddProductWindow(stage, table, shelfData, inventoryData, true); // a window that lets the user add something to the shelfData based on what's in inventoryData with a stock limit (true)
 					addWindow.show();
 			}});
 			
-			moreButtons.getChildren().add(addProduct);
+			Button viewInventory = new Button("View Database");
+			
+			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
+				public void handle (MouseEvent event) {
+					InventoryScene inventoryScene = new InventoryScene(stage, inventoryData, database, mainScene);
+					stage.setScene(inventoryScene);
+					stage.setTitle("Database");
+			}});
+			
+			moreButtons.getChildren().addAll(addProduct, viewInventory);
 		}
 		
+		// view database button
 		if (currentUser.getUserType().equals(User.MANAGER)) {
 			Button viewDatabase = new Button("View Database");
 			
@@ -132,6 +144,7 @@ public class Main extends Application {
 			moreButtons.getChildren().add(viewDatabase);
 		}
 		
+		// delete (to be changed), manual save (to be changed), and quit button
 		if (currentUser.getUserType().equals(User.MANAGER) || currentUser.getUserType().equals(User.CLERK)) {
 			Button deleteSelected = new Button("Delete Selected"); // temp
 			
@@ -213,6 +226,7 @@ public class Main extends Application {
 		}
 		
 		
+		// log in button (to be implemented)
 		if (currentUser.getUserType().equals(User.GUEST)) {
 			Button login = new Button("Login"); //temp, does not work at all yet
 			
