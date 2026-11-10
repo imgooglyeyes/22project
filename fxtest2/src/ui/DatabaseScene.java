@@ -58,7 +58,7 @@ public class DatabaseScene extends Scene{
 			Button quit = new Button("Quit");
 			HBox moreButtons = new HBox(10, viewShelf, createProduct, deleteSelected, quit); // creates an hbox with a 10px spacing and these 4 buttons as children
 			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
-			ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
+			//ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
 			
 			createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
