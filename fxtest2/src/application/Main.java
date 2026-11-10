@@ -150,8 +150,8 @@ public class Main extends Application {
 			
 			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
 				public void handle (MouseEvent event) {
-					shelfData.remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
-					table.setItems(shelfData); // update items
+					shelfData.getObservableList().remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
+					table.setItems(shelfData.getObservableList()); // update items
 			}});
 			
 			Button exportBtn = new Button("Manual Save");
@@ -165,7 +165,7 @@ public class Main extends Application {
 					System.out.println("Saving database...");
 					try {
 						BufferedWriter writer = Files.newBufferedWriter(dbSavePath);
-						for(Product p : database) { // go through every product in the database (not to be confused by the data in the table)
+						for(Product p : database.getObservableList()) { // go through every product in the database (not to be confused by the data in the table)
 							writer.write(p.getId() + "|" + p.getName() + "|" + p.getDescription() + "|" + p.getPrice());
 							writer.newLine();
 						}
@@ -182,7 +182,7 @@ public class Main extends Application {
 					System.out.println("Saving marketplace data...");
 					try {
 						BufferedWriter writer = Files.newBufferedWriter(shelfSavePath);
-						for(Product p : shelfData) { // go through every product in the table
+						for(Product p : shelfData.getObservableList()) { // go through every product in the table
 							writer.write(p.getId() + "|" + p.getStock());
 							writer.newLine();
 						}
@@ -199,7 +199,7 @@ public class Main extends Application {
 					System.out.println("Saving inventory data...");
 					try {
 						BufferedWriter writer = Files.newBufferedWriter(inventorySavePath);
-						for(Product p : inventoryData) { // go through every product in the table
+						for(Product p : inventoryData.getObservableList()) { // go through every product in the table
 							writer.write(p.getId() + "|" + p.getStock());
 							writer.newLine();
 						}

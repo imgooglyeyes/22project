@@ -1,7 +1,7 @@
 package ui;
 
 import application.Product;
-import javafx.collections.ObservableList;
+import application.ProductContainer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,7 +25,7 @@ public class ProductCreationWindow {
 	private Scene createScene;
 	private Stage createWindow;
 	
-	public ProductCreationWindow(Stage stage, ObservableList<Product> database, TableView<Product> table) {
+	public ProductCreationWindow(Stage stage, ProductContainer database, TableView<Product> table) {
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
 		this.priceField = new LabelledTextField("Price:", true);
@@ -51,8 +51,8 @@ public class ProductCreationWindow {
         // Handle submission / closing
         create.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				database.add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0));
-				table.setItems(database); // update table
+				database.getObservableList().add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0));
+				table.setItems(database.getObservableList()); // update table
 				createWindow.close();
 			}
 		});
