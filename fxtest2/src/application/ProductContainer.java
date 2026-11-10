@@ -12,9 +12,16 @@ public class ProductContainer {
 	}
 	
 	public void add(Product product) {
-		Product p = getProductById(product.getId());
-		if (p == null) productList.add(p);; // doesn't exist yet, just add it normally
+		Product p = getProductById(product.getId()); // find the product in this database
+		if (p == null) productList.add(product);; // doesn't exist yet, just add it normally
 		p.setStock(p.getStock() + product.getStock()); // exists already, just stack the stocks
+	}
+	
+	public void add(Product product, int stocks) { // version where you can specify the stocks
+		Product p = getProductById(product.getId()); // find the product in this database
+		product.setStock(stocks); // just to make sure the right amount is getting added
+		if (p == null) productList.add(product); // doesn't exist yet, just add it normally
+		p.setStock(p.getStock() + stocks);
 	}
 	
 	public void remove(int i) {
@@ -25,14 +32,8 @@ public class ProductContainer {
 		productList.remove(p);
 	}
 	
-	public void addStock(Product product, int stocks) {
-		Product p = getProductById(product.getId());
-		if (p == null) add(p); // doesn't exist yet, just add it normally
-		p.setStock(p.getStock() - stocks);
-	}
-	
 	public void removeStock(Product product, int stocks) {
-		Product p = getProductById(product.getId());
+		Product p = getProductById(product.getId()); // find the product in this database
 		if (p == null) return;
 		p.setStock(p.getStock() - stocks);
 	}

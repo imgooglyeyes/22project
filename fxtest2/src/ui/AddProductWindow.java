@@ -36,9 +36,9 @@ public class AddProductWindow {
 	private Scene addScene;
 	private Stage addWindow;
 	
-	public AddProductWindow(Stage stage, TableView<Product> table, ProductContainer tableData, ProductContainer database, Boolean limited) {
+	public AddProductWindow(Stage stage, TableView<Product> table, ProductContainer targetDatabase, ProductContainer sourceDatabase, Boolean limited) {
 		HashMap<String, Integer> products = new HashMap<>();
-		for (Product p : database.getList()) { // go through every product in the database
+		for (Product p : sourceDatabase.getList()) { // go through every product in the database
 			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
 		}
 		
@@ -56,7 +56,7 @@ public class AddProductWindow {
 			
 			productBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 	            if (newVal != null) {
-	            	int maxStock = database.getProductById(products.get(newVal)).getStock();
+	            	int maxStock = sourceDatabase.getProductById(products.get(newVal)).getStock();
 	                // to explain piece by piece:
 	                // newVal = name of the product the user just chose
 	                // products.get(newVal) = the internal ID of the chosen product
@@ -87,10 +87,6 @@ public class AddProductWindow {
         this.exit = new Button("Cancel");
         
         
-
-        // Set a default initial selection
-        
-        
        BooleanBinding productBoxEmpty = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the usertype box has anything selected or not
 	        if (this.productBox.getValue() == null) return true;
 	        else return false;
@@ -112,15 +108,15 @@ public class AddProductWindow {
         add.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
 				int addAmount = spinner.getValue();
-				int addId = products.get(productBox.getValue());
-				Product addedProduct = database.getProductById(addId); // grabs the product from the database
-				addedProduct.setStock(addAmount);
+				int addId = products.get(productBox.getValue()); // reminder: products is a HashMap<String, Integer> where string is the product name and integer is the id
+				Product addedProduct = sourceDatabase.getProductById(addId); // grabs the product from the database
 				if (limited) {
-					database.removeStock(database.getProductById(addId), addAmount);
-					// make sure to grab the product by id from the database itself
+					sourceDatabase.removeStock(addedProduct, addAmount);
+					// removeStock by referring to the internal id
+					// this means all that matters is the id for the function to update the correct, corresponding product within any database
 				}
-				tableData.add(addedProduct); 
-				table.setItems(tableData.getObservableList());
+				targetDatabase.add(addedProduct, addAmount); // add the product with its specific data
+				table.setItems(targetDatabase.getObservableList());
 				addWindow.close();
 			}
 		});
