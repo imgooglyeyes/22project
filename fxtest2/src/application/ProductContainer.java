@@ -11,8 +11,10 @@ public class ProductContainer {
 		this.productList = p;
 	}
 	
-	public void add(Product p) {
-		productList.add(p);
+	public void add(Product product) {
+		Product p = getProductById(product.getId());
+		if (p == null) productList.add(p);; // doesn't exist yet, just add it normally
+		p.setStock(p.getStock() + product.getStock()); // exists already, just stack the stocks
 	}
 	
 	public void remove(int i) {
@@ -21,6 +23,18 @@ public class ProductContainer {
 	
 	public void remove(Product p) {
 		productList.remove(p);
+	}
+	
+	public void addStock(Product product, int stocks) {
+		Product p = getProductById(product.getId());
+		if (p == null) add(p); // doesn't exist yet, just add it normally
+		p.setStock(p.getStock() - stocks);
+	}
+	
+	public void removeStock(Product product, int stocks) {
+		Product p = getProductById(product.getId());
+		if (p == null) return;
+		p.setStock(p.getStock() - stocks);
 	}
 	
 	public ObservableList<Product> getObservableList() {

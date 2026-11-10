@@ -116,10 +116,8 @@ public class AddProductWindow {
 				Product addedProduct = database.getProductById(addId); // grabs the product from the database
 				addedProduct.setStock(addAmount);
 				if (limited) {
-					database.getProductById(addId).setStock(database.getProductById(addId).getStock() - addAmount);
-					// 1. grab the product
-					// 2. set the product's stock to:
-						// the product's current stock minus the added stock
+					database.removeStock(database.getProductById(addId), addAmount);
+					// make sure to grab the product by id from the database itself
 				}
 				tableData.add(addedProduct); 
 				table.setItems(tableData.getObservableList());
