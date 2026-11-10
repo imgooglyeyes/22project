@@ -2,8 +2,8 @@ package ui;
 
 import application.ImportExportHandler;
 import application.Product;
+import application.ProductContainer;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,7 +19,7 @@ public class InventoryScene extends Scene{
 	// ======= TEMPLATE ========
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public InventoryScene(Stage stage, ObservableList<Product> inventoryData, ObservableList<Product> database, Scene mainScene){
+	public InventoryScene(Stage stage, ProductContainer inventoryData, ProductContainer database, Scene mainScene){
 			TableView<Product> table = new TableView<>();
 	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -38,7 +38,7 @@ public class InventoryScene extends Scene{
 	        );
 
 	        
-	        table.setItems(inventoryData);
+	        table.setItems(inventoryData.getObservableList());
 	        
 			BorderPane root = new BorderPane(table);
 			
