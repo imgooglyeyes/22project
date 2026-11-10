@@ -51,7 +51,7 @@ public class ProductCreationWindow {
         // Handle submission / closing
         create.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				database.getObservableList().add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0));
+				database.add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0));
 				table.setItems(database.getObservableList()); // update table
 				createWindow.close();
 			}
