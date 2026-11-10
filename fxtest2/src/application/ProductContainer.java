@@ -11,6 +11,18 @@ public class ProductContainer {
 		this.productList = p;
 	}
 	
+	public void add(Product p) {
+		productList.add(p);
+	}
+	
+	public void remove(int i) {
+		productList.remove(i);
+	}
+	
+	public void remove(Product p) {
+		productList.remove(p);
+	}
+	
 	public ObservableList<Product> getObservableList() {
 		return FXCollections.observableArrayList(productList);
 	}

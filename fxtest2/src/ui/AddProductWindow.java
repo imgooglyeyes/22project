@@ -121,7 +121,7 @@ public class AddProductWindow {
 					// 2. set the product's stock to:
 						// the product's current stock minus the added stock
 				}
-				tableData.getObservableList().add(addedProduct); 
+				tableData.add(addedProduct); 
 				table.setItems(tableData.getObservableList());
 				addWindow.close();
 			}

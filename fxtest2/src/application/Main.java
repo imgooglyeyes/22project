@@ -150,7 +150,7 @@ public class Main extends Application {
 			
 			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
 				public void handle (MouseEvent event) {
-					shelfData.getObservableList().remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
+					shelfData.remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
 					table.setItems(shelfData.getObservableList()); // update items
 			}});
 			
