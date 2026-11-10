@@ -83,13 +83,13 @@ public class Main extends Application {
         hardcodedData.add(new Product("Ube (1kg)",  "Fresh purple yam roots.",  110.0, 20));
         hardcodedData.add(new Product("Ube Halaya (350g)",  "Sweet purple yam jam, sold in a jar.",  140.0, 20));
         
-        ObservableList<Product> shelfData = FXCollections.observableArrayList(hardcodedData); // products on sale (must exist in inventory)
-        ObservableList<Product> inventoryData = FXCollections.observableArrayList(hardcodedData); // products not on sale / products in storage (must exist in database)
+        ProductContainer shelfData = new ProductContainer(hardcodedData); // products on sale (must exist in inventory)
+        ProductContainer inventoryData = new ProductContainer(hardcodedData); // products not on sale / products in storage (must exist in database)
         
-        hardcodedData.add(new Product("1kg Rice",  "Perfect alongside any meal. It can even become a meal itself.",  100.0, 20));
+        hardcodedData.add(new Product("Secret Sauce",  "This sauce is a secret.",  100.0, 20));
         
-        ObservableList<Product> database = FXCollections.observableArrayList(hardcodedData); // universal set of existing products
-        table.setItems(shelfData);
+        ProductContainer database = new ProductContainer(hardcodedData); // universal set of existing products
+        table.setItems(shelfData.getObservableList());
         
         User currentUser = new User("MainManager", "password", "Billy Bob", "Jones", User.MANAGER);
         

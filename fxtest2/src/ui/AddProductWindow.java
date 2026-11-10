@@ -3,6 +3,7 @@ package ui;
 import java.util.HashMap;
 
 import application.Product;
+import application.ProductContainer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
@@ -35,9 +36,9 @@ public class AddProductWindow {
 	private Scene addScene;
 	private Stage addWindow;
 	
-	public AddProductWindow(Stage stage, TableView<Product> table, ObservableList<Product> tableData, ObservableList<Product> database, Boolean limited) {
+	public AddProductWindow(Stage stage, TableView<Product> table, ProductContainer tableData, ProductContainer database, Boolean limited) {
 		HashMap<String, Integer> products = new HashMap<>();
-		for (Product p : database) { // go through every product in the database
+		for (Product p : database.getList()) { // go through every product in the database
 			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
 		}
 		
@@ -55,11 +56,11 @@ public class AddProductWindow {
 			
 			productBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
 	            if (newVal != null) {
-	            	int maxStock = database.get(products.get(newVal)).getStock();
+	            	int maxStock = database.getProductById(products.get(newVal)).getStock();
 	                // to explain piece by piece:
 	                // newVal = name of the product the user just chose
 	                // products.get(newVal) = the internal ID of the chosen product
-	                // database.get(...) = the full product information of the chosen product
+	                // database.getProductById(...) = the full product information of the chosen product
 	                // (...).getStock() = the stock of the chosen product, taken from the full information
 
 	                // Dynamically update the factory max limit
@@ -110,15 +111,18 @@ public class AddProductWindow {
         // Handle submission / closing
         add.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				Product addedProduct = database.get(products.get(productBox.getValue())); // grabs the product from the database
-				addedProduct.setStock(spinner.getValue());
+				int addAmount = spinner.getValue();
+				int addId = products.get(productBox.getValue());
+				Product addedProduct = database.getProductById(addId); // grabs the product from the database
+				addedProduct.setStock(addAmount);
 				if (limited) {
-					database.get(products.get(productBox.getValue())).setStock(database.get(products.get(productBox.getValue())).getStock() - spinner.getValue());
-					// this is too much to explain
-					// I will refine product databases into a class
+					database.getProductById(addId).setStock(database.getProductById(addId).getStock() - addAmount);
+					// 1. grab the product
+					// 2. set the product's stock to:
+						// the product's current stock minus the added stock
 				}
-				tableData.add(addedProduct); 
-				table.setItems(tableData);
+				tableData.getObservableList().add(addedProduct); 
+				table.setItems(tableData.getObservableList());
 				addWindow.close();
 			}
 		});
