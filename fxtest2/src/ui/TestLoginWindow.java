@@ -1,6 +1,6 @@
 package ui;
 
-import application.Product;
+import application.User;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -36,7 +36,7 @@ public class TestLoginWindow {
 	private Scene successScene;
 	private Stage loginWindow;
 	
-	public TestLoginWindow(Stage stage, ObservableList<Product> data) {
+	public TestLoginWindow(Stage stage, ObservableList<User> data) {
 		this.usernameField = new LabelledTextField("Username:", true);
 		this.passwordField = new LabelledPasswordField("Password: ", true);
         this.login = new Button("Log In");
@@ -66,7 +66,7 @@ public class TestLoginWindow {
         // Handle submission / closing
         login.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				for (Product u : data) { // check every known user
+				for (User u : data) { // check every known user
 					if (u.getUsername().equals(usernameField.getText()) && u.getPassword().equals(passwordField.getText())) { // if username and password matches anyone within the data
 						welcomeText.setText("Welcome, " + u.getFirstName() + " " + u.getLastName() + "!");
 						userTypeText.setText(u.getUserType());
