@@ -117,18 +117,18 @@ public class Main extends Application {
 					addWindow.show();
 			}});
 			
-			Button viewInventory = new Button("View Database");
+			Button viewInventory = new Button("View Inventory");
 			
 			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
 					InventoryScene inventoryScene = new InventoryScene(stage, inventoryData, database, mainScene);
 					stage.setScene(inventoryScene);
-					stage.setTitle("Database");
+					stage.setTitle("Inventory");
 			}});
 			
 			moreButtons.getChildren().addAll(addProduct, viewInventory);
 		}
-		
+
 		// view database button
 		if (currentUser.getUserType().equals(User.MANAGER)) {
 			Button viewDatabase = new Button("View Database");
