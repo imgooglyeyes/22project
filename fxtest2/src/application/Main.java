@@ -87,7 +87,6 @@ public class Main extends Application {
         ProductContainer database = new ProductContainer(hardcodedData); // universal set of existing products
         ProductContainer inventoryData = new ProductContainer(); // products not on sale / products in storage (must exist in database)
         
-        System.out.println(database.getProductById(0).getName());
         
         inventoryData.add(database.getProductById(0), 20);
         inventoryData.add(database.getProductById(1), 20);
