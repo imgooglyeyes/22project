@@ -16,10 +16,12 @@ public class ProductContainer {
 	}
 	
 	public void add(Product product, int stocks) {
+		System.out.println("Attempting to add " + stocks + "x " + product.getName());
 		Product p = getProductById(product.getId()); // find the product in this database
 		if (p == null) {
-			productList.add(new Product(product.getName(), product.getDescription(), product.getPrice(), stocks)); // doesn't exist yet, just add it normally
+			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks)); // doesn't exist yet, just add it normally
 			System.out.println("Added " + stocks + "x " + product.getName());
+			return;
 		}
 		p.setStock(p.getStock() + stocks);
 		System.out.println("Added "+ stocks + "x more " + p.getName());
@@ -49,7 +51,6 @@ public class ProductContainer {
 	
 	public Product getProductById(int id) {
 		for (Product p : productList) { // go through every product
-			System.out.println(p.getId() + " | " + p.getName());
 			if (p.getId() == id) {return p;} // does its id match what the user is looking for?
 		}
 		return null; // if not, return null
