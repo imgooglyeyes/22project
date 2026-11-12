@@ -7,21 +7,22 @@ import javafx.collections.ObservableList;
 public class ProductContainer {
 	private ArrayList<Product> productList;
 	
+	public ProductContainer() {
+		this.productList = new ArrayList<>();;
+	}
+	
 	public ProductContainer(ArrayList<Product> p) {
-		this.productList = p;
+		this.productList = new ArrayList<>(p);;
 	}
 	
-	public void add(Product product) {
+	public void add(Product product, int stocks) {
 		Product p = getProductById(product.getId()); // find the product in this database
-		if (p == null) productList.add(product);; // doesn't exist yet, just add it normally
-		p.setStock(p.getStock() + product.getStock()); // exists already, just stack the stocks
-	}
-	
-	public void add(Product product, int stocks) { // version where you can specify the stocks
-		Product p = getProductById(product.getId()); // find the product in this database
-		product.setStock(stocks); // just to make sure the right amount is getting added
-		if (p == null) productList.add(product); // doesn't exist yet, just add it normally
+		if (p == null) {
+			productList.add(new Product(product.getName(), product.getDescription(), product.getPrice(), stocks)); // doesn't exist yet, just add it normally
+			System.out.println("Added " + stocks + "x " + product.getName());
+		}
 		p.setStock(p.getStock() + stocks);
+		System.out.println("Added "+ stocks + "x more " + p.getName());
 	}
 	
 	public void remove(int i) {
@@ -48,6 +49,7 @@ public class ProductContainer {
 	
 	public Product getProductById(int id) {
 		for (Product p : productList) { // go through every product
+			System.out.println(p.getId() + " | " + p.getName());
 			if (p.getId() == id) {return p;} // does its id match what the user is looking for?
 		}
 		return null; // if not, return null
