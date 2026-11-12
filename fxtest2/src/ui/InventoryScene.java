@@ -22,17 +22,17 @@ public class InventoryScene extends Scene{
 	public InventoryScene(Stage stage, ProductContainer inventoryData, ProductContainer database, Scene mainScene){
 			TableView<Product> table = new TableView<>();
 	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+	
 	        TableColumn<Product, String> colName		= new TableColumn<>("Name");
 	        TableColumn<Product, String> colDesc		= new TableColumn<>("Description");
 	        TableColumn<Product, String> colPrice		= new TableColumn<>("Price");
 	        TableColumn<Product, String> colStock		= new TableColumn<>("Stock");
-
+	
 	        colName.setCellValueFactory(new PropertyValueFactory<>("name")); // I have no idea how these work but they seem to be calling getter functions somehow
 	        colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 	        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-	        colPrice.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
+	        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+	
 	        table.getColumns().addAll( // add these columns to the table
 	            colName, colDesc, colPrice, colStock
 	        );

@@ -17,6 +17,14 @@ public class Product {
         this.stock = stock;
         AVAILABLE_ID += 1; // the next product to be created will not share the id of the last product
     }
+    
+    public Product(int existing_id, String name, String desc, double price, int stock) { // version that adds a product with an existing id
+    	this.id = existing_id;
+    	this.name = name;
+        this.desc = desc;
+        this.price = price;
+        this.stock = stock;
+    }
 
     public int getId()					{ return id; }
     public String getName()				{ return name; }
