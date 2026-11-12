@@ -1,0 +1,13 @@
+{
+    // tell VS Code where the Java source files are
+    "java.project.sourcePaths": [
+        "fxtest2/src"
+    ],
+    // put compiled Java files in the fxtest2 bin folder
+    "java.project.outputPath": "fxtest2/bin",
+    // add all JavaFX JAR files to the project
+    // EDIT THIS!!! 
+    "java.project.referencedLibraries": [
+        "C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\lib\\*.jar"
+    ]
+}
