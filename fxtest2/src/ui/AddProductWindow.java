@@ -45,7 +45,7 @@ public class AddProductWindow {
 		ObservableList<String> productNames = FXCollections.observableArrayList(products.keySet()); // convert the key set (product names) to an observable list so that the combo box can use it
 		this.productBox = new ComboBox<>(productNames);
 		
-		productBox.getSelectionModel().selectFirst(); // to make sure something is already selected
+		//productBox.getSelectionModel().selectFirst(); // to make sure something is already selected
         
         
 		// Create an integer Spinner
@@ -79,9 +79,7 @@ public class AddProductWindow {
 			spinner.setValueFactory(valueFactory);
 		}
         
-		spinner.setEditable(true); // allows the user to put their own number
-        // TELL ME IF THIS CAN GO OVER THE MAX
-		
+		spinner.setEditable(true); // allows the user to put their own number (does not go over max)		
 		
         this.add = new Button("Add");
         this.exit = new Button("Cancel");
@@ -119,6 +117,7 @@ public class AddProductWindow {
 				}
 				targetDatabase.add(addedProduct, addAmount); // add the product with its specific data
 				table.setItems(targetDatabase.getObservableList());
+				table.refresh();
 				addWindow.close();
 			}
 		});

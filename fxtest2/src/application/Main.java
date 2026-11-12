@@ -101,11 +101,6 @@ public class Main extends Application {
         shelfData.add(inventoryData.getProductById(1), 5);
         shelfData.add(inventoryData.getProductById(2), 5);
         
-        
-        
-        
-        
-        
         table.setItems(shelfData.getObservableList());
         
         User currentUser = new User("MainManager", "password", "Billy Bob", "Jones", User.MANAGER);
