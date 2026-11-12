@@ -18,13 +18,13 @@ public class ProductContainer {
 	public void add(Product product, int stocks) {
 		System.out.println("Attempting to add " + stocks + "x " + product.getName());
 		Product p = getProductById(product.getId()); // find the product in this database
-		if (p == null) {
-			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks)); // doesn't exist yet, just add it normally
+		if (p == null) { // doesn't exist yet, just add it normally
+			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks)); 
 			System.out.println("Added " + stocks + "x " + product.getName());
 			return;
 		}
-		p.setStock(p.getStock() + stocks);
-		System.out.println("Added "+ stocks + "x more " + p.getName());
+		p.setStock(p.getStock() + stocks); // already exists, stack the stocks
+		System.out.println("Added "+ stocks + "x more " + p.getName() + " (Total in stock: " + p.getStock() + ")");
 	}
 	
 	public void remove(int i) {
