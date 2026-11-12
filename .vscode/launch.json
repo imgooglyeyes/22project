@@ -1,0 +1,25 @@
+{
+    // this file tells VS Code how to start the JavaFX app
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            // start the main Java class.
+            "type": "java",
+            "name": "Launch fxtest2 JavaFX application",
+            "request": "launch",
+            "mainClass": "application.Main",
+            // use the compiled classes from the fxtest2 project
+            "classPaths": [
+                "${workspaceFolder}\\fxtest2\\bin"
+            ],
+            // use the installed JavaFX library files
+            // EDIT THIS!!!
+            "modulePaths": [
+                "C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\lib"
+            ],
+            // load the JavaFX controls and FXML modules
+            "vmArgs": "--add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}
