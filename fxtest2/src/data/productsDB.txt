@@ -1,3 +1,28 @@
-0|Corn|A staple food in many regions of the world. Can be used for starch, syrup, oil, and more.|25.0
-1|Coconut|From the tree of life, this fruit comes with multiple culinary and nonculinary use.|40.0
-2|1kg Rice|Perfect alongside any meal. It can even become a meal itself.|100.0
+0|Mature Coconut|Whole mature coconut, fresh from the tree.|30.0
+1|Virgin Coconut Oil (250ml)|Cold-pressed, unrefined oil for cooking, baking and skin and hair care.|230.0
+2|Virgin Coconut Oil (500ml)|Cold-pressed, unrefined oil for cooking, baking and skin and hair care..|365.0
+3|Coconut Milk (400ml)|Unsweetened milk pressed from ripe coconut meat, for sweet and savory dishes.|68.0
+4|Coconut Cream (250ml)|Thick first-press cream for desserts and rich sauces.|65.0
+5|Desiccated Coconut (250g)|Dried, finely shredded coconut meat for baking and desserts.|85.0
+6|Young Coconut|Fresh whole young coconut for drinking and scraping the soft meat.|35.0
+7|Fresh Coconut Sap (500ml)|Unfermented sap tapped from the coconut flower stalk.|80.0
+8|Coconut Sugar (250g)|Unrefined sugar made by boiling down coconut sap.|120.0
+9|Coconut Sap Vinegar (500ml)|Traditional vinegar fermented from coconut sap.|75.0
+10|Palay (25kg)|Freshly threshed rice grain with the husk on.|450.0
+11|Well-Milled White Rice (5kg)|Everyday polished white rice.|280.0
+12|Brown Rice (1kg)|Whole-grain rice with the bran layer kept.|85.0
+13|Saba Banana (1kg)|Cooking banana for turon, banana cue and nilaga.|45.0
+14|Banana Chips (200g)|Crisp fried saba banana slices.|70.0
+15|Carabao Mango (1kg)|Fresh ripe sweet mangoes.|120.0
+16|Dried Mango (100g)|Soft sun-dried mango slices.|95.0
+17|Calamansi (500g)|Fresh calamansi for juice, marinades and dipping sauces.|60.0
+18|Calamansi Juice Concentrate (250ml)|Concentrated juice to dilute and drink.|110.0
+19|Dried Cacao Beans (500g)|Fermented, sun-dried cacao beans.|160.0
+20|Cacao Tablea (250g)|Pressed roasted cacao tablets for tsokolate.|180.0
+21|Green Coffee Beans (Barako) (500g)|Dried, unroasted liberica coffee beans.|240.0
+22|Barako Coffee Beans (Roasted) (250g)|Roasted whole beans of strong Philippine liberica coffee.|220.0
+23|Sugarcane Stalks (1 bundle)|Freshly cut sugarcane.|60.0
+24|Muscovado Sugar (500g)|Unrefined brown sugar from sugarcane juice.|85.0
+25|Ube (1kg)|Fresh purple yam roots.|110.0
+26|Ube Halaya (350g)|Sweet purple yam jam, sold in a jar.|140.0
+27|Secret Sauce|This sauce is a secret.|100.0
