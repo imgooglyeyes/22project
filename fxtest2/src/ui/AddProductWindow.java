@@ -95,7 +95,7 @@ public class AddProductWindow {
         add.disableProperty().bind(productBoxEmpty); // submit button being disabled is binded to the boolean binding made earlier
         
         this.buttonsHBox = new HBox(10, exit, add);
-        this.vbox = new VBox(10, productBox, buttonsHBox); // creates a vbox with a 10px spacing with these as children
+        this.vbox = new VBox(10, productBox, spinner, buttonsHBox); // creates a vbox with a 10px spacing with these as children
         vbox.setStyle("-fx-padding: 20;");
 
         this.addScene = new Scene(vbox, 500, 350);
@@ -109,7 +109,9 @@ public class AddProductWindow {
 			public void handle (MouseEvent event) {
 				int addAmount = spinner.getValue();
 				int addId = products.get(productBox.getValue()); // reminder: products is a HashMap<String, Integer> where string is the product name and integer is the id
+				System.out.println("Attempting to add product with id: " + addId);
 				Product addedProduct = sourceDatabase.getProductById(addId); // grabs the product from the database
+				System.out.println("Product with that id in the source database is: " + addedProduct.getName());
 				if (limited) {
 					sourceDatabase.removeStock(addedProduct, addAmount);
 					// removeStock by referring to the internal id
