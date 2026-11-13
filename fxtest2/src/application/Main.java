@@ -114,7 +114,7 @@ public class Main extends Application {
 		root.setStyle("-fx-padding: 12;");
 		Scene mainScene = new Scene(root, 900, 500);
 		stage.setScene(mainScene);
-		stage.setTitle("proof of concept");
+		stage.setTitle("The Shelf");
 		stage.show();
 
 		
@@ -133,7 +133,7 @@ public class Main extends Application {
 			
 			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
-					InventoryScene inventoryScene = new InventoryScene(stage, inventoryData, database, mainScene);
+					InventoryScene inventoryScene = new InventoryScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
 					stage.setScene(inventoryScene);
 					stage.setTitle("Inventory");
 			}});
@@ -148,7 +148,7 @@ public class Main extends Application {
 			viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
 					// temporarily uses database instead of inventoryData, inventory is not yet implemented
-					DatabaseScene databaseScene = new DatabaseScene(stage, database, mainScene);
+					DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
 					stage.setScene(databaseScene);
 					stage.setTitle("Database");
 			}});

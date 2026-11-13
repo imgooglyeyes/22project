@@ -3,6 +3,7 @@ package ui;
 import application.ImportExportHandler;
 import application.Product;
 import application.ProductContainer;
+import application.User;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -19,7 +20,7 @@ public class InventoryScene extends Scene{
 	// ======= TEMPLATE ========
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public InventoryScene(Stage stage, ProductContainer inventoryData, ProductContainer database, Scene mainScene){
+	public InventoryScene(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData , Scene mainScene, User currentUser){
 			TableView<Product> table = new TableView<>();
 	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 	
@@ -44,13 +45,12 @@ public class InventoryScene extends Scene{
 			
 			// ===== END OF TEMPLATE ====
 			
-			Button createProduct = new Button("Add New Product");
+			Button createProduct = new Button("Add Product From Database");
 			Button viewShelf = new Button("View Shelf");
 			Button deleteSelected = new Button("Delete Selected"); // temp
 			Button quit = new Button("Quit");
-			HBox moreButtons = new HBox(10, viewShelf, createProduct, deleteSelected, quit); // creates an hbox with a 10px spacing and these 4 buttons as children
+			HBox moreButtons = new HBox(10); // creates an hbox with a 10px spacing and these 4 buttons as children
 			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
-			//ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
 			
 			createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
@@ -64,6 +64,23 @@ public class InventoryScene extends Scene{
 					stage.setTitle("proof of concept");
 			}});
 			
+			moreButtons.getChildren().addAll(createProduct, viewShelf);
+			
+			// view database button
+			if (currentUser.getUserType().equals(User.MANAGER)) {
+				Button viewDatabase = new Button("View Database");
+				
+				viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
+					public void handle (MouseEvent event) {
+						// temporarily uses database instead of inventoryData, inventory is not yet implemented
+						DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
+						stage.setScene(databaseScene);
+						stage.setTitle("Database");
+				}});
+				
+				moreButtons.getChildren().add(viewDatabase);
+			}
+			
 			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
 					System.out.println("This should delete an item from the inventory, and shelf.");
@@ -75,6 +92,8 @@ public class InventoryScene extends Scene{
 					Platform.exit();
 				}
 			});
+			
+			moreButtons.getChildren().addAll(deleteSelected, quit);
 			
 			root.setTop(moreButtons);
 			root.setStyle("-fx-padding: 12;");
