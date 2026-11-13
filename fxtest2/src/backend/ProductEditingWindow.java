@@ -42,7 +42,7 @@ public class ProductEditingWindow {
         // RIGHT NOW IT WILL BREAK IF THE INPUT IS NOT A DOUBLE
         
         // NOTE: It is apparently already given that any future reference to a variable will be "this." if it was initialized with it
-        confirm.disableProperty().bind(nameField.empty.or(descriptionField.empty).or(priceField.empty)); // submit button being disabled is binded to the boolean binding made earlier
+        confirm.disableProperty().bind(nameField.empty.or(descriptionField.empty).or(priceField.empty).or(priceField.NaN)); // submit button being disabled is binded to the boolean binding made earlier
         
         this.buttonsHBox = new HBox(10, exit, confirm);
         this.vbox = new VBox(10, nameField, descriptionField, priceField, buttonsHBox); // creates a vbox with a 10px spacing with these as children
