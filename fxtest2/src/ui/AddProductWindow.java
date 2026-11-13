@@ -35,7 +35,7 @@ public class AddProductWindow {
 	
 	public AddProductWindow(Stage stage, TableView<Product> table, ProductContainer targetDatabase, ProductContainer sourceDatabase, Boolean limited) {
 		HashMap<String, Integer> products = new HashMap<>();
-		for (Product p : sourceDatabase.getList()) { // go through every product in the database
+		for (Product p : sourceDatabase.getProducts()) { // go through every product in the database
 			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
 		}
 		
