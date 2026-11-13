@@ -5,6 +5,8 @@ import application.Product;
 import application.ProductContainer;
 import application.User;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -47,7 +49,6 @@ public class InventoryScene extends Scene{
 			
 			Button createProduct = new Button("Add Product From Database");
 			Button viewShelf = new Button("View Shelf");
-			Button deleteSelected = new Button("Delete Selected"); // temp
 			Button quit = new Button("Quit");
 			HBox moreButtons = new HBox(10); // creates an hbox with a 10px spacing and these 4 buttons as children
 			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
@@ -78,13 +79,24 @@ public class InventoryScene extends Scene{
 						stage.setTitle("Database");
 				}});
 				
-				moreButtons.getChildren().add(viewDatabase);
+				Button removeStocks = new Button("Delete Stocks");
+				
+				BooleanBinding noItemSelected = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the table has anything selected or not
+			        if (table.getSelectionModel().getSelectedItem() == null) return true;
+			        else return false;
+			    }, table.getSelectionModel().selectedItemProperty());
+				
+				removeStocks.disableProperty().bind(noItemSelected);
+				
+				removeStocks.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
+					public void handle (MouseEvent event) {
+						MoveProductWindow moveWindow = new MoveProductWindow(stage, table, inventoryData, null, table.getSelectionModel().getSelectedItem());
+						// note: null is selected as the storage parameter for MoveProductWindow. This means, products removed from inventoryData will be moved nowhere.
+						moveWindow.show();
+				}});
+				
+				moreButtons.getChildren().addAll(viewDatabase, removeStocks);
 			}
-			
-			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					System.out.println("This should delete an item from the inventory, and shelf.");
-			}});
 			
 			quit.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
@@ -93,7 +105,7 @@ public class InventoryScene extends Scene{
 				}
 			});
 			
-			moreButtons.getChildren().addAll(deleteSelected, quit);
+			moreButtons.getChildren().add(quit);
 			
 			root.setTop(moreButtons);
 			root.setStyle("-fx-padding: 12;");

@@ -22,9 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-
-// TO-DO: Allow the user to specify amount of stock and validate it based on how many of that item is in the inventory
-
 public class AddProductWindow {
 	
 	private ComboBox<String> productBox;
@@ -99,7 +96,7 @@ public class AddProductWindow {
         this.addScene = new Scene(vbox, 500, 350);
 
         this.addWindow = new Stage(); // creates a new window for the user creation 
-        addWindow.setTitle("Add Product From Inventory");
+        addWindow.setTitle("Add Product");
         addWindow.setScene(addScene);
         
         // Handle submission / closing
@@ -111,9 +108,8 @@ public class AddProductWindow {
 				Product addedProduct = sourceDatabase.getProductById(addId); // grabs the product from the database
 				System.out.println("Product with that id in the source database is: " + addedProduct.getName());
 				if (limited) {
-					sourceDatabase.removeStock(addedProduct, addAmount);
-					// removeStock by referring to the internal id
-					// this means all that matters is the id for the function to update the correct, corresponding product within any database
+					sourceDatabase.remove(addedProduct, addAmount);
+					// since we're taking stock from the source, we need to remove stocks from the source
 				}
 				targetDatabase.add(addedProduct, addAmount); // add the product with its specific data
 				table.setItems(targetDatabase.getObservableList());
