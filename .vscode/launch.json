@@ -8,7 +8,7 @@
             "type": "java",
             "name": "Launch fxtest2 JavaFX application",
             "request": "launch",
-            "mainClass": "application.Main",
+            "mainClass": "application.Main1",
             // use the compiled classes from the fxtest2 project
             "classPaths": [
                 "${workspaceFolder}\\fxtest2\\bin"
