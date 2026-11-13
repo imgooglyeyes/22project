@@ -36,9 +36,9 @@ public class LabelledTextField extends HBox { // a hbox with a label and text fi
 			this.NaN = Bindings.createBooleanBinding(() -> { 
 				try{
 					double val = Double.parseDouble(this.textField.getText());
-					return true;
+					return false; // is a not NaN
 				} catch (NumberFormatException e) {
-					return false;
+					return true;  // is NaN
 				}
 		    }, this.textField.textProperty());
 		}
