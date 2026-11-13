@@ -1,4 +1,4 @@
-package ui;
+package backend;
 
 import application.Product;
 import application.ProductContainer;
@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ui.LabelledTextField;
 
 public class ProductCreationWindow {
 	

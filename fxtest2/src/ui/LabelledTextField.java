@@ -10,7 +10,8 @@ import javafx.scene.layout.HBox;
 public class LabelledTextField extends HBox { // a hbox with a label and text field
 	private Label label;
 	private TextField textField;
-	protected BooleanBinding empty;
+	public BooleanBinding empty;
+	public BooleanBinding NaN;
 	
 	public LabelledTextField(String text) {
 		super(10); // sets the spacing to 10px
@@ -32,10 +33,22 @@ public class LabelledTextField extends HBox { // a hbox with a label and text fi
 		        if (this.textField.getText().trim().isEmpty()) return true;
 		        else return false;
 		    }, this.textField.textProperty());
+			this.NaN = Bindings.createBooleanBinding(() -> { 
+				try{
+					double val = Double.parseDouble(this.textField.getText());
+					return true;
+				} catch (NumberFormatException e) {
+					return false;
+				}
+		    }, this.textField.textProperty());
 		}
 	}
 	
 	public String getText() { // shortening the code
 		return this.textField.getText();
+	}
+	
+	public void setText(String t) {
+		textField.setText(t);
 	}
 }
