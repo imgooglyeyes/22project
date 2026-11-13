@@ -77,4 +77,9 @@ public class SceneManager {
         stage.setScene(databaseScene);
         stage.setTitle("Database");
     }
+
+    // creates the header for the current scene
+    public AppHeader createHeader(String currentScene) {
+        return new AppHeader(this, currentScene);
+    }
 }
