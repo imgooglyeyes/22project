@@ -2,6 +2,8 @@ package application;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -21,6 +23,7 @@ import ui.TestLoginWindow;
 import ui.AddProductWindow;
 import ui.DatabaseScene;
 import ui.InventoryScene;
+import ui.MoveProductWindow;
 import ui.ProductCreationWindow;
 
 import java.io.BufferedWriter;
@@ -158,12 +161,20 @@ public class Main extends Application {
 		
 		// delete (to be changed), manual save (to be changed), and quit button
 		if (currentUser.getUserType().equals(User.MANAGER) || currentUser.getUserType().equals(User.CLERK)) {
-			Button deleteSelected = new Button("Delete Selected"); // temp
+			Button removeStocks = new Button("Move Stocks To Inventory");
 			
-			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
+			BooleanBinding noItemSelected = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the table has anything selected or not
+		        if (table.getSelectionModel().getSelectedItem() == null) return true;
+		        else return false;
+		    }, table.getSelectionModel().selectedItemProperty());
+			
+			removeStocks.disableProperty().bind(noItemSelected);
+			
+			removeStocks.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
 				public void handle (MouseEvent event) {
-					shelfData.remove(table.getSelectionModel().getSelectedItem()); // takes the currently selected object (DON'T TAKE THE INDEX, IT'S NOT CONSTANT)
-					table.setItems(shelfData.getObservableList()); // update items
+					MoveProductWindow moveWindow = new MoveProductWindow(stage, table, shelfData, inventoryData, table.getSelectionModel().getSelectedItem());
+					// note: inventoryData is selected as the storage parameter for MoveProductWindow. This means, products removed from shelfData will be moved there.
+					moveWindow.show();
 			}});
 			
 			Button exportBtn = new Button("Manual Save");
@@ -234,7 +245,7 @@ public class Main extends Application {
 				}
 			});
 			
-			moreButtons.getChildren().addAll(deleteSelected, exportBtn, quit);
+			moreButtons.getChildren().addAll(removeStocks, exportBtn, quit);
 		}
 		
 		

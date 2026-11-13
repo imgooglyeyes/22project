@@ -27,18 +27,11 @@ public class ProductContainer {
 		System.out.println("Added "+ stocks + "x more " + p.getName() + " (Total in stock: " + p.getStock() + ")");
 	}
 	
-	public void remove(int i) {
-		productList.remove(i);
-	}
-	
-	public void remove(Product p) {
-		productList.remove(p);
-	}
-	
-	public void removeStock(Product product, int stocks) {
+	public void remove(Product product, int stocks) {
 		Product p = getProductById(product.getId()); // find the product in this database
-		if (p == null) return;
+		if (p == null) return; // doesn't exist
 		p.setStock(p.getStock() - stocks);
+		if (p.getStock() == 0) productList.remove(p); // nothing left, just remove it
 	}
 	
 	public ObservableList<Product> getObservableList() {
