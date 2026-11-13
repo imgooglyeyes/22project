@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import ui.TestLoginWindow;
 import ui.AddProductWindow;
 import ui.DatabaseScene;
-import ui.InventoryScene;
+import ui.InventoryScene1;
 import ui.MoveProductWindow;
 import ui.ProductCreationWindow;
 
@@ -136,7 +136,7 @@ public class Main extends Application {
 			
 			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
-					InventoryScene inventoryScene = new InventoryScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
+					InventoryScene1 inventoryScene = new InventoryScene1(stage, database, inventoryData, shelfData, mainScene, currentUser);
 					stage.setScene(inventoryScene);
 					stage.setTitle("Inventory");
 			}});
