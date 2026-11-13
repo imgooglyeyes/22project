@@ -21,8 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ui.TestLoginWindow;
 import ui.AddProductWindow;
-import ui.DatabaseScene1;
-import ui.InventoryScene1;
+import ui.DatabaseScene;
+import ui.InventoryScene;
 import ui.MoveProductWindow;
 import ui.ProductCreationWindow;
 
@@ -136,7 +136,7 @@ public class Main extends Application {
 			
 			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
-					InventoryScene1 inventoryScene = new InventoryScene1(stage, database, inventoryData, shelfData, mainScene, currentUser);
+					InventoryScene inventoryScene = new InventoryScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
 					stage.setScene(inventoryScene);
 					stage.setTitle("Inventory");
 			}});
@@ -151,7 +151,7 @@ public class Main extends Application {
 			viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
 					// temporarily uses database instead of inventoryData, inventory is not yet implemented
-					DatabaseScene1 databaseScene = new DatabaseScene1(stage, database, inventoryData, shelfData, mainScene, currentUser);
+					DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
 					stage.setScene(databaseScene);
 					stage.setTitle("Database");
 			}});

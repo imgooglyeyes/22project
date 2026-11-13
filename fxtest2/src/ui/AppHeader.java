@@ -1,5 +1,7 @@
+
 package ui;
 
+import application.User;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,38 +9,52 @@ import javafx.scene.layout.HBox;
 
 public class AppHeader extends HBox {
 
-    public AppHeader(SceneManager manager, String currentScene) {
+    public AppHeader(SceneManager manager, String currentScene, User user) {
 
         setSpacing(10);
         setPadding(new Insets(10));
 
         Label title = new Label("Inventory System");
 
-        Button shelf = new Button("Shelf");
-        Button inventory = new Button("Inventory");
-        Button database = new Button("Database");
+        Button shelfButton = new Button("Shelf");
+        Button inventoryButton = new Button("Inventory");
+        Button databaseButton = new Button("Database");
 
-        // connects the navigation buttons
-        shelf.setOnAction(event -> manager.showShelf());
-        inventory.setOnAction(event -> manager.showInventory());
-        database.setOnAction(event -> manager.showDatabase());
+        // opens the selected scene
+        shelfButton.setOnAction(e -> manager.showShelf());
+        inventoryButton.setOnAction(e -> manager.showInventory());
+        databaseButton.setOnAction(e -> manager.showDatabase());
 
         // highlights the current scene
-        setActive(shelf, currentScene.equals("Shelf"));
-        setActive(inventory, currentScene.equals("Inventory"));
-        setActive(database, currentScene.equals("Database"));
+        setActive(shelfButton, currentScene.equals("Shelf"));
+        setActive(inventoryButton, currentScene.equals("Inventory"));
+        setActive(databaseButton, currentScene.equals("Database"));
 
-        getChildren().addAll(title, shelf, inventory, database);
+        // checks which buttons the user can access
+        boolean isManager = user.getUserType().equals(User.MANAGER);
+        boolean isClerk = user.getUserType().equals(User.CLERK);
+
+        getChildren().add(title);
+        getChildren().add(shelfButton);
+
+        if (isManager || isClerk) {
+            getChildren().add(inventoryButton);
+        }
+
+        if (isManager) {
+            getChildren().add(databaseButton);
+        }
     }
 
-    // highlights the active navigation button
+    // highlights the active button
     private void setActive(Button button, boolean active) {
 
         if (active) {
             button.setStyle(
-                    "-fx-background-color: lightblue;" +
-                    "-fx-font-weight: bold;"
+                "-fx-background-color: lightblue;" +
+                "-fx-font-weight: bold;"
             );
+            button.setDisable(true);
         }
     }
 }
