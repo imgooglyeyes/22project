@@ -1,3 +1,4 @@
+
 package ui;
 
 import java.io.BufferedWriter;
@@ -14,180 +15,145 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 public class ShelfScene extends Scene {
-
-    // stores the currently selected product
-    private final ObjectProperty<Product> selectedProduct =
-            new SimpleObjectProperty<>();
-
-    // holds all the product rows
-    private final VBox productRows = new VBox(5);
 
     private ProductContainer database;
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
 
-    private SceneManager sceneManager;
+    private ObjectProperty<Product> selectedProduct =
+            new SimpleObjectProperty<>();
+
+    private VBox productRows = new VBox(5);
 
     public ShelfScene(
             Stage stage,
-            SceneManager sceneManager,
+            SceneManager manager,
             ProductContainer database,
             ProductContainer inventoryData,
             ProductContainer shelfData,
             User currentUser) {
 
-        super(new VBox(10), 900, 500);
+        super(new BorderPane(), 900, 500);
 
         this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
-        this.sceneManager = sceneManager;
 
-        VBox root = (VBox) getRoot();
+        BorderPane root = (BorderPane) getRoot();
         root.setPadding(new Insets(12));
 
         // creates the column headers
         HBox header = new HBox(10);
 
         header.getChildren().addAll(
-                createLabel("Name", 150),
-                createLabel("Description", 400),
-                createLabel("Price", 100),
-                createLabel("Stock", 80)
+            createLabel("Name", 150),
+            createLabel("Description", 400),
+            createLabel("Price", 100),
+            createLabel("Stock", 80)
         );
 
-        // puts the headers and product rows inside a scrollpane
-        VBox shelfList = new VBox(10);
-        shelfList.getChildren().addAll(header, productRows);
+        // creates the product list
+        VBox shelfList = new VBox(10, header, productRows);
 
         ScrollPane scrollPane = new ScrollPane(shelfList);
         scrollPane.setFitToWidth(true);
 
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
-
-        // displays the products on the shelf
-        refreshShelf();
-
         // creates the buttons
         Button addProduct = new Button("Add Product From Inventory");
-        Button viewInventory = new Button("View Inventory");
-        Button viewDatabase = new Button("View Database");
         Button moveStocks = new Button("Move Stocks To Inventory");
         Button manualSave = new Button("Manual Save");
         Button quit = new Button("Quit");
-        Button login = new Button("Login");
 
-        HBox buttons = new HBox(10);
+        HBox buttons = new HBox(10,
+            addProduct,
+            moveStocks,
+            manualSave,
+            quit
+        );
 
-        // checks the user's permissions
-        boolean isManager =
-                currentUser.getUserType().equals(User.MANAGER);
-
-        boolean canManageStock =
-                isManager ||
-                currentUser.getUserType().equals(User.CLERK);
-
-        // adds a product from inventory to the shelf
+        // adds a product from inventory
         addProduct.setOnAction(event -> {
 
-            AddProductWindow1 addWindow = new AddProductWindow1(
-                    stage,
-                    shelfData,
-                    inventoryData,
-                    true,
-                    this::refreshShelf
+            AddProductWindow1 window = new AddProductWindow1(
+                stage,
+                shelfData,
+                inventoryData,
+                true,
+                this::refreshShelf
             );
 
-            addWindow.show();
-        });
-
-        // opens the inventory
-        viewInventory.setOnAction(event -> {
-            sceneManager.showInventory();
-        });
-
-        // opens the database
-        viewDatabase.setOnAction(event -> {
-            sceneManager.showDatabase();
+            window.show();
         });
 
         // disables moving stocks when nothing is selected
         moveStocks.disableProperty().bind(
-                Bindings.isNull(selectedProduct)
+            Bindings.isNull(selectedProduct)
         );
 
-        // moves stocks from the shelf to inventory
+        // moves stocks back to inventory
         moveStocks.setOnAction(event -> {
 
             Product product = selectedProduct.get();
 
             if (product != null) {
 
-                MoveProductWindow1 moveWindow = new MoveProductWindow1(
-                        stage,
-                        shelfData,
-                        inventoryData,
-                        product,
-                        this::refreshShelf
+                MoveProductWindow1 window = new MoveProductWindow1(
+                    stage,
+                    shelfData,
+                    inventoryData,
+                    product,
+                    this::refreshShelf
                 );
 
-                moveWindow.show();
+                window.show();
             }
         });
 
-        // saves all product data
+        // saves the product data
         manualSave.setOnAction(event -> saveData());
 
         // exits the application
         quit.setOnAction(event -> Platform.exit());
 
-        // displays a temporary login message
-        login.setOnAction(event -> {
-            System.out.println("login is not implemented yet.");
-        });
+        // checks the user's permissions
+        boolean isManager =
+            currentUser.getUserType().equals(User.MANAGER);
 
-        // adds buttons based on the user's role
-        if (canManageStock) {
-            buttons.getChildren().addAll(
-                    addProduct,
-                    viewInventory
-            );
+        boolean isClerk =
+            currentUser.getUserType().equals(User.CLERK);
+
+        // displays the shared header
+        root.setTop(manager.createHeader("Shelf"));
+
+        // displays the product list
+        root.setCenter(scrollPane);
+
+        // displays the buttons
+        if (isManager || isClerk) {
+            root.setBottom(buttons);
         }
 
-        if (isManager) {
-            buttons.getChildren().add(viewDatabase);
-        }
-
-        if (canManageStock) {
-            buttons.getChildren().addAll(
-                    moveStocks,
-                    manualSave,
-                    quit
-            );
-        }
-
-        if (currentUser.getUserType().equals(User.GUEST)) {
-            buttons.getChildren().add(login);
-        }
-
-        // displays the shelf and its buttons
-        root.getChildren().addAll(scrollPane, buttons);
+        // loads the products
+        refreshShelf();
     }
 
     // creates a label with a fixed width
     private Label createLabel(String text, double width) {
+
         Label label = new Label(text);
         label.setPrefWidth(width);
+
         return label;
     }
 
@@ -210,23 +176,23 @@ public class ShelfScene extends Scene {
 
             selectedProduct.set(product);
 
-            // removes the selection color from all rows
-            for (var node : productRows.getChildren()) {
+            // resets all row styles
+            for (Node node : productRows.getChildren()) {
                 node.setStyle("-fx-border-color: lightgray;");
             }
 
             // highlights the selected row
             row.setStyle(
-                    "-fx-background-color: lightblue;" +
-                    "-fx-border-color: gray;"
+                "-fx-background-color: lightblue;" +
+                "-fx-border-color: gray;"
             );
         });
 
         productRows.getChildren().add(row);
     }
 
-    // clears and reloads the shelf display
-    private void refreshShelf() {
+    // refreshes the shelf display
+    public void refreshShelf() {
 
         productRows.getChildren().clear();
         selectedProduct.set(null);
@@ -241,40 +207,43 @@ public class ShelfScene extends Scene {
 
         try (
             BufferedWriter databaseWriter =
-                    Files.newBufferedWriter(Paths.get("src/data/productsDB.txt"));
+                Files.newBufferedWriter(Paths.get("src/data/productsDB.txt"));
 
             BufferedWriter shelfWriter =
-                    Files.newBufferedWriter(Paths.get("src/data/shelf.txt"));
+                Files.newBufferedWriter(Paths.get("src/data/shelf.txt"));
 
             BufferedWriter inventoryWriter =
-                    Files.newBufferedWriter(Paths.get("src/data/inventory.txt"))
+                Files.newBufferedWriter(Paths.get("src/data/inventory.txt"))
         ) {
 
-            // saves all products in the database
+            // saves all database products
             for (Product p : database.getProducts()) {
+
                 databaseWriter.write(
-                        p.getId() + "|" +
-                        p.getName() + "|" +
-                        p.getDescription() + "|" +
-                        p.getPrice()
+                    p.getId() + "|" +
+                    p.getName() + "|" +
+                    p.getDescription() + "|" +
+                    p.getPrice()
                 );
 
                 databaseWriter.newLine();
             }
 
-            // saves all products on the shelf
+            // saves shelf products
             for (Product p : shelfData.getProducts()) {
+
                 shelfWriter.write(
-                        p.getId() + "|" + p.getStock()
+                    p.getId() + "|" + p.getStock()
                 );
 
                 shelfWriter.newLine();
             }
 
-            // saves all products in inventory
+            // saves inventory products
             for (Product p : inventoryData.getProducts()) {
+
                 inventoryWriter.write(
-                        p.getId() + "|" + p.getStock()
+                    p.getId() + "|" + p.getStock()
                 );
 
                 inventoryWriter.newLine();

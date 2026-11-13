@@ -1,3 +1,4 @@
+
 package ui;
 
 import application.ProductContainer;
@@ -31,55 +32,57 @@ public class SceneManager {
 
         // creates the shelf scene
         shelfScene = new ShelfScene(
-                stage,
-                this,
-                database,
-                inventoryData,
-                shelfData,
-                currentUser
+            stage,
+            this,
+            database,
+            inventoryData,
+            shelfData,
+            currentUser
         );
     }
 
-    // displays the shelf
+    // creates the shared header
+    public AppHeader createHeader(String currentScene) {
+        return new AppHeader(this, currentScene, currentUser);
+    }
+
+    // opens the shelf
     public void showShelf() {
+        shelfScene.refreshShelf();
+
         stage.setScene(shelfScene);
         stage.setTitle("The Shelf");
     }
 
-    // displays the inventory
+    // opens the inventory
     public void showInventory() {
 
-        InventoryScene1 inventoryScene = new InventoryScene1(
-                stage,
-                database,
-                inventoryData,
-                shelfData,
-                shelfScene,
-                currentUser
+        InventoryScene1 scene = new InventoryScene1(
+            stage,
+            database,
+            inventoryData,
+            shelfData,
+            this,
+            currentUser
         );
 
-        stage.setScene(inventoryScene);
+        stage.setScene(scene);
         stage.setTitle("Inventory");
     }
 
-    // displays the database
+    // opens the database
     public void showDatabase() {
 
-        DatabaseScene1 databaseScene = new DatabaseScene1(
-                stage,
-                database,
-                inventoryData,
-                shelfData,
-                shelfScene,
-                currentUser
+        DatabaseScene1 scene = new DatabaseScene1(
+            stage,
+            database,
+            inventoryData,
+            shelfData,
+            this,
+            currentUser
         );
 
-        stage.setScene(databaseScene);
+        stage.setScene(scene);
         stage.setTitle("Database");
-    }
-
-    // creates the header for the current scene
-    public AppHeader createHeader(String currentScene) {
-        return new AppHeader(this, currentScene);
     }
 }

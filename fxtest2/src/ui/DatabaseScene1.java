@@ -1,3 +1,4 @@
+
 package ui;
 
 import application.Product;
@@ -9,136 +10,116 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class DatabaseScene1 extends Scene {
 
-    // stores the currently selected product
-    private final ObjectProperty<Product> selectedProduct =
+    private ProductContainer database;
+
+    private ObjectProperty<Product> selectedProduct =
             new SimpleObjectProperty<>();
 
-    // holds all the product rows
-    private final VBox productRows = new VBox(5);
-
-    private final ProductContainer database;
+    private VBox productRows = new VBox(5);
 
     public DatabaseScene1(
             Stage stage,
             ProductContainer database,
             ProductContainer inventoryData,
             ProductContainer shelfData,
-            Scene mainScene,
+            SceneManager manager,
             User currentUser) {
 
-        super(new VBox(10), 900, 500);
+        super(new BorderPane(), 900, 500);
 
         this.database = database;
 
-        VBox root = (VBox) getRoot();
+        BorderPane root = (BorderPane) getRoot();
         root.setPadding(new Insets(12));
 
         // creates the column headers
         HBox header = new HBox(10);
+
         header.getChildren().addAll(
-                createLabel("Internal ID", 100),
-                createLabel("Name", 150),
-                createLabel("Description", 400),
-                createLabel("Price", 100)
+            createLabel("Name", 150),
+            createLabel("Description", 400),
+            createLabel("Price", 100),
+            createLabel("Stock", 80)
         );
 
-        // puts the headers and product rows inside a scrollpane
-        VBox databaseList = new VBox(10);
-        databaseList.getChildren().addAll(header, productRows);
+        // creates the product list
+        VBox databaseList = new VBox(10, header, productRows);
 
         ScrollPane scrollPane = new ScrollPane(databaseList);
         scrollPane.setFitToWidth(true);
-        VBox.setVgrow(scrollPane, javafx.scene.layout.Priority.ALWAYS);
-
-        // displays the products in the database
-        refreshDatabase();
 
         // creates the buttons
         Button createProduct = new Button("Create New Product");
-        Button viewShelf = new Button("View Shelf");
-        Button viewInventory = new Button("View Inventory");
         Button deleteSelected = new Button("Delete Selected");
         Button quit = new Button("Quit");
 
-        HBox buttons = new HBox(
-                10,
-                createProduct,
-                viewShelf,
-                viewInventory,
-                deleteSelected,
-                quit
-        );
+        HBox buttons = new HBox(10);
 
-        // opens the window for creating a product
+        // opens the product creation window
         createProduct.setOnAction(event -> {
 
-            ProductCreationWindow1 creationWindow =
-                    new ProductCreationWindow1(
-                            stage,
-                            database,
-                            this::refreshDatabase
-                    );
+            ProductCreationWindow1 window =
+                new ProductCreationWindow1(
+                    stage,
+                    database,
+                    this::refreshDatabase
+                );
 
-            creationWindow.show();
-        });
-        // returns to the shelf
-        viewShelf.setOnAction(event -> {
-            stage.setScene(mainScene);
-            stage.setTitle("The Shelf");
+            window.show();
         });
 
-        // opens the inventory scene
-        viewInventory.setOnAction(event -> {
-            InventoryScene1 inventoryScene =
-                    new InventoryScene1(
-                            stage,
-                            database,
-                            inventoryData,
-                            shelfData,
-                            mainScene,
-                            currentUser
-                    );
-
-            stage.setScene(inventoryScene);
-            stage.setTitle("Inventory");
-        });
-
-        // disables delete when nothing is selected
+        // disables delete when no product is selected
         deleteSelected.disableProperty().bind(
-                Bindings.isNull(selectedProduct)
+            Bindings.isNull(selectedProduct)
         );
 
-        // handles deleting the selected product
+        // delete functionality is not implemented yet
         deleteSelected.setOnAction(event -> {
-            Product product = selectedProduct.get();
-
-            if (product != null) {
-                System.out.println(
-                        "This should delete " + product.getName()
-                );
-            }
+            System.out.println("Delete product is not implemented yet.");
         });
 
         // exits the application
         quit.setOnAction(event -> Platform.exit());
 
-        root.getChildren().addAll(scrollPane, buttons);
+        // displays the shared header
+        root.setTop(manager.createHeader("Database"));
+
+        // displays the product list
+        root.setCenter(scrollPane);
+
+        // displays the buttons
+        if (currentUser.getUserType().equals(User.MANAGER)) {
+            buttons.getChildren().addAll(
+                createProduct,
+                deleteSelected
+            );
+        }
+
+        buttons.getChildren().add(quit);
+        root.setBottom(buttons);
+
+        // loads the products
+        refreshDatabase();
     }
 
     // creates a label with a fixed width
     private Label createLabel(String text, double width) {
+
         Label label = new Label(text);
         label.setPrefWidth(width);
+
         return label;
     }
 
@@ -147,12 +128,12 @@ public class DatabaseScene1 extends Scene {
 
         HBox row = new HBox(10);
 
-        Label id = createLabel(String.valueOf(product.getId()), 100);
         Label name = createLabel(product.getName(), 150);
         Label description = createLabel(product.getDescription(), 400);
         Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label stock = createLabel(String.valueOf(product.getStock()), 80);
 
-        row.getChildren().addAll(id, name, description, price);
+        row.getChildren().addAll(name, description, price, stock);
         row.setPadding(new Insets(8));
         row.setStyle("-fx-border-color: lightgray;");
 
@@ -161,22 +142,22 @@ public class DatabaseScene1 extends Scene {
 
             selectedProduct.set(product);
 
-            // removes the selection color from all rows
-            for (var node : productRows.getChildren()) {
+            // resets all row styles
+            for (Node node : productRows.getChildren()) {
                 node.setStyle("-fx-border-color: lightgray;");
             }
 
             // highlights the selected row
             row.setStyle(
-                    "-fx-background-color: lightblue;" +
-                    "-fx-border-color: gray;"
+                "-fx-background-color: lightblue;" +
+                "-fx-border-color: gray;"
             );
         });
 
         productRows.getChildren().add(row);
     }
 
-    // clears and reloads the database display
+    // refreshes the database display
     private void refreshDatabase() {
 
         productRows.getChildren().clear();
