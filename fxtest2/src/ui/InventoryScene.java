@@ -1,9 +1,11 @@
 package ui;
 
-import application.ImportExportHandler;
 import application.Product;
 import application.ProductContainer;
 import application.User;
+import backend.AddProductWindow;
+import backend.ImportExportHandler;
+import backend.MoveProductWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -22,7 +24,7 @@ public class InventoryScene extends Scene{
 	// ======= TEMPLATE ========
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	public InventoryScene(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData , Scene mainScene, User currentUser){
+	public InventoryScene(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData, User currentUser){
 			TableView<Product> table = new TableView<>();
 	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 	
@@ -61,8 +63,9 @@ public class InventoryScene extends Scene{
 			
 			viewShelf.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
-					stage.setScene(mainScene);
-					stage.setTitle("proof of concept");
+					ShelfScene shelfScene = new ShelfScene(stage, database, inventoryData, shelfData, currentUser);
+					stage.setScene(shelfScene);
+					stage.setTitle("The Shelf");
 			}});
 			
 			moreButtons.getChildren().addAll(createProduct, viewShelf);
@@ -74,7 +77,7 @@ public class InventoryScene extends Scene{
 				viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
 					public void handle (MouseEvent event) {
 						// temporarily uses database instead of inventoryData, inventory is not yet implemented
-						DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, mainScene, currentUser);
+						DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, currentUser);
 						stage.setScene(databaseScene);
 						stage.setTitle("Database");
 				}});
