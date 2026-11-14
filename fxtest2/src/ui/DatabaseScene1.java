@@ -100,8 +100,8 @@ public class DatabaseScene1 extends Scene {
 
             if (product != null) {
 
-                ProductEditingWindow1 window =
-                    new ProductEditingWindow1(
+                ProductEditingWindow window =
+                    new ProductEditingWindow(
                         stage,
                         database,
                         inventoryData,
