@@ -4,6 +4,8 @@ package ui;
 import application.Product;
 import application.ProductContainer;
 import application.User;
+import backend.AddProductWindow;
+import backend.MoveProductWindow;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

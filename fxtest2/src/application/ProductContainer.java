@@ -43,6 +43,12 @@ public class ProductContainer {
 		return productList;
 	}
 
+	// ADDED BACK: getList() IS THE ORIGINAL METHOD THE BACKEND (AddProductWindow) USES.
+	// WHY: SO THE BACKEND CODE STAYS THE SAME AS BEFORE. IT RETURNS THE SAME LIST AS getProducts().
+	public ArrayList<Product> getList(){
+		return productList;
+	}
+
 	public Product getProductById(int id) {
 		for (Product p : productList) { // go through every product
 			if (p.getId() == id) {return p;} // does its id match what the user is looking for?
