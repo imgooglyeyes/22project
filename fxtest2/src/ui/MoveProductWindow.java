@@ -14,11 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class MoveProductWindow1 {
+public class MoveProductWindow {
 
     private Stage window;
 
-    public MoveProductWindow1(
+    public MoveProductWindow(
             Stage stage,
             ProductContainer currentDatabase,
             ProductContainer storageDatabase,

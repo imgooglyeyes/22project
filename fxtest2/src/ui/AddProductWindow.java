@@ -17,11 +17,11 @@ import javafx.geometry.Insets;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AddProductWindow1 {
+public class AddProductWindow {
 
     private Stage window;
 
-    public AddProductWindow1(
+    public AddProductWindow(
             Stage stage,
             ProductContainer targetDatabase,
             ProductContainer sourceDatabase,
