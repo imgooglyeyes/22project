@@ -4,7 +4,7 @@ import application.Product;
 import application.ProductContainer;
 import javafx.stage.Stage;
 
-public class ProductEditingWindow extends ui.ProductEditingWindow1 {
+public class ProductEditingWindow extends ui.ProductEditingWindow {
 
     public ProductEditingWindow(
             Stage stage,

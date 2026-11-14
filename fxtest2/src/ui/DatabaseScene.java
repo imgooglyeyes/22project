@@ -57,11 +57,13 @@ public class DatabaseScene extends Scene{
 			Button createProduct = new Button("Create New Product");
 			Button viewShelf = new Button("View Shelf");
 			Button viewInventory = new Button("View Inventory");
+			Button editSelected = new Button("Edit Selected");
 			Button deleteSelected = new Button("Delete Selected"); // temp
 			Button quit = new Button("Quit");
-			HBox moreButtons = new HBox(10, createProduct, viewShelf, viewInventory, deleteSelected, quit); // creates an hbox with a 10px spacing and these 4 buttons as children
+			HBox moreButtons = new HBox(10, createProduct, viewShelf, viewInventory, editSelected, deleteSelected, quit); // creates an hbox with a 10px spacing with these buttons as children
 			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
 			//ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
+			UniversalDeleter deleter = new UniversalDeleter(database, inventoryData, shelfData); // this is used to delete all instances of a product
 			
 			createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
@@ -82,10 +84,24 @@ public class DatabaseScene extends Scene{
 					stage.setScene(inventoryScene);
 					stage.setTitle("Inventory");
 			}});
+
+			editSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
+				public void handle (MouseEvent event) {
+					ProductEditingWindow editWindow = new ProductEditingWindow(stage, database, inventoryData, shelfData,
+							table.getSelectionModel().getSelectedItem(),
+							() -> { // refresh the table after the edit
+								table.setItems(database.getObservableList());
+								table.refresh();
+							});
+					editWindow.show();
+			}});
 			
 			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
 				public void handle (MouseEvent event) {
-					System.out.println("This should delete an item from the database, inventory, and shelf.");
+					deleter.delete(table.getSelectionModel().getSelectedItem());
+					// refresh the table after the delete
+					table.setItems(database.getObservableList());
+					table.refresh();
 			}});
 			
 			quit.setOnMouseClicked(new EventHandler<MouseEvent>(){
