@@ -33,22 +33,23 @@ public class LabelledTextField extends HBox { // a hbox with a label and text fi
 		        if (this.textField.getText().trim().isEmpty()) return true;
 		        else return false;
 		    }, this.textField.textProperty());
-			this.NaN = Bindings.createBooleanBinding(() -> { 
-				try{
-					double val = Double.parseDouble(this.textField.getText());
-					return false; // is a not NaN
-				} catch (NumberFormatException e) {
-					return true;  // is NaN
-				}
-		    }, this.textField.textProperty());
 		}
+
+		this.NaN = Bindings.createBooleanBinding(() -> {
+			try {
+				double value = Double.parseDouble(this.textField.getText());
+				return !Double.isFinite(value) || value < 0;
+			} catch (NumberFormatException e) {
+				return true;
+			}
+		}, this.textField.textProperty());
 	}
 	
 	public String getText() { // shortening the code
 		return this.textField.getText();
 	}
-	
-	public void setText(String t) {
-		textField.setText(t);
+
+	public void setText(String text) {
+		this.textField.setText(text);
 	}
 }

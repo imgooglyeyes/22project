@@ -8,7 +8,7 @@
             "type": "java",
             "name": "Launch fxtest2 JavaFX application",
             "request": "launch",
-            "mainClass": "application.Main",
+            "mainClass": "application.Main1",
             // use the compiled classes from the fxtest2 project
             "classPaths": [
                 "${workspaceFolder}\\fxtest2\\bin"
@@ -18,8 +18,8 @@
             "modulePaths": [
                 "C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\lib"
             ],
-            // load the JavaFX controls and FXML modules
-            "vmArgs": "--add-modules javafx.controls,javafx.fxml"
+            // load the JavaFX modules and native Windows libraries
+            "vmArgs": "--add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics -Djava.library.path=\"C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\bin\""
         }
     ]
 }
