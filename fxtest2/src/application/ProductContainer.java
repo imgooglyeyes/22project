@@ -18,6 +18,7 @@ public class ProductContainer {
 	public void add(Product product, int stocks) {
 		System.out.println("Attempting to add " + stocks + "x " + product.getName());
 		Product p = getProductById(product.getId()); // find the product in this database
+		
 		if (p == null) { // doesn't exist yet, just add it normally
 			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks)); 
 			System.out.println("Added " + stocks + "x " + product.getName());
@@ -38,6 +39,10 @@ public class ProductContainer {
 		return FXCollections.observableArrayList(productList);
 	}
 	
+	public ArrayList<Product> getProducts(){
+		return productList;
+	}
+
 	public ArrayList<Product> getList(){
 		return productList;
 	}
