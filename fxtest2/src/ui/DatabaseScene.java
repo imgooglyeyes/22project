@@ -1,126 +1,206 @@
 package ui;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-
 import application.Product;
 import application.ProductContainer;
 import application.User;
-import backend.ImportExportHandler;
-import backend.ProductCreationWindow;
-import backend.ProductEditingWindow;
-import backend.UniversalDeleter;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DatabaseScene extends Scene{
-	// ======= TEMPLATE ========
-	
-	@SuppressWarnings({ "deprecation", "unchecked" })
-	public DatabaseScene(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData, User currentUser){
-			TableView<Product> table = new TableView<>();
-	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+public class DatabaseScene extends Scene {
 
-	        TableColumn<Product, String> colID			= new TableColumn<>("Internal ID");
-	        TableColumn<Product, String> colName		= new TableColumn<>("Name");
-	        TableColumn<Product, String> colDesc		= new TableColumn<>("Description");
-	        TableColumn<Product, String> colPrice		= new TableColumn<>("Price");
+    private ProductContainer database;
 
-	        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
-	        colName.setCellValueFactory(new PropertyValueFactory<>("name")); // I have no idea how these work but they seem to be calling getter functions somehow
-	        colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
-	        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+    private ObjectProperty<Product> selectedProduct =
+            new SimpleObjectProperty<>();
 
-	        table.getColumns().addAll( // add these columns to the table
-	            colID, colName, colDesc, colPrice
-	        );
+    private VBox productRows = new VBox(5);
 
-	        
-	        table.setItems(database.getObservableList());
-	        
-			BorderPane root = new BorderPane(table);
-			
-			// ===== END OF TEMPLATE ====
-			
-			Button createProduct = new Button("Create New Product");
-			Button viewShelf = new Button("View Shelf");
-			Button viewInventory = new Button("View Inventory");
-			Button deleteSelected = new Button("Delete All Instances"); // not yet implemented
-			Button editSelected = new Button("Edit Product Data");
-			BooleanBinding noItemSelected = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the table has anything selected or not
-		        if (table.getSelectionModel().getSelectedItem() == null) return true;
-		        else return false;
-		    }, table.getSelectionModel().selectedItemProperty());
-			
-			deleteSelected.disableProperty().bind(noItemSelected);
-			editSelected.disableProperty().bind(noItemSelected);
-			
-			Button quit = new Button("Quit");
-			
-			UniversalDeleter deleter = new UniversalDeleter(table, database, inventoryData, shelfData); // this is used to delete all instances of a product
+    public DatabaseScene(
+            Stage stage,
+            ProductContainer database,
+            ProductContainer inventoryData,
+            ProductContainer shelfData,
+            SceneManager manager,
+            User currentUser) {
 
-			HBox moreButtons = new HBox(10, createProduct, viewShelf, viewInventory, editSelected, deleteSelected, quit); // creates an hbox with a 10px spacing and these 4 buttons as children
-			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
-			//ImportExportHandler dataHandler = new ImportExportHandler(); // will be reused soon. currently not used anywhere in the code.
-			
-			createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					ProductCreationWindow creationWindow = new ProductCreationWindow(stage, database, table); // I had to make it a new class to shorten the code, also more modular that way
-					creationWindow.show();
-			}});
-			
-			viewShelf.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					// temporarily uses database instead of inventoryData, inventory is not yet implemented
-					ShelfScene shelfScene = new ShelfScene(stage, database, inventoryData, shelfData, currentUser);
-					stage.setScene(shelfScene);
-					stage.setTitle("The Shelf");
-			}});
-			
-			viewInventory.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					InventoryScene inventoryScene = new InventoryScene(stage, database, inventoryData, shelfData, currentUser);
-					stage.setScene(inventoryScene);
-					stage.setTitle("Inventory");
-			}});
-			
-			editSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					ProductEditingWindow editWindow = new ProductEditingWindow(stage, table, database, inventoryData, shelfData, table.getSelectionModel().getSelectedItem()); // I had to make it a new class to shorten the code, also more modular that way
-					editWindow.show();
-			}});
-			
-			deleteSelected.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					deleter.delete(table.getSelectionModel().getSelectedItem());
-			}});
-			
-			quit.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-//					dataHandler.quickSave(stage, tableData);
-					Platform.exit();
-				}
-			});
-			
-			root.setTop(moreButtons);
-			root.setStyle("-fx-padding: 12;");
-			super(root, 900, 500);
-	}
+        super(new BorderPane(), 900, 500);
+
+        this.database = database;
+
+        BorderPane root = (BorderPane) getRoot();
+        root.setPadding(new Insets(12));
+
+        // creates the column headers
+        HBox header = new HBox(10);
+
+        header.getChildren().addAll(
+            createLabel("Name", 150),
+            createLabel("Description", 400),
+            createLabel("Price", 100),
+            createLabel("Stock", 80)
+        );
+
+        // creates the product list
+        VBox databaseList = new VBox(10, header, productRows);
+
+        ScrollPane scrollPane = new ScrollPane(databaseList);
+        scrollPane.setFitToWidth(true);
+
+        // creates the buttons
+        Button createProduct = new Button("Create New Product");
+        Button editSelected = new Button("Edit Product Data");
+        Button deleteSelected = new Button("Delete All Instances");
+        Button quit = new Button("Quit");
+
+        HBox buttons = new HBox(10);
+
+        // creates the deleter used to remove a product everywhere
+        UniversalDeleter deleter =
+            new UniversalDeleter(database, inventoryData, shelfData);
+
+        // opens the product creation window
+        createProduct.setOnAction(event -> {
+
+            ProductCreationWindow window =
+                new ProductCreationWindow(
+                    stage,
+                    database,
+                    this::refreshDatabase
+                );
+
+            window.show();
+        });
+
+        // disables edit and delete when no product is selected
+        editSelected.disableProperty().bind(
+            Bindings.isNull(selectedProduct)
+        );
+
+        deleteSelected.disableProperty().bind(
+            Bindings.isNull(selectedProduct)
+        );
+
+        // opens the product editing window
+        editSelected.setOnAction(event -> {
+
+            Product product = selectedProduct.get();
+
+            if (product != null) {
+
+                ProductEditingWindow window =
+                    new ProductEditingWindow(
+                        stage,
+                        database,
+                        inventoryData,
+                        shelfData,
+                        product,
+                        this::refreshDatabase
+                    );
+
+                window.show();
+            }
+        });
+
+        // deletes the selected product from the database, inventory, and shelf
+        deleteSelected.setOnAction(event -> {
+
+            Product product = selectedProduct.get();
+
+            if (product != null) {
+                deleter.delete(product);
+                refreshDatabase();
+            }
+        });
+
+        // exits the application
+        quit.setOnAction(event -> Platform.exit());
+
+        // displays the shared header
+        root.setTop(manager.createHeader("Database"));
+
+        // displays the product list
+        root.setCenter(scrollPane);
+
+        // displays the buttons
+        if (currentUser.getUserType().equals(User.MANAGER)) {
+            buttons.getChildren().addAll(
+                createProduct,
+                editSelected,
+                deleteSelected
+            );
+        }
+
+        buttons.getChildren().add(quit);
+        root.setBottom(buttons);
+
+        // loads the products
+        refreshDatabase();
+    }
+
+    // creates a label with a fixed width
+    private Label createLabel(String text, double width) {
+
+        Label label = new Label(text);
+        label.setPrefWidth(width);
+
+        return label;
+    }
+
+    // creates a row for one product
+    private void addProductRow(Product product) {
+
+        HBox row = new HBox(10);
+
+        Label name = createLabel(product.getName(), 150);
+        Label description = createLabel(product.getDescription(), 400);
+        Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label stock = createLabel(String.valueOf(product.getStock()), 80);
+
+        row.getChildren().addAll(name, description, price, stock);
+        row.setPadding(new Insets(8));
+        row.setStyle("-fx-border-color: lightgray;");
+
+        // selects the product when its row is clicked
+        row.setOnMouseClicked(event -> {
+
+            selectedProduct.set(product);
+
+            // resets all row styles
+            for (Node node : productRows.getChildren()) {
+                node.setStyle("-fx-border-color: lightgray;");
+            }
+
+            // highlights the selected row
+            row.setStyle(
+                "-fx-background-color: lightblue;" +
+                "-fx-border-color: gray;"
+            );
+        });
+
+        productRows.getChildren().add(row);
+    }
+
+    // refreshes the database display
+    private void refreshDatabase() {
+
+        productRows.getChildren().clear();
+        selectedProduct.set(null);
+
+        for (Product product : database.getProducts()) {
+            addProductRow(product);
+        }
+    }
 }

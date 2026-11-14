@@ -15,11 +15,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ProductCreationWindow1 {
+public class ProductCreationWindow {
 
     private Stage window;
 
-    public ProductCreationWindow1(
+    public ProductCreationWindow(
             Stage stage,
             ProductContainer database,
             Runnable refreshDatabase) {

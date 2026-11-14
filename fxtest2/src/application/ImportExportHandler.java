@@ -1,4 +1,4 @@
-package backend;
+package application;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,16 +22,16 @@ import javafx.stage.Stage;
 
 public class ImportExportHandler {
 	private File saveFile;
-	
+
 	public void importData(Stage stage, TableView<Product> table, ObservableList<Product> data) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Import Save File");
 		fileChooser.getExtensionFilters().add(
 			    new FileChooser.ExtensionFilter("Text Files", "*.txt")
 			); // this filters the allowed extensions
-		
+
 		saveFile = fileChooser.showOpenDialog(stage);
-		
+
 		if (saveFile != null) {
 			System.out.println("Loading database...");
 			try {
@@ -67,10 +67,10 @@ public class ImportExportHandler {
 			System.out.println("Save file is null. Most likely cancelled by user.");
 			return;
 		}
-		
+
 		return;
 	}
-	
+
 	public void exportData(Stage stage, ObservableList<Product> data) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Export Save File");
@@ -102,7 +102,7 @@ public class ImportExportHandler {
 			return;
 		}
 	}
-	
+
 	public void quickSave(Stage stage,ObservableList<Product> data) { // used during save and quit, will save to most recent save file accessed or none of the user has not exported/imported anything this session
 		if (saveFile != null) {
 			System.out.println("Saving database...");
@@ -125,22 +125,22 @@ public class ImportExportHandler {
 			return;
 		}
 	}
-	
+
 	private void createSuccessWindow(Stage stage, int ignored, int added) { // success screen for importing
 		Label lowerText = new Label(added + " users added and " + ignored+ " duplicates ignored.");
         Label upperText = new Label("Import successful!");
         upperText.setStyle("-fx-font-size: 20;");
-        
+
         VBox successArea = new VBox(10, upperText, lowerText);
         successArea.setStyle("-fx-padding: 20;");
         successArea.setAlignment(Pos.CENTER);
         Scene successScene = new Scene(successArea, 400, 200);
-        
+
         Stage successWindow = new Stage(); // creates a new window for the success screen
         successWindow.setTitle("Import Successful");
         successWindow.setScene(successScene);
         successWindow.show(); // don't forget to make the screen actually appear
-        
+
 		return;
 	}
 }
