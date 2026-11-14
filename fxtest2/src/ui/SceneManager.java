@@ -33,6 +33,7 @@ public class SceneManager {
         // creates the shelf scene
         shelfScene = new ShelfScene(
             stage,
+            this,
             database,
             inventoryData,
             shelfData,
@@ -47,6 +48,7 @@ public class SceneManager {
 
     // opens the shelf
     public void showShelf() {
+        shelfScene.refreshShelf();
         stage.setScene(shelfScene);
         stage.setTitle("The Shelf");
     }
@@ -54,7 +56,7 @@ public class SceneManager {
     // opens the inventory
     public void showInventory() {
 
-        InventoryScene1 scene = new InventoryScene1(
+        InventoryScene scene = new InventoryScene(
             stage,
             database,
             inventoryData,
@@ -70,7 +72,7 @@ public class SceneManager {
     // opens the database
     public void showDatabase() {
 
-        DatabaseScene1 scene = new DatabaseScene1(
+        DatabaseScene scene = new DatabaseScene(
             stage,
             database,
             inventoryData,

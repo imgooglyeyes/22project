@@ -1,117 +1,186 @@
+
 package ui;
 
 import application.Product;
 import application.ProductContainer;
 import application.User;
-import backend.AddProductWindow;
-import backend.ImportExportHandler;
-import backend.MoveProductWindow;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.event.EventHandler;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class InventoryScene extends Scene{
-	// ======= TEMPLATE ========
-	
-	@SuppressWarnings({ "deprecation", "unchecked" })
-	public InventoryScene(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData, User currentUser){
-			TableView<Product> table = new TableView<>();
-	        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-	
-	        TableColumn<Product, String> colName		= new TableColumn<>("Name");
-	        TableColumn<Product, String> colDesc		= new TableColumn<>("Description");
-	        TableColumn<Product, String> colPrice		= new TableColumn<>("Price");
-	        TableColumn<Product, String> colStock		= new TableColumn<>("Stock");
-	
-	        colName.setCellValueFactory(new PropertyValueFactory<>("name")); // I have no idea how these work but they seem to be calling getter functions somehow
-	        colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
-	        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-	        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-	
-	        table.getColumns().addAll( // add these columns to the table
-	            colName, colDesc, colPrice, colStock
-	        );
+public class InventoryScene extends Scene {
 
-	        
-	        table.setItems(inventoryData.getObservableList());
-	        
-			BorderPane root = new BorderPane(table);
-			
-			// ===== END OF TEMPLATE ====
-			
-			Button createProduct = new Button("Add Product From Database");
-			Button viewShelf = new Button("View Shelf");
-			Button quit = new Button("Quit");
-			HBox moreButtons = new HBox(10); // creates an hbox with a 10px spacing and these 4 buttons as children
-			moreButtons.setStyle("-fx-padding: 10;"); // this gives a nicer bit of space around the hbox
-			
-			createProduct.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					AddProductWindow addWindow = new AddProductWindow(stage, table, inventoryData, database, false); // adding to inventory based on info in database
-					addWindow.show();
-			}});
-			
-			viewShelf.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-					ShelfScene shelfScene = new ShelfScene(stage, database, inventoryData, shelfData, currentUser);
-					stage.setScene(shelfScene);
-					stage.setTitle("The Shelf");
-			}});
-			
-			moreButtons.getChildren().addAll(createProduct, viewShelf);
-			
-			// view database button
-			if (currentUser.getUserType().equals(User.MANAGER)) {
-				Button viewDatabase = new Button("View Database");
-				
-				viewDatabase.setOnMouseClicked(new EventHandler<MouseEvent>(){
-					public void handle (MouseEvent event) {
-						// temporarily uses database instead of inventoryData, inventory is not yet implemented
-						DatabaseScene databaseScene = new DatabaseScene(stage, database, inventoryData, shelfData, currentUser);
-						stage.setScene(databaseScene);
-						stage.setTitle("Database");
-				}});
-				
-				Button removeStocks = new Button("Delete Stocks");
-				
-				BooleanBinding noItemSelected = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the table has anything selected or not
-			        if (table.getSelectionModel().getSelectedItem() == null) return true;
-			        else return false;
-			    }, table.getSelectionModel().selectedItemProperty());
-				
-				removeStocks.disableProperty().bind(noItemSelected);
-				
-				removeStocks.setOnMouseClicked(new EventHandler<MouseEvent>(){ // will be changed to affect stocks
-					public void handle (MouseEvent event) {
-						MoveProductWindow moveWindow = new MoveProductWindow(stage, table, inventoryData, null, table.getSelectionModel().getSelectedItem());
-						// note: null is selected as the storage parameter for MoveProductWindow. This means, products removed from inventoryData will be moved nowhere.
-						moveWindow.show();
-				}});
-				
-				moreButtons.getChildren().addAll(viewDatabase, removeStocks);
-			}
-			
-			quit.setOnMouseClicked(new EventHandler<MouseEvent>(){
-				public void handle (MouseEvent event) {
-//					dataHandler.quickSave(stage, tableData);
-					Platform.exit();
-				}
-			});
-			
-			moreButtons.getChildren().add(quit);
-			
-			root.setTop(moreButtons);
-			root.setStyle("-fx-padding: 12;");
-			super(root, 900, 500);
-	}
+    private ProductContainer inventoryData;
+
+    private ObjectProperty<Product> selectedProduct =
+            new SimpleObjectProperty<>();
+
+    private VBox productRows = new VBox(5);
+
+    public InventoryScene(
+            Stage stage,
+            ProductContainer database,
+            ProductContainer inventoryData,
+            ProductContainer shelfData,
+            SceneManager manager,
+            User currentUser) {
+
+        super(new BorderPane(), 900, 500);
+
+        this.inventoryData = inventoryData;
+
+        BorderPane root = (BorderPane) getRoot();
+        root.setPadding(new Insets(12));
+
+        // creates the column headers
+        HBox header = new HBox(10);
+
+        header.getChildren().addAll(
+            createLabel("Name", 150),
+            createLabel("Description", 400),
+            createLabel("Price", 100),
+            createLabel("Stock", 80)
+        );
+
+        // creates the product list
+        VBox inventoryList = new VBox(10, header, productRows);
+
+        ScrollPane scrollPane = new ScrollPane(inventoryList);
+        scrollPane.setFitToWidth(true);
+
+        // creates the buttons
+        Button addProduct = new Button("Add Product From Database");
+        Button deleteStocks = new Button("Delete Stocks");
+        Button quit = new Button("Quit");
+
+        HBox buttons = new HBox(10);
+
+        // adds a product from the database
+        addProduct.setOnAction(event -> {
+
+            AddProductWindow window = new AddProductWindow(
+                stage,
+                inventoryData,
+                database,
+                false,
+                this::refreshInventory
+            );
+
+            window.show();
+        });
+
+        // disables delete when no product is selected
+        deleteStocks.disableProperty().bind(
+            Bindings.isNull(selectedProduct)
+        );
+
+        // removes stocks from inventory
+        deleteStocks.setOnAction(event -> {
+
+            Product product = selectedProduct.get();
+
+            if (product != null) {
+
+                MoveProductWindow window = new MoveProductWindow(
+                    stage,
+                    inventoryData,
+                    null,
+                    product,
+                    this::refreshInventory
+                );
+
+                window.show();
+            }
+        });
+
+        // exits the application
+        quit.setOnAction(event -> Platform.exit());
+
+        // displays the shared header
+        root.setTop(manager.createHeader("Inventory"));
+
+        // displays the product list
+        root.setCenter(scrollPane);
+
+        // displays the buttons
+        boolean canManageInventory =
+            currentUser.getUserType().equals(User.MANAGER) ||
+            currentUser.getUserType().equals(User.CLERK);
+
+        if (canManageInventory) {
+            buttons.getChildren().addAll(addProduct, deleteStocks);
+        }
+
+        buttons.getChildren().add(quit);
+        root.setBottom(buttons);
+
+        // loads the products
+        refreshInventory();
+    }
+
+    // creates a label with a fixed width
+    private Label createLabel(String text, double width) {
+
+        Label label = new Label(text);
+        label.setPrefWidth(width);
+
+        return label;
+    }
+
+    // creates a row for one product
+    private void addProductRow(Product product) {
+
+        HBox row = new HBox(10);
+
+        Label name = createLabel(product.getName(), 150);
+        Label description = createLabel(product.getDescription(), 400);
+        Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label stock = createLabel(String.valueOf(product.getStock()), 80);
+
+        row.getChildren().addAll(name, description, price, stock);
+        row.setPadding(new Insets(8));
+        row.setStyle("-fx-border-color: lightgray;");
+
+        // selects the product when its row is clicked
+        row.setOnMouseClicked(event -> {
+
+            selectedProduct.set(product);
+
+            // resets all row styles
+            for (Node node : productRows.getChildren()) {
+                node.setStyle("-fx-border-color: lightgray;");
+            }
+
+            // highlights the selected row
+            row.setStyle(
+                "-fx-background-color: lightblue;" +
+                "-fx-border-color: gray;"
+            );
+        });
+
+        productRows.getChildren().add(row);
+    }
+
+    // refreshes the inventory display
+    private void refreshInventory() {
+
+        productRows.getChildren().clear();
+        selectedProduct.set(null);
+
+        for (Product product : inventoryData.getProducts()) {
+            addProductRow(product);
+        }
+    }
 }
