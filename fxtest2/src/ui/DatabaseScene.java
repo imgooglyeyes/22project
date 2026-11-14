@@ -3,6 +3,9 @@ package ui;
 import application.Product;
 import application.ProductContainer;
 import application.User;
+import backend.ProductCreationWindow;
+import backend.ProductEditingWindow;
+import backend.UniversalDeleter;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
