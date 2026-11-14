@@ -1,4 +1,3 @@
-
 package ui;
 
 import application.Product;
@@ -62,10 +61,15 @@ public class DatabaseScene1 extends Scene {
 
         // creates the buttons
         Button createProduct = new Button("Create New Product");
-        Button deleteSelected = new Button("Delete Selected");
+        Button editSelected = new Button("Edit Product Data");
+        Button deleteSelected = new Button("Delete All Instances");
         Button quit = new Button("Quit");
 
         HBox buttons = new HBox(10);
+
+        // creates the deleter used to remove a product everywhere
+        UniversalDeleter deleter =
+            new UniversalDeleter(database, inventoryData, shelfData);
 
         // opens the product creation window
         createProduct.setOnAction(event -> {
@@ -80,14 +84,45 @@ public class DatabaseScene1 extends Scene {
             window.show();
         });
 
-        // disables delete when no product is selected
+        // disables edit and delete when no product is selected
+        editSelected.disableProperty().bind(
+            Bindings.isNull(selectedProduct)
+        );
+
         deleteSelected.disableProperty().bind(
             Bindings.isNull(selectedProduct)
         );
 
-        // delete functionality is not implemented yet
+        // opens the product editing window
+        editSelected.setOnAction(event -> {
+
+            Product product = selectedProduct.get();
+
+            if (product != null) {
+
+                ProductEditingWindow1 window =
+                    new ProductEditingWindow1(
+                        stage,
+                        database,
+                        inventoryData,
+                        shelfData,
+                        product,
+                        this::refreshDatabase
+                    );
+
+                window.show();
+            }
+        });
+
+        // deletes the selected product from the database, inventory, and shelf
         deleteSelected.setOnAction(event -> {
-            System.out.println("Delete product is not implemented yet.");
+
+            Product product = selectedProduct.get();
+
+            if (product != null) {
+                deleter.delete(product);
+                refreshDatabase();
+            }
         });
 
         // exits the application
@@ -103,6 +138,7 @@ public class DatabaseScene1 extends Scene {
         if (currentUser.getUserType().equals(User.MANAGER)) {
             buttons.getChildren().addAll(
                 createProduct,
+                editSelected,
                 deleteSelected
             );
         }
