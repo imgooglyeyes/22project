@@ -8,11 +8,11 @@ public class ProductContainer {
 	private ArrayList<Product> productList;
 
 	public ProductContainer() { // null constructor
-		this.productList = new ArrayList<>();;
+		this.productList = new ArrayList<>();
 	}
 
 	public ProductContainer(ArrayList<Product> p) { // can give the list a starting value
-		this.productList = new ArrayList<>(p);;
+		this.productList = new ArrayList<>(p);
 	}
 
 	public void add(Product product, int stocks) {
