@@ -110,8 +110,15 @@ note: right now the code lets clerks add and delete inventory stock and move she
 
 ### phase 4: sales and cash
 - [x] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
+  - created `application/SaleTransaction.java`
 - [x] `TransactionContainer`: add, get all, get by id, get by requester
+  - created `application/TransactionContainer.java`
 - [x] `transactions.txt` save and load
+  - created `application/TransactionStore.java`
+  - `Main` loads it at start, manual save on the shelf also saves it
+- [x] `FarmSystem.confirm()` takes shelf stock and `void()` returns it if it was confirmed
+  - created `application/FarmSystem.java` with `requestToBuy`, `confirm` and `voidTransaction`
+  - `SceneManager` creates it and shares it with `getFarmSystem()`
 - [ ] customer "request to buy" button on the shelf (up to shelf stock)
 - [ ] `MyRequestsScene` for customers
 - [ ] `TransactionsScene` for clerk / manager: confirm and void with an alert
