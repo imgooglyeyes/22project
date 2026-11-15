@@ -118,15 +118,28 @@ public class SceneManager {
     // opens all transactions, only clerks and managers can open it
     public void showTransactions() {
 
-        boolean isStaff =
-            currentUser.getUserType().equals(User.MANAGER) ||
-            currentUser.getUserType().equals(User.CLERK);
-
-        if (!isStaff) return;
+        if (!isStaff()) return;
 
         TransactionsScene scene = new TransactionsScene(stage, this, currentUser);
 
         stage.setScene(scene);
         stage.setTitle("Transactions");
+    }
+
+    // opens the cash balance, only clerks and managers can open it
+    public void showCash() {
+
+        if (!isStaff()) return;
+
+        CashScene scene = new CashScene(stage, this);
+
+        stage.setScene(scene);
+        stage.setTitle("Cash");
+    }
+
+    // true for clerks and managers
+    private boolean isStaff() {
+        return currentUser.getUserType().equals(User.MANAGER) ||
+               currentUser.getUserType().equals(User.CLERK);
     }
 }

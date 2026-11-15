@@ -117,17 +117,17 @@ note: right now the code lets clerks add and delete inventory stock and move she
   - created `application/FarmSystem.java` with `requestToBuy`, `confirm` and `voidTransaction`
   - `SceneManager` creates it and shares it with `getFarmSystem()`
 - [x] customer "request to buy" button on the shelf (up to shelf stock)
-  - edit `ShelfScene`, new request window with a quantity spinner, shown to customers only
+  - edited `ShelfScene`, new request window with a quantity spinner, shown to customers only
   - created `backend/RequestToBuyWindow.java`
 - [x] `MyRequestsScene` for customers
-  - new `ui/MyRequestsScene.java`, the customer's own requests and their status
-  - add `showMyRequests()` to `SceneManager` and a header button for customers
+  - created `ui/MyRequestsScene.java`, the customer's own requests and their status
+  - added `showMyRequests()` to `SceneManager` and a header button for customers
 - [x] `TransactionsScene` for clerk / manager: confirm and void with an alert
-  - new `ui/TransactionsScene.java`, shows who, what, when, status, confirmer and voider
-  - add `showTransactions()` to `SceneManager` and a header button for clerk / manager
-- [ ] `CashScene`: balance and entries derived from confirmed and voided transactions
-  - new `ui/CashScene.java`, no new model needed
-  - add `showCash()` to `SceneManager` and a header button for clerk / manager
+  - created `ui/TransactionsScene.java`, shows who, what, when, status, confirmer and voider
+  - added `showTransactions()` to `SceneManager` and a header button for clerk / manager
+- [x] `CashScene`: balance and entries derived from confirmed and voided transactions
+  - created `ui/CashScene.java`, no new model needed
+  - added `showCash()` to `SceneManager` and a header button for clerk / manager
 
 
 ### phase 5: dashboards and history
