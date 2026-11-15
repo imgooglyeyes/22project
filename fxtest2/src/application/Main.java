@@ -63,13 +63,13 @@ public class Main extends Application {
             shelfData.add(inventoryData.getProductById(i), 5);
         }
 
-        // creates the current user
+        // temporary for testing
         User currentUser = new User(
-            "MainManager",
+            "customer1",
             "password",
             "Billy Bob",
             "Jones",
-            User.MANAGER
+            User.CUSTOMER
         );
 
         // creates the scene manager
