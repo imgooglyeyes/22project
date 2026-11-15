@@ -17,20 +17,29 @@
 - [x] add and move windows block amounts below 1
 - [x] leftover classes removed (`TestLoginWindow`, `ImportExportHandler`)
 - [x] readme layout section matches the real folders
+- [x] sales transactions: request, confirm and void (phase 4)
+- [x] cash balance derived from the transactions (phase 4)
 
-### half done
+### in progress (wip)
 - [ ] persistence: files are written but never read back (`Main` still hardcodes everything)
 - [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
+- [ ] login, sign up, manager approval, customer role
+- [ ] product "made from" field
+- [ ] `ProductCreationWindow` and `ProductEditingWindow` block the `|` character
+- [ ] `templatedata/` is unused, use it as the "reset to default data" source
+- [ ] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
+
+### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
 
 ### not started
-- [ ] login, sign up, manager approval, customer role
-- [ ] sales transactions (request, confirm, void)
-- [ ] cash balance
 - [ ] sale history and clerk list
 - [ ] dashboards
-- [ ] product unit, crop, type (harvest or made) and "made from" fields
-- [ ] shelf grouping and filter by crop / type
+- [ ] shelf filter by made from harvest
+
+### dropped
+- product unit, crop and type fields
+- shelf grouping by crop
 
 ---
 
@@ -40,18 +49,24 @@
 - [x] `ProductContainer.add` and `AddProductWindow` / `MoveProductWindow` accept amount `0`, which creates 0-stock rows on the shelf
 - [x] price shows as raw double (`30.0`), now formatted as `₱30.00`
 - [x] `application.css` is never loaded, now loaded through `Styles.apply(scene)`
-- [ ] `ImportExportHandler` and `TestLoginWindow` are leftovers and not used, deleted
+- [x] `ImportExportHandler` and `TestLoginWindow` are leftovers and not used, deleted
 
+### decided
+- all data files are saved in `src/data/` (products, inventory, shelf, transactions, later users), run the app from the `fxtest2` folder
+- `src/templatedata/` holds the default copies, it is only read when resetting or when a data file is missing
+- `bin/data` and `bin/templatedata` are compiled copies, ignore them
 
 ### still open
-- [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart
-- [ ] `ShelfScene.saveData()` writes to `src/data/` but the app runs from `bin/`, pick one data folder and use it everywhere
-- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random
-- [ ] `ProductCreationWindow` does not block duplicate names or the `|` character (it would break the txt format)
-- [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout
+- [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart (wip)
+- [ ] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `DataStore` once it exists
+- [ ] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
+- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random (blocking duplicate names would fix the collision)
+- [ ] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
+- [ ] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
+- [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
 - [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
-- [ ] `templatedata/` is unused, use it as the "reset to default data" source
+- [ ] `templatedata/` is unused, use it as the "reset to default data" source (wip)
 - [ ] stock logic lives inside the windows, move it so screens and windows only call it
 - [ ] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
@@ -85,25 +100,31 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] fix the bugs listed in section 2 that are one-liners (typo, amount 0, price format)
 
 ### phase 1: persistence and rules
-- [ ] add `data/DataStore.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (and later users, transactions)
-- [ ] `Main`: load from files, fall back to `templatedata/` if files are missing
-- [ ] save automatically after every change (add, move, edit, delete), keep manual save as a backup
-- [ ] add `application/FarmSystem.java`: `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
+- [ ] add `data/DataStore.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
+  - everything is saved in `src/data/`
+  - `productsDB.txt` line format: `id|name|description|price|madeFrom` (`madeFrom` is a product id, empty for a harvest item)
+  - users are saved in `src/data/users.txt` in phase 3, transactions already have `TransactionStore`
+  - load products with the existing-id `Product` constructor so ids don't change
+- [ ] `Main`: load from `src/data/`, fall back to `src/templatedata/` if files are missing (wip)
+- [ ] reset to default data: copy `src/templatedata/` over `src/data/` (wip)
+- [ ] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
+- [ ] extend `application/FarmSystem.java` (it already has the sales methods) with `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
 - [ ] windows call `FarmSystem` instead of touching containers directly
 - [ ] tighten role checks in `SceneManager` and the scene buttons (use section 3)
+  - phase 3 and phase 5 reuse these checks, do this before the dashboard
 
 ### phase 2: richer products
-- [ ] add `unit`, `crop`, `type` (`Harvest` / `Made`) and `madeFrom` to `Product`
-- [ ] update `productsDB.txt` format and the create / edit windows
-- [ ] show unit, crop and made-from on the shelf rows
-- [ ] shelf: group by crop and add a filter (all / harvest / made)
+- [ ] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
+- [ ] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
+- [ ] show made-from on the shelf rows
+- [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set
 
 ### phase 3: accounts
-- [ ] add `status` to `User` and a `users.txt` file with one default clerk and one default manager
-- [ ] `LoginScene` and `SignUpScene` (customer active at once, clerk / manager pending)
-- [ ] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default
-- [ ] header: login / logout buttons
-- [ ] `SignUpRequestsScene` for managers: approve or reject pending users
+- [ ] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)
+- [ ] `LoginScene` and `SignUpScene` (customer active at once, clerk / manager pending) (wip)
+- [ ] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default (wip)
+- [ ] header: login / logout buttons (wip)
+- [ ] `SignUpRequestsScene` for managers: approve or reject pending users (wip)
 
 ### phase 4: sales and cash
 - [x] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
@@ -132,9 +153,14 @@ note: right now the code lets clerks add and delete inventory stock and move she
 
 ### phase 5: dashboards and history
 - [ ] `DashboardScene` with tiles by role
+  - needs the phase 1 role checks, add a sign-up requests tile once `SignUpRequestsScene` exists
+  - edits `SceneManager` and `AppHeader`, same files as phase 1 and phase 3
 - [ ] `SaleHistoryScene`: transactions confirmed or voided by one clerk
+  - only reads transactions, no phase 1 to 3 needed, uses the current username for a clerk's own history
 - [ ] `ClerkListScene` for the manager, opens a clerk's history
+  - reads the clerks from `users.txt` (phase 3)
 - [ ] login lands on the dashboard for the role
+  - needs the phase 3 login
 
 ### phase 6: polish and demo
 - [ ] final css pass
