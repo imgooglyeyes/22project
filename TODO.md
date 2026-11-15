@@ -46,16 +46,13 @@
 ### still open
 - [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart
 - [ ] `ShelfScene.saveData()` writes to `src/data/` but the app runs from `bin/`, pick one data folder and use it everywhere
-- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random, sort the names and handle duplicates
+- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random
 - [ ] `ProductCreationWindow` does not block duplicate names or the `|` character (it would break the txt format)
-- [ ] extra 28th product `Secret Sauce` is not in the plan (27 products), remove it or keep it only as a test item
-- [ ] inline `setStyle` colors (`lightblue`, `lightgray`, `gray`) in the scenes override the stylesheet, move them to css classes
-- [ ] css makes text bold monospace 14px, long product names may get cut off in the 150px name column, widen the labels in the three scenes
 - [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout
 - [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
 - [ ] `templatedata/` is unused, use it as the "reset to default data" source
-- [ ] stock logic lives inside the windows, move it to `FarmSystem` so screens and windows only call it
+- [ ] stock logic lives inside the windows, move it so screens and windows only call it
 - [ ] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
 ---
@@ -119,11 +116,19 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] `FarmSystem.confirm()` takes shelf stock and `void()` returns it if it was confirmed
   - created `application/FarmSystem.java` with `requestToBuy`, `confirm` and `voidTransaction`
   - `SceneManager` creates it and shares it with `getFarmSystem()`
-- [ ] customer "request to buy" button on the shelf (up to shelf stock)
+- [x] customer "request to buy" button on the shelf (up to shelf stock)
+  - edit `ShelfScene`, new request window with a quantity spinner, shown to customers only
+  - created `backend/RequestToBuyWindow.java`
 - [ ] `MyRequestsScene` for customers
+  - new `ui/MyRequestsScene.java`, the customer's own requests and their status
+  - add `showMyRequests()` to `SceneManager` and a header button for customers
 - [ ] `TransactionsScene` for clerk / manager: confirm and void with an alert
-- [ ] `FarmSystem.confirm()` takes shelf stock and `void()` returns it if it was confirmed
+  - new `ui/TransactionsScene.java`, shows who, what, when, status, confirmer and voider
+  - add `showTransactions()` to `SceneManager` and a header button for clerk / manager
 - [ ] `CashScene`: balance and entries derived from confirmed and voided transactions
+  - new `ui/CashScene.java`, no new model needed
+  - add `showCash()` to `SceneManager` and a header button for clerk / manager
+
 
 ### phase 5: dashboards and history
 - [ ] `DashboardScene` with tiles by role
