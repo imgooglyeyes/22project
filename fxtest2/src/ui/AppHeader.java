@@ -18,18 +18,21 @@ public class AppHeader extends HBox {
 
         Button shelfButton = new Button("Shelf");
         Button inventoryButton = new Button("Inventory");
+        Button transactionsButton = new Button("Transactions");
         Button databaseButton = new Button("Database");
         Button myRequestsButton = new Button("My Requests");
 
         // opens the selected scene
         shelfButton.setOnAction(e -> manager.showShelf());
         inventoryButton.setOnAction(e -> manager.showInventory());
+        transactionsButton.setOnAction(e -> manager.showTransactions());
         databaseButton.setOnAction(e -> manager.showDatabase());
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
         // highlights the current scene
         setActive(shelfButton, currentScene.equals("Shelf"));
         setActive(inventoryButton, currentScene.equals("Inventory"));
+        setActive(transactionsButton, currentScene.equals("Transactions"));
         setActive(databaseButton, currentScene.equals("Database"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
 
@@ -48,6 +51,7 @@ public class AppHeader extends HBox {
 
         if (isManager || isClerk) {
             getChildren().add(inventoryButton);
+            getChildren().add(transactionsButton);
         }
 
         if (isManager) {
