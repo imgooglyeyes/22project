@@ -1,6 +1,7 @@
 package ui;
 
 import application.ProductContainer;
+import application.TransactionContainer;
 import application.User;
 import javafx.stage.Stage;
 
@@ -11,6 +12,7 @@ public class SceneManager {
     private ProductContainer database;
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
+    private TransactionContainer transactionData;
 
     private User currentUser;
 
@@ -21,12 +23,14 @@ public class SceneManager {
             ProductContainer database,
             ProductContainer inventoryData,
             ProductContainer shelfData,
+            TransactionContainer transactionData,
             User currentUser) {
 
         this.stage = stage;
         this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
+        this.transactionData = transactionData; // must be set before the shelf scene is created
         this.currentUser = currentUser;
 
         // creates the shelf scene
@@ -38,6 +42,11 @@ public class SceneManager {
             shelfData,
             currentUser
         );
+    }
+
+    // lets scenes read and save the transactions
+    public TransactionContainer getTransactions() {
+        return transactionData;
     }
 
     // creates the shared header
