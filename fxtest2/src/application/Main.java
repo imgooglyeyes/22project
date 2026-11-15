@@ -18,7 +18,7 @@ public class Main extends Application {
 
         hardcodedData.add(new Product("Mature Coconut", "Whole mature coconut, fresh from the tree.", 30.0, 0));
         hardcodedData.add(new Product("Virgin Coconut Oil (250ml)", "Cold-pressed, unrefined oil for cooking, baking and skin and hair care.", 230.0, 0));
-        hardcodedData.add(new Product("Virgin Coconut Oil (500ml)", "Cold-pressed, unrefined oil for cooking, baking and skin and hair care..", 365.0, 0));
+        hardcodedData.add(new Product("Virgin Coconut Oil (500ml)", "Cold-pressed, unrefined oil for cooking, baking and skin and hair care.", 365.0, 0));
         hardcodedData.add(new Product("Coconut Milk (400ml)", "Unsweetened milk pressed from ripe coconut meat, for sweet and savory dishes.", 68.0, 0));
         hardcodedData.add(new Product("Coconut Cream (250ml)", "Thick first-press cream for desserts and rich sauces.", 65.0, 0));
         hardcodedData.add(new Product("Desiccated Coconut (250g)", "Dried, finely shredded coconut meat for baking and desserts.", 85.0, 0));

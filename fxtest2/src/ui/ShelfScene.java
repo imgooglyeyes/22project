@@ -47,6 +47,9 @@ public class ShelfScene extends Scene {
 
         super(new BorderPane(), 900, 500);
 
+        // loads the shared stylesheet
+        Styles.apply(this);
+
         this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
@@ -130,7 +133,7 @@ public class ShelfScene extends Scene {
         HBox row = new HBox(10);
         Label name = createLabel(product.getName(), 150);
         Label description = createLabel(product.getDescription(), 400);
-        Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         Label stock = createLabel(String.valueOf(product.getStock()), 80);
 
         row.getChildren().addAll(name, description, price, stock);

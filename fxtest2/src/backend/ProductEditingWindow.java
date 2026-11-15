@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui.LabelledTextField;
+import ui.Styles;
 
 public class ProductEditingWindow {
 	private LabelledTextField nameField;
@@ -48,6 +49,7 @@ public class ProductEditingWindow {
         vbox.setStyle("-fx-padding: 20;");
 
         this.editScene = new Scene(vbox, 500, 350);
+        Styles.apply(editScene); // loads the shared stylesheet
 
         this.editWindow = new Stage(); // creates a new window for the user creation
         editWindow.setTitle("Edit Product");
