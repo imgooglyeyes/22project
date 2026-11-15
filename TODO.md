@@ -122,7 +122,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] `MyRequestsScene` for customers
   - new `ui/MyRequestsScene.java`, the customer's own requests and their status
   - add `showMyRequests()` to `SceneManager` and a header button for customers
-- [ ] `TransactionsScene` for clerk / manager: confirm and void with an alert
+- [x] `TransactionsScene` for clerk / manager: confirm and void with an alert
   - new `ui/TransactionsScene.java`, shows who, what, when, status, confirmer and voider
   - add `showTransactions()` to `SceneManager` and a header button for clerk / manager
 - [ ] `CashScene`: balance and entries derived from confirmed and voided transactions
