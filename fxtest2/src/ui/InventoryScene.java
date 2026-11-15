@@ -41,6 +41,9 @@ public class InventoryScene extends Scene {
 
         super(new BorderPane(), 900, 500);
 
+        // loads the shared stylesheet
+        Styles.apply(this);
+
         this.inventoryData = inventoryData;
 
         BorderPane root = (BorderPane) getRoot();
@@ -148,7 +151,7 @@ public class InventoryScene extends Scene {
 
         Label name = createLabel(product.getName(), 150);
         Label description = createLabel(product.getDescription(), 400);
-        Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         Label stock = createLabel(String.valueOf(product.getStock()), 80);
 
         row.getChildren().addAll(name, description, price, stock);

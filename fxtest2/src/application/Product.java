@@ -35,6 +35,10 @@ public class Product {
     public double getPrice()			{ return price; }
     public int getStock()				{ return stock; }
     
+    // price as text for the screens, example: ₱30.00
+    // \u20B1 is the peso sign, written as an escape so the file encoding can't break it
+    public String getFormattedPrice()	{ return String.format("\u20B1%.2f", price); }
+    
     public void setStock(int stock)		{ this.stock = stock;}
     public void setName(String name)		{ this.name = name;}
     public void setDescription(String desc)		{ this.desc = desc;}

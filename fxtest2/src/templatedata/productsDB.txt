@@ -1,6 +1,6 @@
 0|Mature Coconut|Whole mature coconut, fresh from the tree.|30.0
 1|Virgin Coconut Oil (250ml)|Cold-pressed, unrefined oil for cooking, baking and skin and hair care.|230.0
-2|Virgin Coconut Oil (500ml)|Cold-pressed, unrefined oil for cooking, baking and skin and hair care..|365.0
+2|Virgin Coconut Oil (500ml)|Cold-pressed, unrefined oil for cooking, baking and skin and hair care.|365.0
 3|Coconut Milk (400ml)|Unsweetened milk pressed from ripe coconut meat, for sweet and savory dishes.|68.0
 4|Coconut Cream (250ml)|Thick first-press cream for desserts and rich sauces.|65.0
 5|Desiccated Coconut (250g)|Dried, finely shredded coconut meat for baking and desserts.|85.0

@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ui.Styles;
 
 public class MoveProductWindow {
 	private Label productName;
@@ -48,6 +49,7 @@ public class MoveProductWindow {
         vbox.setStyle("-fx-padding: 20;");
 
         this.addScene = new Scene(vbox, 500, 350);
+        Styles.apply(addScene); // loads the shared stylesheet
 
         this.addWindow = new Stage(); // creates a new window for the user creation
         addWindow.setTitle("Move Product Stocks");
@@ -64,9 +66,9 @@ public class MoveProductWindow {
 					return;
 				}
 				int moveAmount = spinner.getValue();
-				// ADDED: STOP IF THE AMOUNT IS NEGATIVE OR MORE THAN WHAT WE HAVE.
-				// WHY: A TYPED NUMBER CAN GO OUTSIDE THE SPINNER LIMITS.
-				if (moveAmount < 0 || moveAmount > targetProduct.getStock()) return;
+				// stop if the amount is below 1 (moving nothing) or more than what we have
+				// a typed number can go outside the spinner limits
+				if (moveAmount < 1 || moveAmount > targetProduct.getStock()) return;
 				if (storageDatabase != null) {
 					storageDatabase.add(targetProduct, moveAmount);
 					// since there is an assigned storage for the moved products to go to, we need to add it there

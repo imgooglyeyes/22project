@@ -1,0 +1,134 @@
+# shopeefarm todo
+
+## 1. current progress
+
+### done
+- [x] `Product`, `ProductContainer`, `User` models
+- [x] three row-based screens: `ShelfScene`, `InventoryScene`, `DatabaseScene`
+- [x] `SceneManager` swaps scenes on one stage, `AppHeader` shows buttons by role
+- [x] modal windows: `AddProductWindow`, `MoveProductWindow`, `ProductCreationWindow`, `ProductEditingWindow`
+- [x] `UniversalDeleter` removes a product from database, inventory and shelf
+- [x] stock moves: database -> inventory -> shelf, and back (shelf -> inventory)
+- [x] manual save writes `productsDB.txt`, `inventory.txt`, `shelf.txt`
+- [x] 27 starting products plus sample stock
+
+### half done
+- [ ] persistence: files are written but never read back (`Main` still hardcodes everything)
+- [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
+- [ ] styling: `application.css` exists but no scene loads it, scenes use inline styles
+
+### not started
+- [ ] login, sign up, manager approval, customer role
+- [ ] sales transactions (request, confirm, void)
+- [ ] cash balance
+- [ ] sale history and clerk list
+- [ ] dashboards
+- [ ] product unit, crop, type (harvest or made) and "made from" fields
+- [ ] shelf grouping and filter by crop / type
+
+---
+
+## 2. bugs and cleanups found in the current code
+
+- [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart
+- [ ] `ShelfScene.saveData()` writes to `src/data/` but the app runs from `bin/`, pick one data folder and use it everywhere
+- [ ] `ProductContainer.add` and `AddProductWindow` / `MoveProductWindow` accept amount `0`, which creates 0-stock rows on the shelf, require amount of at least 1
+- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random, sort the names and handle duplicates
+- [ ] `ProductCreationWindow` does not block duplicate names or the `|` character (it would break the txt format)
+- [ ] typo in virgin coconut oil (500ml) description: `care..`
+- [ ] extra 28th product `Secret Sauce` is not in the plan (27 products), remove it or keep it only as a test item
+- [ ] price shows as raw double (`30.0`), format as `₱30.00`
+- [ ] `application.css` is never loaded, add `getStylesheets().add(...)` in each scene and remove the inline `setStyle` colors
+- [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout
+- [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
+- [ ] no confirm before "delete all instances"
+- [ ] `ImportExportHandler` and `TestLoginWindow` are leftovers and not used, delete them (or reuse the login window idea for the real login)
+- [ ] `templatedata/` is unused, use it as the "reset to default data" source
+- [ ] stock logic lives inside the windows, move it to `FarmSystem` so screens and windows only call it
+- [ ] readme layout is outdated (product windows are in `backend/`, not `ui/`)
+
+---
+
+## 3. updated role rules
+
+changed from the old table so it matches what the code can do now and keeps the plan small
+
+| action | guest | customer | clerk | manager |
+|---|---|---|---|---|
+| browse shelf | yes | yes | yes | yes |
+| request to buy | no | yes | no | no |
+| add product to shelf (from inventory) | no | no | yes | yes |
+| move shelf stock back to inventory | no | no | no | yes |
+| view inventory | no | no | yes | yes |
+| add / remove inventory stock | no | no | no | yes |
+| product database (create, edit, delete) | no | no | no | yes |
+| confirm / void transactions | no | no | yes | yes |
+| cash balance | no | no | yes | yes |
+| sale history | no | no | own only | any clerk |
+| approve sign-ups | no | no | no | yes |
+
+note: right now the code lets clerks add and delete inventory stock and move shelf stock back, phase 1 fixes this
+
+---
+
+## 4. todo by phase
+
+### phase 0: cleanup (small, do first)
+- [ ] fix the bugs listed in section 2 that are one-liners
+- [ ] delete `TestLoginWindow` and `ImportExportHandler`
+- [ ] load `application.css` in all scenes
+- [ ] update `README.md` layout section
+
+### phase 1: persistence and rules
+- [ ] add `data/DataStore.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (and later users, transactions)
+- [ ] `Main`: load from files, fall back to `templatedata/` if files are missing
+- [ ] save automatically after every change (add, move, edit, delete), keep manual save as a backup
+- [ ] add `application/FarmSystem.java`: `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
+- [ ] windows call `FarmSystem` instead of touching containers directly
+- [ ] tighten role checks in `SceneManager` and the scene buttons (use section 4)
+
+### phase 2: richer products
+- [ ] add `unit`, `crop`, `type` (`Harvest` / `Made`) and `madeFrom` to `Product`
+- [ ] update `productsDB.txt` format and the create / edit windows
+- [ ] show unit, crop and made-from on the shelf rows
+- [ ] shelf: group by crop and add a filter (all / harvest / made)
+
+### phase 3: accounts
+- [ ] add `status` to `User` and a `users.txt` file with one default clerk and one default manager
+- [ ] `LoginScene` and `SignUpScene` (customer active at once, clerk / manager pending)
+- [ ] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default
+- [ ] header: login / logout buttons
+- [ ] `SignUpRequestsScene` for managers: approve or reject pending users
+
+### phase 4: sales and cash
+- [ ] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
+- [ ] `transactions.txt` save and load
+- [ ] customer "request to buy" button on the shelf (up to shelf stock)
+- [ ] `MyRequestsScene` for customers
+- [ ] `TransactionsScene` for clerk / manager: confirm and void with an alert
+- [ ] `FarmSystem.confirm()` takes shelf stock and `void()` returns it if it was confirmed
+- [ ] `CashScene`: balance and entries derived from confirmed and voided transactions
+
+### phase 5: dashboards and history
+- [ ] `DashboardScene` with tiles by role
+- [ ] `SaleHistoryScene`: transactions confirmed or voided by one clerk
+- [ ] `ClerkListScene` for the manager, opens a clerk's history
+- [ ] login lands on the dashboard for the role
+
+### phase 6: polish and demo
+- [ ] final css pass
+- [ ] update `README.md` (features, layout, how to run)
+- [ ] rehearse the demo run below
+
+---
+
+## 5. demo checklist (definition of done)
+
+1. open app as guest and browse the shelf
+2. sign up as a customer and log in
+3. request to buy a product
+4. log in as the default clerk and confirm it
+5. check that shelf stock and cash balance changed
+6. log in as the manager and void it
+7. check that stock came back and cash was reversed
+8. close and reopen the app, all data is still there
