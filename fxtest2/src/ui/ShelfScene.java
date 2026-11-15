@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 
 import application.Product;
 import application.ProductContainer;
+import application.TransactionContainer;
+import application.TransactionStore;
 import application.User;
 import backend.AddProductWindow;
 import backend.MoveProductWindow;
@@ -31,6 +33,7 @@ public class ShelfScene extends Scene {
     private ProductContainer database;
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
+    private TransactionContainer transactionData;
 
     private ObjectProperty<Product> selectedProduct =
             new SimpleObjectProperty<>();
@@ -53,6 +56,7 @@ public class ShelfScene extends Scene {
         this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
+        this.transactionData = manager.getTransactions(); // used by manual save
 
         BorderPane root = (BorderPane) getRoot();
         root.setPadding(new Insets(12));
@@ -196,5 +200,8 @@ public class ShelfScene extends Scene {
             System.out.println("Something went wrong while saving.");
             e.printStackTrace();
         }
+
+        // transactions have their own save, it handles its own errors
+        TransactionStore.save(transactionData);
     }
 }
