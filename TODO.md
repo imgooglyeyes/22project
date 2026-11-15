@@ -109,7 +109,8 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] `SignUpRequestsScene` for managers: approve or reject pending users
 
 ### phase 4: sales and cash
-- [ ] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
+- [x] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
+- [x] `TransactionContainer`: add, get all, get by id, get by requester
 - [ ] `transactions.txt` save and load
 - [ ] customer "request to buy" button on the shelf (up to shelf stock)
 - [ ] `MyRequestsScene` for customers
