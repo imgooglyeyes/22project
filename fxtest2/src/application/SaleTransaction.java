@@ -20,12 +20,12 @@ public class SaleTransaction {
     private int id;
     private int productId;
     private String productName; 
-    private double unitPrice;   // copy, price per piece at the request time
+    private double unitPrice;   // copy, price per piece at request time
     private int quantity;
     private String requester;   // username of the customer
     private String status;
 
-    private String confirmedBy; // stays filled even if the transaction is voided
+    private String confirmedBy; // stays filled even if the transaction
     private String voidedBy;
 
     private LocalDateTime requestedAt;
@@ -46,6 +46,30 @@ public class SaleTransaction {
         this.requestedAt = LocalDateTime.now();
     }
 
+    // rebuilds a saved transaction with all its data
+    // confirmedBy, voidedBy and the times can be null
+    public SaleTransaction(int id, int productId, String productName, double unitPrice, int quantity,
+                           String requester, String status, String confirmedBy, String voidedBy,
+                           LocalDateTime requestedAt, LocalDateTime confirmedAt, LocalDateTime voidedAt) {
+        this.id = id;
+        this.productId = productId;
+        this.productName = productName;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+        this.requester = requester;
+        this.status = status;
+        this.confirmedBy = confirmedBy;
+        this.voidedBy = voidedBy;
+        this.requestedAt = requestedAt;
+        this.confirmedAt = confirmedAt;
+        this.voidedAt = voidedAt;
+
+        // make sure new transactions never reuse a loaded id
+        if (AVAILABLE_ID <= id) {
+            AVAILABLE_ID = id + 1;
+        }
+    }
+
     // a request can only be confirmed once
     public boolean canConfirm() {
         return status.equals(REQUESTED);
@@ -56,7 +80,7 @@ public class SaleTransaction {
         return !status.equals(VOIDED);
     }
 
-    // true if this sale was confirmed before
+    // true if this sale was confirmed before even if it is voided
     public boolean wasConfirmed() {
         return confirmedBy != null;
     }

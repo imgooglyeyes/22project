@@ -50,6 +50,9 @@ public class Main extends Application {
         ProductContainer inventoryData = new ProductContainer();
         ProductContainer shelfData = new ProductContainer();
 
+        // loads the saved transactions (empty if the file doesn't exist yet)
+        TransactionContainer transactionData = TransactionStore.load();
+
         // adds initial stocks to inventory
         for (int i = 0; i < 6; i++) {
             inventoryData.add(database.getProductById(i), 20);
@@ -75,6 +78,7 @@ public class Main extends Application {
             database,
             inventoryData,
             shelfData,
+            transactionData,
             currentUser
         );
 
