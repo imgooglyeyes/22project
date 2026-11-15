@@ -1,5 +1,6 @@
 package ui;
 
+import application.FarmSystem;
 import application.ProductContainer;
 import application.TransactionContainer;
 import application.User;
@@ -13,6 +14,8 @@ public class SceneManager {
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
+
+    private FarmSystem farmSystem;
 
     private User currentUser;
 
@@ -33,6 +36,9 @@ public class SceneManager {
         this.transactionData = transactionData; // must be set before the shelf scene is created
         this.currentUser = currentUser;
 
+        // one shared farm system for all the sales actions
+        this.farmSystem = new FarmSystem(database, shelfData, transactionData);
+
         // creates the shelf scene
         shelfScene = new ShelfScene(
             stage,
@@ -47,6 +53,11 @@ public class SceneManager {
     // lets scenes read and save the transactions
     public TransactionContainer getTransactions() {
         return transactionData;
+    }
+
+    // lets scenes call the sales actions
+    public FarmSystem getFarmSystem() {
+        return farmSystem;
     }
 
     // creates the shared header
