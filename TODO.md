@@ -119,7 +119,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] customer "request to buy" button on the shelf (up to shelf stock)
   - edit `ShelfScene`, new request window with a quantity spinner, shown to customers only
   - created `backend/RequestToBuyWindow.java`
-- [ ] `MyRequestsScene` for customers
+- [x] `MyRequestsScene` for customers
   - new `ui/MyRequestsScene.java`, the customer's own requests and their status
   - add `showMyRequests()` to `SceneManager` and a header button for customers
 - [ ] `TransactionsScene` for clerk / manager: confirm and void with an alert

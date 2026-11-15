@@ -103,4 +103,15 @@ public class SceneManager {
         stage.setScene(scene);
         stage.setTitle("Database");
     }
+
+    // opens the customer's own requests, only customers can open it
+    public void showMyRequests() {
+
+        if (!currentUser.getUserType().equals(User.CUSTOMER)) return;
+
+        MyRequestsScene scene = new MyRequestsScene(stage, this, currentUser);
+
+        stage.setScene(scene);
+        stage.setTitle("My Requests");
+    }
 }

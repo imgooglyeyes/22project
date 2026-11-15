@@ -19,23 +19,32 @@ public class AppHeader extends HBox {
         Button shelfButton = new Button("Shelf");
         Button inventoryButton = new Button("Inventory");
         Button databaseButton = new Button("Database");
+        Button myRequestsButton = new Button("My Requests");
 
         // opens the selected scene
         shelfButton.setOnAction(e -> manager.showShelf());
         inventoryButton.setOnAction(e -> manager.showInventory());
         databaseButton.setOnAction(e -> manager.showDatabase());
+        myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
         // highlights the current scene
         setActive(shelfButton, currentScene.equals("Shelf"));
         setActive(inventoryButton, currentScene.equals("Inventory"));
         setActive(databaseButton, currentScene.equals("Database"));
+        setActive(myRequestsButton, currentScene.equals("My Requests"));
 
         // checks which buttons the user can access
         boolean isManager = user.getUserType().equals(User.MANAGER);
         boolean isClerk = user.getUserType().equals(User.CLERK);
+        boolean isCustomer = user.getUserType().equals(User.CUSTOMER);
 
         getChildren().add(title);
         getChildren().add(shelfButton);
+
+        // customers can see their own requests
+        if (isCustomer) {
+            getChildren().add(myRequestsButton);
+        }
 
         if (isManager || isClerk) {
             getChildren().add(inventoryButton);
