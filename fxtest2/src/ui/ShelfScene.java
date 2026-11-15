@@ -12,6 +12,7 @@ import application.TransactionStore;
 import application.User;
 import backend.AddProductWindow;
 import backend.MoveProductWindow;
+import backend.RequestToBuyWindow;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -85,6 +86,11 @@ public class ShelfScene extends Scene {
             quit
         );
 
+        // customers get their own buttons, they can only request to buy and quit
+        Button requestToBuy = new Button("Request To Buy");
+        Button customerQuit = new Button("Quit");
+        HBox customerButtons = new HBox(10, requestToBuy, customerQuit);
+
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
                 stage,
@@ -112,16 +118,38 @@ public class ShelfScene extends Scene {
             }
         });
 
+        // the request button needs a selected product
+        requestToBuy.disableProperty().bind(Bindings.isNull(selectedProduct));
+
+        // opens the request window, the sales rules are in FarmSystem
+        requestToBuy.setOnAction(event -> {
+            Product product = selectedProduct.get();
+            if (product != null) {
+                RequestToBuyWindow window = new RequestToBuyWindow(
+                    stage,
+                    manager.getFarmSystem(),
+                    product,
+                    currentUser.getUsername(),
+                    this::refreshShelf
+                );
+                window.show();
+            }
+        });
+
         manualSave.setOnAction(event -> saveData());
         quit.setOnAction(event -> Platform.exit());
+        customerQuit.setOnAction(event -> Platform.exit());
 
         boolean isManager = currentUser.getUserType().equals(User.MANAGER);
         boolean isClerk = currentUser.getUserType().equals(User.CLERK);
+        boolean isCustomer = currentUser.getUserType().equals(User.CUSTOMER);
 
         root.setTop(manager.createHeader("Shelf"));
         root.setCenter(scrollPane);
         if (isManager || isClerk) {
             root.setBottom(buttons);
+        } else if (isCustomer) {
+            root.setBottom(customerButtons);
         }
 
         refreshShelf();
