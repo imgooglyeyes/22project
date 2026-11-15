@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui.LabelledTextField;
+import ui.Styles;
 
 public class ProductCreationWindow {
 
@@ -43,6 +44,7 @@ public class ProductCreationWindow {
         vbox.setStyle("-fx-padding: 20;");
 
         this.createScene = new Scene(vbox, 500, 350);
+        Styles.apply(createScene); // loads the shared stylesheet
 
         this.createWindow = new Stage(); // creates a new window for the user creation
         createWindow.setTitle("Create New Product");

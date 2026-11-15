@@ -41,6 +41,9 @@ public class DatabaseScene extends Scene {
 
         super(new BorderPane(), 900, 500);
 
+        // loads the shared stylesheet
+        Styles.apply(this);
+
         this.database = database;
 
         BorderPane root = (BorderPane) getRoot();
@@ -170,7 +173,7 @@ public class DatabaseScene extends Scene {
         Label id = createLabel(String.valueOf(product.getId()), 50);
         Label name = createLabel(product.getName(), 150);
         Label description = createLabel(product.getDescription(), 400);
-        Label price = createLabel(String.valueOf(product.getPrice()), 100);
+        Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         
 
         row.getChildren().addAll(id, name, description, price);

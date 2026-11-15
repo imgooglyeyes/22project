@@ -10,6 +10,7 @@ by: shawn, jian, and matt
   - inventory stock can be moved onto the shelf
   - product details and stock levels can be viewed and updated through the
     application windows
+- see `TODO.md` for the current status and the plan for what is next
 
 ## Main Features
 
@@ -41,13 +42,21 @@ by: shawn, jian, and matt
 
 ## Project Layout
 
+- `TODO.md`
+  - current status, bugs, and the phased plan for the project
 - `fxtest2/src/application/`
   - contains the main application classes
   - contains product, user, and product container models
   - contains `Main.java`, which starts the javafx application
+  - contains `application.css`, the shared stylesheet
 - `fxtest2/src/ui/`
-  - contains the database, inventory, shelf, and product window classes
-  - contains the scene manager and shared navigation components
+  - contains the scenes: shelf, inventory, and database
+  - contains the scene manager and shared navigation (`AppHeader`)
+  - contains reusable parts: `LabelledTextField`, `LabelledPasswordField`
+  - contains `Styles.java`, which loads the shared stylesheet into a scene
+- `fxtest2/src/backend/`
+  - contains the popup windows: add, move, create, and edit product
+  - contains `UniversalDeleter`, which removes a product everywhere
 - `fxtest2/src/data/`
   - contains data files used by the project
 - `fxtest2/src/templatedata/`
@@ -95,6 +104,7 @@ by: shawn, jian, and matt
   - the inventory screen
   - the product database screen
 - use the product windows to create, edit, move, or remove products
+- every scene and popup window loads `application.css` through `ui.Styles`
 
 ## Important Notes
 
@@ -106,8 +116,8 @@ by: shawn, jian, and matt
   - javafx module names
   - native library path
 - changing or removing these settings can make the application fail to start
-- `testloginwindow.java` is an older leftover class and is not used by the
-  current ShopeeFarm application flow
+- `application.css` must stay in the `application` package, `ui.Styles` loads it
+  from `/application/application.css` on the class path
 
 ## Troubleshooting
 
@@ -123,3 +133,6 @@ by: shawn, jian, and matt
   - stop any old java process
   - run the visual studio code javafx configuration
   - review the problems panel for compile errors
+- if the application crashes with a `NullPointerException` in `Styles.apply`:
+  - `application.css` was not copied to `bin/application/`
+  - clean and rebuild the project so the css is copied next to the classes

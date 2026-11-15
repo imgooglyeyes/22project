@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ui.Styles;
 
 public class AddProductWindow {
 
@@ -96,6 +97,7 @@ public class AddProductWindow {
         vbox.setStyle("-fx-padding: 20;");
 
         this.addScene = new Scene(vbox, 500, 350);
+        Styles.apply(addScene); // loads the shared stylesheet
 
         this.addWindow = new Stage(); // creates a new window for the user creation
         addWindow.setTitle("Add Product");
@@ -112,6 +114,8 @@ public class AddProductWindow {
 					return;
 				}
 				int addAmount = spinner.getValue();
+				// adding nothing would create an empty row, so the amount must be at least 1
+				if (addAmount < 1) return;
 				int addId = products.get(productBox.getValue()); // reminder: products is a HashMap<String, Integer> where string is the product name and integer is the id
 				System.out.println("Attempting to add product with id: " + addId);
 				Product addedProduct = sourceDatabase.getProductById(addId); // grabs the product from the database
@@ -147,5 +151,4 @@ public class AddProductWindow {
 		// make the new window actually appear
         addWindow.show();
 	}
-}
-//>>>>>>> branch 'master' of https://github.com/imgooglyeyes/22project.git
+}	
