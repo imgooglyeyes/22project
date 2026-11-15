@@ -7,11 +7,11 @@ import javafx.collections.ObservableList;
 public class ProductContainer {
 	private ArrayList<Product> productList;
 
-	public ProductContainer() {
+	public ProductContainer() { // null constructor
 		this.productList = new ArrayList<>();;
 	}
 
-	public ProductContainer(ArrayList<Product> p) {
+	public ProductContainer(ArrayList<Product> p) { // can give the list a starting value
 		this.productList = new ArrayList<>(p);;
 	}
 
