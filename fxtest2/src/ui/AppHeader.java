@@ -19,6 +19,7 @@ public class AppHeader extends HBox {
         Button shelfButton = new Button("Shelf");
         Button inventoryButton = new Button("Inventory");
         Button transactionsButton = new Button("Transactions");
+        Button cashButton = new Button("Cash");
         Button databaseButton = new Button("Database");
         Button myRequestsButton = new Button("My Requests");
 
@@ -26,6 +27,7 @@ public class AppHeader extends HBox {
         shelfButton.setOnAction(e -> manager.showShelf());
         inventoryButton.setOnAction(e -> manager.showInventory());
         transactionsButton.setOnAction(e -> manager.showTransactions());
+        cashButton.setOnAction(e -> manager.showCash());
         databaseButton.setOnAction(e -> manager.showDatabase());
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
@@ -33,6 +35,7 @@ public class AppHeader extends HBox {
         setActive(shelfButton, currentScene.equals("Shelf"));
         setActive(inventoryButton, currentScene.equals("Inventory"));
         setActive(transactionsButton, currentScene.equals("Transactions"));
+        setActive(cashButton, currentScene.equals("Cash"));
         setActive(databaseButton, currentScene.equals("Database"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
 
@@ -52,6 +55,7 @@ public class AppHeader extends HBox {
         if (isManager || isClerk) {
             getChildren().add(inventoryButton);
             getChildren().add(transactionsButton);
+            getChildren().add(cashButton);
         }
 
         if (isManager) {
