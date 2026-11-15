@@ -114,4 +114,19 @@ public class SceneManager {
         stage.setScene(scene);
         stage.setTitle("My Requests");
     }
+
+    // opens all transactions, only clerks and managers can open it
+    public void showTransactions() {
+
+        boolean isStaff =
+            currentUser.getUserType().equals(User.MANAGER) ||
+            currentUser.getUserType().equals(User.CLERK);
+
+        if (!isStaff) return;
+
+        TransactionsScene scene = new TransactionsScene(stage, this, currentUser);
+
+        stage.setScene(scene);
+        stage.setTitle("Transactions");
+    }
 }
