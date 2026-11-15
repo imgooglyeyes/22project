@@ -24,6 +24,9 @@ public class Product {
         this.desc = desc;
         this.price = price;
         this.stock = stock;
+        if (AVAILABLE_ID <= existing_id) { // make sure the AVAILABLE_ID won't eventually, accidentally reach an existing ID
+        	AVAILABLE_ID = existing_id + 1;
+        }
     }
 
     public int getId()					{ return id; }
