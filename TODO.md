@@ -11,11 +11,17 @@
 - [x] stock moves: database -> inventory -> shelf, and back (shelf -> inventory)
 - [x] manual save writes `productsDB.txt`, `inventory.txt`, `shelf.txt`
 - [x] 27 starting products plus sample stock
+- [x] phase 0 cleanup (see section 4)
+- [x] `ui/Styles.java` loads `application.css` into every scene and popup window
+- [x] prices shown as `₱30.00` through `Product.getFormattedPrice()`
+- [x] add and move windows block amounts below 1
+- [x] leftover classes removed (`TestLoginWindow`, `ImportExportHandler`)
+- [x] readme layout section matches the real folders
 
 ### half done
 - [ ] persistence: files are written but never read back (`Main` still hardcodes everything)
 - [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
-- [ ] styling: `application.css` exists but no scene loads it, scenes use inline styles
+- [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
 
 ### not started
 - [ ] login, sign up, manager approval, customer role
@@ -30,22 +36,27 @@
 
 ## 2. bugs and cleanups found in the current code
 
+### fixed
+- [x] `ProductContainer.add` and `AddProductWindow` / `MoveProductWindow` accept amount `0`, which creates 0-stock rows on the shelf
+- [x] price shows as raw double (`30.0`), now formatted as `₱30.00`
+- [x] `application.css` is never loaded, now loaded through `Styles.apply(scene)`
+- [ ] `ImportExportHandler` and `TestLoginWindow` are leftovers and not used, deleted
+
+
+### still open
 - [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart
 - [ ] `ShelfScene.saveData()` writes to `src/data/` but the app runs from `bin/`, pick one data folder and use it everywhere
-- [ ] `ProductContainer.add` and `AddProductWindow` / `MoveProductWindow` accept amount `0`, which creates 0-stock rows on the shelf, require amount of at least 1
 - [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random, sort the names and handle duplicates
 - [ ] `ProductCreationWindow` does not block duplicate names or the `|` character (it would break the txt format)
-- [ ] typo in virgin coconut oil (500ml) description: `care..`
 - [ ] extra 28th product `Secret Sauce` is not in the plan (27 products), remove it or keep it only as a test item
-- [ ] price shows as raw double (`30.0`), format as `₱30.00`
-- [ ] `application.css` is never loaded, add `getStylesheets().add(...)` in each scene and remove the inline `setStyle` colors
+- [ ] inline `setStyle` colors (`lightblue`, `lightgray`, `gray`) in the scenes override the stylesheet, move them to css classes
+- [ ] css makes text bold monospace 14px, long product names may get cut off in the 150px name column, widen the labels in the three scenes
 - [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout
 - [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
-- [ ] `ImportExportHandler` and `TestLoginWindow` are leftovers and not used, delete them (or reuse the login window idea for the real login)
 - [ ] `templatedata/` is unused, use it as the "reset to default data" source
 - [ ] stock logic lives inside the windows, move it to `FarmSystem` so screens and windows only call it
-- [ ] readme layout is outdated (product windows are in `backend/`, not `ui/`)
+- [ ] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
 ---
 
@@ -67,17 +78,14 @@ changed from the old table so it matches what the code can do now and keeps the 
 | sale history | no | no | own only | any clerk |
 | approve sign-ups | no | no | no | yes |
 
-note: right now the code lets clerks add and delete inventory stock and move shelf stock back, phase 1 fixes this
+note: right now the code lets clerks add and delete inventory stock and move shelf stock back, phase 1 fixes this using this table
 
 ---
 
 ## 4. todo by phase
 
-### phase 0: cleanup (small, do first)
-- [ ] fix the bugs listed in section 2 that are one-liners
-- [ ] delete `TestLoginWindow` and `ImportExportHandler`
-- [ ] load `application.css` in all scenes
-- [ ] update `README.md` layout section
+### phase 0: cleanup 
+- [x] fix the bugs listed in section 2 that are one-liners (typo, amount 0, price format)
 
 ### phase 1: persistence and rules
 - [ ] add `data/DataStore.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (and later users, transactions)
@@ -85,7 +93,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] save automatically after every change (add, move, edit, delete), keep manual save as a backup
 - [ ] add `application/FarmSystem.java`: `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
 - [ ] windows call `FarmSystem` instead of touching containers directly
-- [ ] tighten role checks in `SceneManager` and the scene buttons (use section 4)
+- [ ] tighten role checks in `SceneManager` and the scene buttons (use section 3)
 
 ### phase 2: richer products
 - [ ] add `unit`, `crop`, `type` (`Harvest` / `Made`) and `madeFrom` to `Product`
