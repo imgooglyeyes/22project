@@ -23,6 +23,7 @@
 - [x] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
 - [x] persistence: files are written but never read back (`Main` still hardcodes everything)
 - [x] `templatedata/` is unused, use it as the "reset to default data" source
+- [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
 
 ### in progress (wip)
 - [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
@@ -59,8 +60,8 @@
 ### still open
 - [x] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart (wip)
 - [x] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `ProductsFileHandler` once it exists
-- [ ] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
-- [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random (blocking duplicate names would fix the collision)
+- [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
+- [ ] `AddProductWindow` uses a `HashMap` of names, and the list order is random
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
 - [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
@@ -103,11 +104,11 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] add `application/ProductsFileHandler.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
   - everything is saved in `src/data/`
   - `productsDB.txt` line format: `id|name|description|price|madeFrom` (`madeFrom` is a product id, empty for a harvest item)
-  - users are saved in `src/data/users.txt` in phase 3, transactions already have `TransactionStore`
+  - users are saved in `src/data/users.txt` in phase 3, transactions already have `TransactionFilesHandler`
   - load products with the existing-id `Product` constructor so ids don't change
 - [x] `Main`: load from `src/data/`, fall back to `src/templatedata/` if files are missing (wip)
 - [ ] reset to default data: copy `src/templatedata/` over `src/data/` (wip)
-- [ ] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
+- [x] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
 - [ ] extend `application/FarmSystem.java` (it already has the sales methods) with `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
 - [ ] windows call `FarmSystem` instead of touching containers directly
 - [ ] tighten role checks in `SceneManager` and the scene buttons (use section 3)
