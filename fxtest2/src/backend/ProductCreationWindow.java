@@ -2,6 +2,8 @@ package backend;
 
 import application.Product;
 import application.ProductContainer;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -35,9 +37,14 @@ public class ProductCreationWindow {
 		this.priceField = new LabelledTextField("Price:", true);
         this.create = new Button("Create");
         this.exit = new Button("Cancel");
+        
+        BooleanBinding duplicateName = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the product name already exists
+	        if (database.getProductByName(this.nameField.getTextField().getText()) == null) return false; // no duplicate found
+	        else return true;
+	    }, this.nameField.getTextField().textProperty());
 
         // NOTE: It is apparently already given that any future reference to a variable will be "this." if it was initialized with it
-        create.disableProperty().bind(nameField.empty.or(descriptionField.empty).or(priceField.empty).or(priceField.NaN)); // submit button being disabled is binded to the boolean binding made earlier
+        create.disableProperty().bind(nameField.invalid.or(descriptionField.invalid).or(priceField.invalid).or(priceField.NaN).or(duplicateName)); // submit button being disabled is binded to the boolean binding made earlier
 
         this.buttonsHBox = new HBox(10, exit, create);
         this.vbox = new VBox(10, nameField, descriptionField, priceField, buttonsHBox); // creates a vbox with a 10px spacing with these as children

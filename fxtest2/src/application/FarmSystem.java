@@ -26,7 +26,7 @@ public class FarmSystem {
         if (quantity > shelfProduct.getStock()) return "Only " + shelfProduct.getStock() + " left on the shelf";
 
         transactionData.add(new SaleTransaction(shelfProduct, quantity, customer));
-        TransactionStore.save(transactionData);
+        TransactionFilesHandler.save(transactionData);
         return null;
     }
 
@@ -42,7 +42,7 @@ public class FarmSystem {
 
         shelfData.remove(shelfProduct, transaction.getQuantity());
         transaction.confirm(staff);
-        TransactionStore.save(transactionData);
+        TransactionFilesHandler.save(transactionData);
         return null;
     }
 
@@ -62,7 +62,7 @@ public class FarmSystem {
         }
 
         transaction.voidTransaction(staff);
-        TransactionStore.save(transactionData);
+        TransactionFilesHandler.save(transactionData);
         return null;
     }
 }
