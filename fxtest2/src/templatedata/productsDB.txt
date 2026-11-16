@@ -25,4 +25,3 @@
 24|Muscovado Sugar (500g)|Unrefined brown sugar from sugarcane juice.|85.0
 25|Ube (1kg)|Fresh purple yam roots.|110.0
 26|Ube Halaya (350g)|Sweet purple yam jam, sold in a jar.|140.0
-27|Secret Sauce|This sauce is a secret.|100.0
