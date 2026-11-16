@@ -51,7 +51,7 @@ public class Main extends Application {
         ProductContainer shelfData = new ProductContainer();
 
         // loads the saved transactions (empty if the file doesn't exist yet)
-        TransactionContainer transactionData = TransactionStore.load();
+        TransactionContainer transactionData = TransactionFilesHandler.load();
 
         // adds initial stocks to inventory
         for (int i = 0; i < 6; i++) {
@@ -69,7 +69,7 @@ public class Main extends Application {
             "password",
             "Billy Bob",
             "Jones",
-            User.CUSTOMER
+            User.MANAGER
         );
 
         // creates the scene manager

@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import application.Product;
 import application.ProductContainer;
 import application.TransactionContainer;
-import application.TransactionStore;
+import application.TransactionFilesHandler;
 import application.User;
 import backend.AddProductWindow;
 import backend.MoveProductWindow;
@@ -230,6 +230,6 @@ public class ShelfScene extends Scene {
         }
 
         // transactions have their own save, it handles its own errors
-        TransactionStore.save(transactionData);
+        TransactionFilesHandler.save(transactionData);
     }
 }

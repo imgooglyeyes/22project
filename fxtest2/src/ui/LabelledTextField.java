@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 public class LabelledTextField extends HBox { // a hbox with a label and text field
 	private Label label;
 	private TextField textField;
-	public BooleanBinding empty;
+	public BooleanBinding invalid;
 	public BooleanBinding NaN;
 	
 	public LabelledTextField(String text) {
@@ -22,15 +22,16 @@ public class LabelledTextField extends HBox { // a hbox with a label and text fi
 		this.getChildren().addAll(label, textField);
 	}
 	
-	public LabelledTextField(String text, boolean required) { // an alternate constructor that gives the text field a boolean binding
+	public LabelledTextField(String text, boolean checkValidity) { // an alternate constructor that gives the text field a boolean binding
 		super(10);
 		this.label = new Label(text);
 		this.textField = new TextField();
 		this.getChildren().addAll(label, textField);
 		
-		if (required) {
-			this.empty = Bindings.createBooleanBinding(() -> { 
-		        if (this.textField.getText().trim().isEmpty()) return true;
+		if (checkValidity) {
+			this.invalid = Bindings.createBooleanBinding(() -> { 
+				if (this.textField.getText().trim().contains("|")) return true;
+				if (this.textField.getText().trim().isEmpty()) return true;
 		        else return false;
 		    }, this.textField.textProperty());
 		}
@@ -51,5 +52,9 @@ public class LabelledTextField extends HBox { // a hbox with a label and text fi
 
 	public void setText(String text) {
 		this.textField.setText(text);
+	}
+	
+	public TextField getTextField() { // for if you want to directly edit the textfield outside of this class
+		return textField;
 	}
 }
