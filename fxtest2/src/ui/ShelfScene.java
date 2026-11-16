@@ -90,6 +90,7 @@ public class ShelfScene extends Scene {
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
                 stage,
+                manager,
                 shelfData,
                 inventoryData,
                 true,
@@ -105,6 +106,7 @@ public class ShelfScene extends Scene {
             if (product != null) {
                 MoveProductWindow window = new MoveProductWindow(
                     stage,
+                    manager,
                     shelfData,
                     inventoryData,
                     product,
