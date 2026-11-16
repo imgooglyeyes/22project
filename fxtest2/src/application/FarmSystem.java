@@ -43,6 +43,7 @@ public class FarmSystem {
         shelfData.remove(shelfProduct, transaction.getQuantity());
         transaction.confirm(staff);
         TransactionFilesHandler.save(transactionData);
+        ProductFilesHandler.save(null, null, shelfData);
         return null;
     }
 
@@ -63,6 +64,7 @@ public class FarmSystem {
 
         transaction.voidTransaction(staff);
         TransactionFilesHandler.save(transactionData);
+        ProductFilesHandler.save(null, null, shelfData);
         return null;
     }
 }
