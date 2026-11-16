@@ -1,14 +1,39 @@
 package application;
 
+/**
+ * products sold in the app with the following attributes:
+ * <p> - id (unique) :int
+ * <p> - name : String 
+ * <p> - desc : String
+ * <p> - price : double
+ * <p> - stock : int 
+ * <p> - AVAILABLE_ID (constant): int 
+ * 
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.0
+ */
 public class Product {
-	private int id; // this will be used to make sure we don't lose track of an item after the user edits its name
+    /** auto-generated id to keep track of a product item even after modification */
+	private int id; 
+    /** what is the product item called */
     private String name;
+    /** description of the product item for more details and specifications */
     private String desc;
+    /** how much is a unit of the product in decimals (double) */
     private double price;
+    /** remaining available amount or number of a product item */
     private int stock;
+    /** ensures that a product item has a unique id  */
+    public static int AVAILABLE_ID = 0; 
     
-    public static int AVAILABLE_ID = 0; // makes sure no item has the same ID
-
+    /**
+     * creates a Product instance
+     * 
+     * @param name : what is the product item called
+     * @param desc : description of the product item for more details and specifications
+     * @param price : how much is a unit of the product in decimals
+     * @param stock : remaining available amount or number of a product item
+     */
     public Product(String name, String desc, double price, int stock) {
     	this.id = AVAILABLE_ID;
     	this.name = name;
