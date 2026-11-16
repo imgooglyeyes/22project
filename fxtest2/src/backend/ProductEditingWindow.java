@@ -4,6 +4,8 @@ package backend;
 
 import application.Product;
 import application.ProductContainer;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -40,9 +42,15 @@ public class ProductEditingWindow {
         nameField.setText(targetProduct.getName());
         descriptionField.setText(targetProduct.getDescription());
         priceField.setText(Double.toString(targetProduct.getPrice()));
+        
+        BooleanBinding invalidName = Bindings.createBooleanBinding(() -> { // a boolean binding to check if the name is invalid (a duplicate of anything but itself)
+	        if (this.nameField.getTextField().getText().equals(targetProduct.getName())) return false; // it's okay if the name hasn't been edited
+        	if (database.getProductByName(this.nameField.getTextField().getText()) == null) return false; // no duplicate found
+	        else return true;
+	    }, this.nameField.getTextField().textProperty());
 
         // NOTE: It is apparently already given that any future reference to a variable will be "this." if it was initialized with it
-        confirm.disableProperty().bind(nameField.empty.or(descriptionField.empty).or(priceField.empty).or(priceField.NaN)); // submit button being disabled is binded to the boolean binding made earlier
+        confirm.disableProperty().bind(nameField.invalid.or(descriptionField.invalid).or(priceField.invalid).or(priceField.NaN).or(invalidName)); // submit button being disabled is binded to the boolean binding made earlier
 
         this.buttonsHBox = new HBox(10, exit, confirm);
         this.vbox = new VBox(10, nameField, descriptionField, priceField, buttonsHBox); // creates a vbox with a 10px spacing with these as children
