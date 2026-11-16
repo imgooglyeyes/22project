@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import application.Product;
 import application.ProductContainer;
+import application.ProductFilesHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
@@ -21,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ui.SceneManager;
 import ui.Styles;
 
 public class AddProductWindow {
@@ -36,7 +38,7 @@ public class AddProductWindow {
 
 	// CHANGED: THE TABLEVIEW PARAMETER IS NOW A RUNNABLE CALLED refresh (LAST PARAMETER).
 	// WHY: THE SCREEN PASSES ITS OWN REFRESH METHOD, SO THE WINDOW CAN TELL THE SCREEN TO REDRAW WITHOUT KNOWING WHAT THE SCREEN LOOKS LIKE.
-	public AddProductWindow(Stage stage, ProductContainer targetDatabase, ProductContainer sourceDatabase, Boolean limited, Runnable refresh) {
+	public AddProductWindow(Stage stage, SceneManager manager, ProductContainer targetDatabase, ProductContainer sourceDatabase, Boolean limited, Runnable refresh) {
 		HashMap<String, Integer> products = new HashMap<>();
 		for (Product p : sourceDatabase.getProducts()) { // go through every product in the database
 			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
@@ -131,6 +133,7 @@ public class AddProductWindow {
 				// CHANGED: WAS table.setItems(...) AND table.refresh(). NOW WE CALL refresh.
 				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
 				if (refresh != null) refresh.run();
+				manager.saveProductContainers();
 				addWindow.close();
 			}
 		});

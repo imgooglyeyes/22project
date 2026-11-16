@@ -77,6 +77,7 @@ public class InventoryScene extends Scene {
 
             AddProductWindow window = new AddProductWindow(
                 stage,
+                manager,
                 inventoryData,
                 database,
                 false,
@@ -100,6 +101,7 @@ public class InventoryScene extends Scene {
 
                 MoveProductWindow window = new MoveProductWindow(
                     stage,
+                    manager,
                     inventoryData,
                     null,
                     product,
