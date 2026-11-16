@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ui.SceneManager;
 import ui.Styles;
 
 public class MoveProductWindow {
@@ -22,12 +23,12 @@ public class MoveProductWindow {
 	private Button exit;
 	private VBox vbox;
 	private HBox buttonsHBox;
-	private Scene addScene;
-	private Stage addWindow;
+	private Scene moveScene;
+	private Stage moveWindow;
 
 	// CHANGED: THE TABLEVIEW PARAMETER IS NOW A RUNNABLE CALLED refresh (LAST PARAMETER).
 	// WHY: THE SCREEN PASSES ITS OWN REFRESH METHOD, SO THE WINDOW CAN TELL THE SCREEN TO REDRAW WITHOUT KNOWING WHAT THE SCREEN LOOKS LIKE.
-	public MoveProductWindow(Stage stage, ProductContainer currentDatabase, ProductContainer storageDatabase, Product targetProduct, Runnable refresh) {
+	public MoveProductWindow(Stage stage, SceneManager manager, ProductContainer currentDatabase, ProductContainer storageDatabase, Product targetProduct, Runnable refresh) {
 
 		this.productName = new Label("Removing " + targetProduct.getName() + " stocks");
 		//productBox.getSelectionModel().selectFirst(); // to make sure something is already selected
@@ -48,12 +49,12 @@ public class MoveProductWindow {
         this.vbox = new VBox(10, productName, spinner, buttonsHBox); // creates a vbox with a 10px spacing with these as children
         vbox.setStyle("-fx-padding: 20;");
 
-        this.addScene = new Scene(vbox, 500, 350);
-        Styles.apply(addScene); // loads the shared stylesheet
+        this.moveScene = new Scene(vbox, 500, 350);
+        Styles.apply(moveScene); // loads the shared stylesheet
 
-        this.addWindow = new Stage(); // creates a new window for the user creation
-        addWindow.setTitle("Move Product Stocks");
-        addWindow.setScene(addScene);
+        this.moveWindow = new Stage(); // creates a new window for the user creation
+        moveWindow.setTitle("Move Product Stocks");
+        moveWindow.setScene(moveScene);
 
         // Handle submission / closing
         add.setOnMouseClicked(new EventHandler<MouseEvent>(){
@@ -77,24 +78,25 @@ public class MoveProductWindow {
 				// CHANGED: WAS table.setItems(...) AND table.refresh(). NOW WE CALL refresh.
 				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
 				if (refresh != null) refresh.run();
-				addWindow.close();
+				manager.saveProductContainers();
+				moveWindow.close();
 			}
 		});
 
         exit.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			public void handle (MouseEvent event) {
-				addWindow.close();
+				moveWindow.close();
 			}
 		});
 
-        addWindow.initModality(Modality.WINDOW_MODAL); // blocks the user from interacting with the window below it
-        addWindow.initOwner(stage); // the window below it being the main stage
+        moveWindow.initModality(Modality.WINDOW_MODAL); // blocks the user from interacting with the window below it
+        moveWindow.initOwner(stage); // the window below it being the main stage
 
 
 	}
 
 	public void show() { // just to make things simpler
 		// make the new window actually appear
-        addWindow.show();
+        moveWindow.show();
 	}
 }

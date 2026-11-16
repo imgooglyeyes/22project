@@ -1,14 +1,10 @@
 package ui;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import application.Product;
 import application.ProductContainer;
+import application.ProductFilesHandler;
 import application.TransactionContainer;
-import application.TransactionStore;
+import application.TransactionFilesHandler;
 import application.User;
 import backend.AddProductWindow;
 import backend.MoveProductWindow;
@@ -94,6 +90,7 @@ public class ShelfScene extends Scene {
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
                 stage,
+                manager,
                 shelfData,
                 inventoryData,
                 true,
@@ -109,6 +106,7 @@ public class ShelfScene extends Scene {
             if (product != null) {
                 MoveProductWindow window = new MoveProductWindow(
                     stage,
+                    manager,
                     shelfData,
                     inventoryData,
                     product,
@@ -195,41 +193,7 @@ public class ShelfScene extends Scene {
     }
 
     private void saveData() {
-        try (
-            BufferedWriter databaseWriter =
-                Files.newBufferedWriter(Paths.get("src/data/productsDB.txt"));
-            BufferedWriter shelfWriter =
-                Files.newBufferedWriter(Paths.get("src/data/shelf.txt"));
-            BufferedWriter inventoryWriter =
-                Files.newBufferedWriter(Paths.get("src/data/inventory.txt"))
-        ) {
-            for (Product p : database.getProducts()) {
-                databaseWriter.write(
-                    p.getId() + "|" +
-                    p.getName() + "|" +
-                    p.getDescription() + "|" +
-                    p.getPrice()
-                );
-                databaseWriter.newLine();
-            }
-
-            for (Product p : shelfData.getProducts()) {
-                shelfWriter.write(p.getId() + "|" + p.getStock());
-                shelfWriter.newLine();
-            }
-
-            for (Product p : inventoryData.getProducts()) {
-                inventoryWriter.write(p.getId() + "|" + p.getStock());
-                inventoryWriter.newLine();
-            }
-
-            System.out.println("Saving complete.");
-        } catch (IOException e) {
-            System.out.println("Something went wrong while saving.");
-            e.printStackTrace();
-        }
-
-        // transactions have their own save, it handles its own errors
-        TransactionStore.save(transactionData);
+    	ProductFilesHandler.save(database, inventoryData, shelfData);
+        TransactionFilesHandler.save(transactionData);
     }
 }

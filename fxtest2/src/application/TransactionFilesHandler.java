@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 // saves and loads transactions.txt
 // one line per transaction, fields separated by |
 
-public class TransactionStore {
+public class TransactionFilesHandler {
 
     // same folder the shelf save button already uses
     private static final String FILE = "src/data/transactions.txt";

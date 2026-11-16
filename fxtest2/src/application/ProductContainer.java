@@ -45,7 +45,14 @@ public class ProductContainer {
 
 	public Product getProductById(int id) {
 		for (Product p : productList) { // go through every product
-			if (p.getId() == id) {return p;} // does its id match what the user is looking for?
+			if (p.getId() == id) {return p;} // does its id match what the parameter is looking for?
+		}
+		return null; // if not, return null
+	}
+	
+	public Product getProductByName(String name) {
+		for (Product p : productList) { // go through every product
+			if (p.getName().equals(name)) {return p;} // does its name match what the parameter is looking for?
 		}
 		return null; // if not, return null
 	}
