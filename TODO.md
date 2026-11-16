@@ -25,9 +25,9 @@
 - [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
 - [ ] login, sign up, manager approval, customer role
 - [ ] product "made from" field
-- [ ] `ProductCreationWindow` and `ProductEditingWindow` block the `|` character
+- [x] `ProductCreationWindow` and `ProductEditingWindow` block the `|` character
 - [ ] `templatedata/` is unused, use it as the "reset to default data" source
-- [ ] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
+- [x] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
 
 ### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
@@ -61,8 +61,8 @@
 - [ ] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `DataStore` once it exists
 - [ ] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
 - [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random (blocking duplicate names would fix the collision)
-- [ ] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
-- [ ] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
+- [x] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
+- [x] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
 - [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
 - [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
