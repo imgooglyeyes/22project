@@ -4,6 +4,7 @@ package backend;
 
 import application.Product;
 import application.ProductContainer;
+import application.ProductFilesHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
@@ -84,6 +85,7 @@ public class ProductEditingWindow {
 				// CHANGED: WAS table.setItems(...) AND table.refresh(). NOW WE CALL refresh.
 				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
 				if (refresh != null) refresh.run();
+				ProductFilesHandler.save(database, inventoryData, shelfData);
 				editWindow.close();
 			}
 		});

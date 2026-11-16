@@ -2,6 +2,7 @@ package ui;
 
 import application.FarmSystem;
 import application.ProductContainer;
+import application.ProductFilesHandler;
 import application.TransactionContainer;
 import application.User;
 import javafx.stage.Stage;
@@ -58,6 +59,11 @@ public class SceneManager {
     // lets scenes call the sales actions
     public FarmSystem getFarmSystem() {
         return farmSystem;
+    }
+    
+    // lets scenes save reliably (used in Add/MoveProductWindows because they do not know what databases they're working with)
+    public void saveProductContainers() {
+    	ProductFilesHandler.save(database, inventoryData, shelfData);
     }
 
     // creates the shared header

@@ -3,6 +3,7 @@ package backend;
 import application.Product;
 import application.ProductContainer;
 // CHANGED: TABLEVIEW IMPORT REMOVED. THE NEW SCREENS USE ROWS, NOT A TABLEVIEW, SO THIS WINDOW NO LONGER NEEDS ONE.
+import application.ProductFilesHandler;
 
 public class UniversalDeleter {
 	// CHANGED: THE TableView table FIELD IS REMOVED. THE SCREEN REFRESHES ITSELF AFTER CALLING delete().
@@ -29,6 +30,7 @@ public class UniversalDeleter {
 			db.remove(removeTarget, removeTarget.getStock()); // remove all stocks
 		}
 
+		ProductFilesHandler.save(database, inventoryData, shelfData);
 		// CHANGED: table.setItems(...) AND table.refresh() REMOVED. WHY: THERE IS NO TABLE. THE SCREEN CALLS ITS OWN REFRESH AFTER delete().
 	}
 }

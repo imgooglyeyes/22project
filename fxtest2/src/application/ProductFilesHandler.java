@@ -31,31 +31,38 @@ public class ProductFilesHandler {
 	            
 	        ) {
 				// id|name|description|price
-	            for (Product p : database.getProducts()) {
-	                databaseWriter.write(
-	                    p.getId() + "|" +
-	                    p.getName() + "|" +
-	                    p.getDescription() + "|" +
-	                    p.getPrice()
-	                );
-	                databaseWriter.newLine();
-	            }
+		        if (database != null) {
+					for (Product p : database.getProducts()) {
+		                databaseWriter.write(
+		                    p.getId() + "|" +
+		                    p.getName() + "|" +
+		                    p.getDescription() + "|" +
+		                    p.getPrice()
+		                );
+		                databaseWriter.newLine();
+		            }
+		        }
 	
 	            // id|stock
-	            for (Product p : inventoryData.getProducts()) {
-	                inventoryWriter.write(p.getId() + "|" + p.getStock());
-	                inventoryWriter.newLine();
-	            }
+		        if (inventoryData != null) {
+		            for (Product p : inventoryData.getProducts()) {
+		            	inventoryWriter.write(p.getId() + "|" + p.getStock());
+		                inventoryWriter.newLine();
+		            }
+		        }
 	            
 	            // id|stock
-	            for (Product p : shelfData.getProducts()) {
-	                shelfWriter.write(p.getId() + "|" + p.getStock());
-	                shelfWriter.newLine();
-	            }
+		        if (shelfData != null) {
+		            for (Product p : shelfData.getProducts()) {
+		            	if(shelfData == null) break; // nothing to save
+		                shelfWriter.write(p.getId() + "|" + p.getStock());
+		                shelfWriter.newLine();
+		            }
+		        }
 	
-	            System.out.println("Saving complete.");
+	            System.out.println("Saved all product containers.");
 	        } catch (IOException e) {
-	            System.out.println("Something went wrong while saving.");
+	            System.out.println("Something went wrong while saving all product containers.");
 	            e.printStackTrace();
 	        }
 	}
