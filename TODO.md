@@ -19,15 +19,15 @@
 - [x] readme layout section matches the real folders
 - [x] sales transactions: request, confirm and void (phase 4)
 - [x] cash balance derived from the transactions (phase 4)
+- [x] `ProductCreationWindow` and `ProductEditingWindow` block the `|` character
+- [x] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
+- [x] persistence: files are written but never read back (`Main` still hardcodes everything)
+- [x] `templatedata/` is unused, use it as the "reset to default data" source
 
 ### in progress (wip)
-- [ ] persistence: files are written but never read back (`Main` still hardcodes everything)
 - [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
 - [ ] login, sign up, manager approval, customer role
 - [ ] product "made from" field
-- [x] `ProductCreationWindow` and `ProductEditingWindow` block the `|` character
-- [ ] `templatedata/` is unused, use it as the "reset to default data" source
-- [x] if time: `ProductCreationWindow` and `ProductEditingWindow` block duplicate names
 
 ### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
@@ -57,8 +57,8 @@
 - `bin/data` and `bin/templatedata` are compiled copies, ignore them
 
 ### still open
-- [ ] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart (wip)
-- [ ] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `DataStore` once it exists
+- [x] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart (wip)
+- [x] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `ProductsFileHandler` once it exists
 - [ ] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
 - [ ] `AddProductWindow` uses a `HashMap` of names, two products with the same name collide and the list order is random (blocking duplicate names would fix the collision)
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
@@ -66,7 +66,7 @@
 - [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
 - [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
-- [ ] `templatedata/` is unused, use it as the "reset to default data" source (wip)
+- [x] `templatedata/` is unused, use it as the "reset to default data" source (wip)
 - [ ] stock logic lives inside the windows, move it so screens and windows only call it
 - [ ] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
@@ -100,12 +100,12 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] fix the bugs listed in section 2 that are one-liners (typo, amount 0, price format)
 
 ### phase 1: persistence and rules
-- [ ] add `data/DataStore.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
+- [ ] add `application/ProductsFileHandler.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
   - everything is saved in `src/data/`
   - `productsDB.txt` line format: `id|name|description|price|madeFrom` (`madeFrom` is a product id, empty for a harvest item)
   - users are saved in `src/data/users.txt` in phase 3, transactions already have `TransactionStore`
   - load products with the existing-id `Product` constructor so ids don't change
-- [ ] `Main`: load from `src/data/`, fall back to `src/templatedata/` if files are missing (wip)
+- [x] `Main`: load from `src/data/`, fall back to `src/templatedata/` if files are missing (wip)
 - [ ] reset to default data: copy `src/templatedata/` over `src/data/` (wip)
 - [ ] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
 - [ ] extend `application/FarmSystem.java` (it already has the sales methods) with `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
