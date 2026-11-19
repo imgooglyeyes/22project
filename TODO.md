@@ -101,7 +101,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] fix the bugs listed in section 2 that are one-liners (typo, amount 0, price format)
 
 ### phase 1: persistence and rules
-- [ ] add `application/ProductsFileHandler.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
+- [x] add `application/ProductsFileHandler.java`: `loadAll()` and `saveAll()` for products, inventory, shelf (wip)
   - everything is saved in `src/data/`
   - `productsDB.txt` line format: `id|name|description|price|madeFrom` (`madeFrom` is a product id, empty for a harvest item)
   - users are saved in `src/data/users.txt` in phase 3, transactions already have `TransactionFilesHandler`
@@ -118,7 +118,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
 - [ ] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
 - [ ] show made-from on the shelf rows
-- [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set
+- [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
 
 ### phase 3: accounts
 - [ ] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)

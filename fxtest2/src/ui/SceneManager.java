@@ -2,11 +2,22 @@ package ui;
 
 import application.FarmSystem;
 import application.ProductContainer;
-import application.ProductFilesHandler;
+import application.ProductsFileHandler;
 import application.TransactionContainer;
 import application.User;
 import javafx.stage.Stage;
 
+/**
+ * creates and opens every scene, and holds the shared containers
+ *
+ * <p>scenes ask it for the header, the transactions and the farm system.
+ * it also saves the product containers and resets them to the template data
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.2
+ * @see FarmSystem
+ * @see ProductsFileHandler
+ */
 public class SceneManager {
 
     private Stage stage;
@@ -22,6 +33,16 @@ public class SceneManager {
 
     private ShelfScene shelfScene;
 
+    /**
+     * creates the scene manager and the shelf scene
+     *
+     * @param stage the main window
+     * @param database every product and its details
+     * @param inventoryData the products and stock in the inventory
+     * @param shelfData the products and stock on the shelf
+     * @param transactionData every sale transaction
+     * @param currentUser the user who is logged in
+     */
     public SceneManager(
             Stage stage,
             ProductContainer database,
@@ -51,34 +72,64 @@ public class SceneManager {
         );
     }
 
-    // lets scenes read and save the transactions
+    /** @return every sale transaction, scenes read and save from it */
     public TransactionContainer getTransactions() {
         return transactionData;
     }
 
-    // lets scenes call the sales actions
+    /** @return the shared farm system, scenes call the sales actions on it */
     public FarmSystem getFarmSystem() {
         return farmSystem;
     }
     
-    // lets scenes save reliably (used in Add/MoveProductWindows because they do not know what databases they're working with)
+    /**
+     * saves the database, inventory and shelf
+     * <p>used by AddProductWindow and MoveProductWindow because they do not know what containers they work with
+     */
     public void saveProductContainers() {
-    	ProductFilesHandler.save(database, inventoryData, shelfData);
+    	ProductsFileHandler.saveAll(database, inventoryData, shelfData);
     }
 
-    // creates the shared header
+    /**
+     * puts the database, inventory and shelf back to the template data
+     * <p>the files are copied first, then loaded again into the same container objects
+     * <p>only managers can do this, transactions are not touched
+     *
+     * @return true if the reset worked, false if the user is not a manager or a file failed
+     * @since 1.2
+     */
+    public boolean resetToDefaults() {
+        if (!currentUser.getUserType().equals(User.MANAGER)) return false; // managers only
+
+        if (!ProductsFileHandler.resetToDefaults()) return false; // copying the files failed
+
+        // load the fresh files, then copy them into the containers the scenes already use
+        ProductContainer[] fresh = ProductsFileHandler.loadAll();
+        database.replaceWith(fresh[0]);
+        inventoryData.replaceWith(fresh[1]);
+        shelfData.replaceWith(fresh[2]);
+
+        return true;
+    }
+
+    /**
+     * creates the shared header
+     *
+     * @param currentScene the name of the open scene, its button is highlighted
+     * @return the header for the current user
+     */
     public AppHeader createHeader(String currentScene) {
         return new AppHeader(this, currentScene, currentUser);
     }
 
-    // opens the shelf
+    /** opens the shelf, it redraws first so it shows the latest stock */
     public void showShelf() {
         shelfScene.refreshShelf();
         stage.setScene(shelfScene);
         stage.setTitle("The Shelf");
     }
 
-    // opens the inventory
+    /** opens the inventory, a new scene is created each time */
     public void showInventory() {
 
         InventoryScene scene = new InventoryScene(
@@ -94,7 +145,7 @@ public class SceneManager {
         stage.setTitle("Inventory");
     }
 
-    // opens the database
+    /** opens the database, a new scene is created each time */
     public void showDatabase() {
 
         DatabaseScene scene = new DatabaseScene(
@@ -110,7 +161,7 @@ public class SceneManager {
         stage.setTitle("Database");
     }
 
-    // opens the customer's own requests, only customers can open it
+    /** opens the customer's own requests, does nothing if the user is not a customer */
     public void showMyRequests() {
 
         if (!currentUser.getUserType().equals(User.CUSTOMER)) return;
@@ -121,7 +172,7 @@ public class SceneManager {
         stage.setTitle("My Requests");
     }
 
-    // opens all transactions, only clerks and managers can open it
+    /** opens all transactions, does nothing if the user is not a clerk or manager */
     public void showTransactions() {
 
         if (!isStaff()) return;
@@ -132,7 +183,7 @@ public class SceneManager {
         stage.setTitle("Transactions");
     }
 
-    // opens the cash balance, only clerks and managers can open it
+    /** opens the cash balance, does nothing if the user is not a clerk or manager */
     public void showCash() {
 
         if (!isStaff()) return;
@@ -143,7 +194,7 @@ public class SceneManager {
         stage.setTitle("Cash");
     }
 
-    // true for clerks and managers
+    /** @return true if the current user is a clerk or a manager */
     private boolean isStaff() {
         return currentUser.getUserType().equals(User.MANAGER) ||
                currentUser.getUserType().equals(User.CLERK);
