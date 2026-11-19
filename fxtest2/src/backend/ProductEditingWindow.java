@@ -1,16 +1,13 @@
 package backend;
 
-// CHANGED: java.awt.TextField IMPORT REMOVED. IT WAS NEVER USED AND IT CAN BREAK THE BUILD IF THE PROJECT HAS NO AWT MODULE.
-
 import application.Product;
 import application.ProductContainer;
-import application.ProductFilesHandler;
+import application.ProductsFileHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-// CHANGED: TABLEVIEW IMPORT REMOVED. THE NEW SCREENS USE ROWS, NOT A TABLEVIEW, SO THIS WINDOW NO LONGER NEEDS ONE.
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,6 +16,17 @@ import javafx.stage.Stage;
 import ui.LabelledTextField;
 import ui.Styles;
 
+/**
+ * popup window to edit the name, description and price of a product
+ *
+ * <p>the change is applied to the database, inventory and shelf copies of the product,
+ * then all three files are saved. the confirm button stays disabled while a field is
+ * invalid or the name belongs to another product
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see ProductsFileHandler#saveAll(ProductContainer, ProductContainer, ProductContainer)
+ */
 public class ProductEditingWindow {
 	private LabelledTextField nameField;
 	private LabelledTextField descriptionField;
@@ -31,8 +39,17 @@ public class ProductEditingWindow {
 	private Scene editScene;
 	private Stage editWindow;
 
-	// CHANGED: THE TABLEVIEW PARAMETER IS NOW A RUNNABLE CALLED refresh (LAST PARAMETER).
-	// WHY: THE SCREEN PASSES ITS OWN REFRESH METHOD, SO THE WINDOW CAN TELL THE SCREEN TO REDRAW WITHOUT KNOWING WHAT THE SCREEN LOOKS LIKE.
+	/**
+	 * creates the window, call show() to display it
+	 * <p>the screen passes its own refresh method so the window can tell it to redraw
+	 *
+	 * @param stage the main window, this window blocks it while open
+	 * @param database every product and its details
+	 * @param inventoryData the products and stock in the inventory
+	 * @param shelfData the products and stock on the shelf
+	 * @param targetProduct the product being edited, its values fill the fields
+	 * @param refresh called after the edit so the screen redraws, can be null
+	 */
 	public ProductEditingWindow(Stage stage, ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData, Product targetProduct, Runnable refresh) {
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
@@ -66,6 +83,11 @@ public class ProductEditingWindow {
 
         // Handle submission / closing
         confirm.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * applies the new values to every copy of the product, then saves all files
+			 *
+			 * @param event the mouse click on the confirm button
+			 */
 			public void handle (MouseEvent event) {
 				Product[] editTargets = new Product[3]; // 3 because that's how many databases we have
 				editTargets[0] = database.getProductById(targetProduct.getId());
@@ -82,15 +104,19 @@ public class ProductEditingWindow {
 					p.setPrice(newPrice);
 				}
 
-				// CHANGED: WAS table.setItems(...) AND table.refresh(). NOW WE CALL refresh.
-				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
+				// the screen redraws itself, there is no table anymore
 				if (refresh != null) refresh.run();
-				ProductFilesHandler.save(database, inventoryData, shelfData);
+				ProductsFileHandler.saveAll(database, inventoryData, shelfData);
 				editWindow.close();
 			}
 		});
 
         exit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * closes the window without changing anything
+			 *
+			 * @param event the mouse click on the cancel button
+			 */
 			public void handle (MouseEvent event) {
 				editWindow.close();
 			}
@@ -102,6 +128,7 @@ public class ProductEditingWindow {
 
 	}
 
+	/** shows the window */
 	public void show() { // just to make things simpler
 		// make the new window actually appear
         editWindow.show();
