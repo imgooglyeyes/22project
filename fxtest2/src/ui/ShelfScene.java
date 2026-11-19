@@ -2,7 +2,7 @@ package ui;
 
 import application.Product;
 import application.ProductContainer;
-import application.ProductFilesHandler;
+import application.ProductsFileHandler;
 import application.TransactionContainer;
 import application.TransactionFilesHandler;
 import application.User;
@@ -25,6 +25,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * the main screen, it shows the products on the shelf
+ *
+ * <p>managers and clerks can move stock between the shelf and the inventory and save by hand.
+ * customers can only select a product and send a request to buy it
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see SceneManager
+ * @see ProductsFileHandler
+ */
 public class ShelfScene extends Scene {
 
     private ProductContainer database;
@@ -37,6 +48,16 @@ public class ShelfScene extends Scene {
 
     private VBox productRows = new VBox(5);
 
+    /**
+     * creates the shelf scene with the buttons that fit the user type
+     *
+     * @param stage the main window
+     * @param manager the scene manager, used for the header, saving and the farm system
+     * @param database every product and its details
+     * @param inventoryData the products and stock in the inventory
+     * @param shelfData the products and stock on the shelf
+     * @param currentUser the user who is logged in
+     */
     public ShelfScene(
             Stage stage,
             SceneManager manager,
@@ -153,12 +174,24 @@ public class ShelfScene extends Scene {
         refreshShelf();
     }
 
+    /**
+     * creates a label with a fixed width
+     *
+     * @param text the text of the label
+     * @param width the preferred width in pixels
+     * @return the label
+     */
     private Label createLabel(String text, double width) {
         Label label = new Label(text);
         label.setPrefWidth(width);
         return label;
     }
 
+    /**
+     * creates a row for one product, clicking the row selects the product
+     *
+     * @param product the shelf product to show
+     */
     private void addProductRow(Product product) {
         HBox row = new HBox(10);
         Label name = createLabel(product.getName(), 150);
@@ -184,6 +217,7 @@ public class ShelfScene extends Scene {
         productRows.getChildren().add(row);
     }
 
+    /** redraws the shelf from the shelf container and clears the selection */
     public void refreshShelf() {
         productRows.getChildren().clear();
         selectedProduct.set(null);
@@ -192,8 +226,9 @@ public class ShelfScene extends Scene {
         }
     }
 
+    /** manual save, writes every product file and the transactions as a backup */
     private void saveData() {
-    	ProductFilesHandler.save(database, inventoryData, shelfData);
+    	ProductsFileHandler.saveAll(database, inventoryData, shelfData);
         TransactionFilesHandler.save(transactionData);
     }
 }
