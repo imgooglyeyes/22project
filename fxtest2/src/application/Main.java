@@ -37,56 +37,19 @@ public class Main extends Application {
 
         // loads the saved transactions (empty if the file doesn't exist yet)
         TransactionContainer transactionData = TransactionFilesHandler.load();
-
-        // temporary for testing
-        ArrayList<User> hardcodedusers = new ArrayList<>();
-        hardcodedusers.add(new User(
-                "MainManager",
-                "maxgalactica",
-                "Billy Bob",
-                "Jones",
-                User.MANAGER
-            ));
-        hardcodedusers.add(new User(
-                "Clerk1",
-                "coughup",
-                "Angel",
-                "Starr",
-                User.CLERK
-            ));
-        hardcodedusers.add(new User(
-                "Clerk2",
-                "sl9",
-                "Jake",
-                "Marshall",
-                User.CLERK
-            ));
-        hardcodedusers.add(new User(
-                "Customer1",
-                "yourhonor",
-                "Beard",
-                "Gentleman",
-                User.CUSTOMER
-            ));
-        hardcodedusers.add(new User(
-                "Customer2",
-                "7777777",
-                "Damon",
-                "Gant",
-                User.CUSTOMER
-            ));
-        hardcodedusers.add(new User(
-                "MainGuest",
-                "",
-                "guest",
-                "",
-                User.GUEST
-            ));
+       
+        // loads the saved user data
+        UserContainer userData = UsersFileHandler.load();
         
-        UserContainer userData = new UserContainer(hardcodedusers);
+        // always start as a guest
+        User currentUser = new User(
+        		"guest",
+        		"",
+        		"guest",
+        		"",
+        		User.GUEST
+        	);
         
-        User currentUser = userData.getUserByUsername("MainGuest");
-
         // creates the scene manager
         SceneManager manager = new SceneManager(
             stage,
