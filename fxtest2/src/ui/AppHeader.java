@@ -71,13 +71,7 @@ public class AppHeader extends HBox {
         if (isManager || isClerk) {
             getChildren().add(inventoryButton);
             getChildren().add(transactionsButton);
-        }
-        
-        if (isClerk) {
             getChildren().add(historyButton);
-        }
-        
-        if (isManager || isClerk) {
             getChildren().add(cashButton);
         }
 
