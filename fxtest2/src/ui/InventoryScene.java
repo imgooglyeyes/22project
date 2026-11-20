@@ -68,6 +68,7 @@ public class InventoryScene extends Scene {
         // creates the buttons
         Button addProduct = new Button("Add Product From Database");
         Button deleteStocks = new Button("Delete Stocks");
+        Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
 
         HBox buttons = new HBox(10);
@@ -112,6 +113,11 @@ public class InventoryScene extends Scene {
             }
         });
 
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
+        
         // exits the application
         quit.setOnAction(event -> Platform.exit());
 
@@ -130,7 +136,7 @@ public class InventoryScene extends Scene {
             buttons.getChildren().addAll(addProduct, deleteStocks);
         }
 
-        buttons.getChildren().add(quit);
+        buttons.getChildren().addAll(logout, quit);
         root.setBottom(buttons);
 
         // loads the products

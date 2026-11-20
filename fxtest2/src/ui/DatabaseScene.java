@@ -69,6 +69,7 @@ public class DatabaseScene extends Scene {
         Button createProduct = new Button("Create New Product");
         Button editSelected = new Button("Edit Product Data");
         Button deleteSelected = new Button("Delete All Instances");
+        Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
 
         HBox buttons = new HBox(10);
@@ -131,6 +132,11 @@ public class DatabaseScene extends Scene {
             }
         });
 
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
+        
         // exits the application
         quit.setOnAction(event -> Platform.exit());
 
@@ -149,7 +155,7 @@ public class DatabaseScene extends Scene {
             );
         }
 
-        buttons.getChildren().add(quit);
+        buttons.getChildren().addAll(logout, quit);
         root.setBottom(buttons);
 
         // loads the products
