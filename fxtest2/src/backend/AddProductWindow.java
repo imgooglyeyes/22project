@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import application.Product;
 import application.ProductContainer;
-import application.ProductFilesHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
@@ -16,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-// CHANGED: TABLEVIEW IMPORT REMOVED. THE NEW SCREENS USE ROWS, NOT A TABLEVIEW, SO THIS WINDOW NO LONGER NEEDS ONE.
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,6 +23,18 @@ import javafx.stage.Stage;
 import ui.SceneManager;
 import ui.Styles;
 
+/**
+ * popup window to add stock of a product from a source container to a target container
+ *
+ * <p>if limited is true the stock is taken from the source, so the amount can't go above
+ * what the source has. saving goes through manager.saveProductContainers()
+ * (the ProductFilesHandler import was removed)
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see MoveProductWindow
+ * @see SceneManager#saveProductContainers()
+ */
 public class AddProductWindow {
 
 	private ComboBox<String> productBox;
@@ -36,8 +46,19 @@ public class AddProductWindow {
 	private Scene addScene;
 	private Stage addWindow;
 
-	// CHANGED: THE TABLEVIEW PARAMETER IS NOW A RUNNABLE CALLED refresh (LAST PARAMETER).
-	// WHY: THE SCREEN PASSES ITS OWN REFRESH METHOD, SO THE WINDOW CAN TELL THE SCREEN TO REDRAW WITHOUT KNOWING WHAT THE SCREEN LOOKS LIKE.
+
+	/**
+	 * creates the window, call show() to display it
+	 * <p>the screen passes its own refresh method so the window can tell it to redraw
+	 * without knowing what the screen looks like
+	 *
+	 * @param stage the main window, this window blocks it while open
+	 * @param manager the scene manager, used to save the product containers
+	 * @param targetDatabase the container that receives the stock
+	 * @param sourceDatabase the container the products are picked from
+	 * @param limited true if the stock is taken from the source and capped to its stock
+	 * @param refresh called after a successful add so the screen redraws, can be null
+	 */
 	public AddProductWindow(Stage stage, SceneManager manager, ProductContainer targetDatabase, ProductContainer sourceDatabase, Boolean limited, Runnable refresh) {
 		HashMap<String, Integer> products = new HashMap<>();
 		for (Product p : sourceDatabase.getProducts()) { // go through every product in the database
@@ -107,9 +128,14 @@ public class AddProductWindow {
 
         // Handle submission / closing
         add.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * adds the chosen amount to the target, takes it from the source if limited, then saves
+			 *
+			 * @param event the mouse click on the add button
+			 */
 			public void handle (MouseEvent event) {
-				// ADDED: READ WHAT THE USER TYPED INTO THE SPINNER.
-				// WHY: THE SPINNER IS EDITABLE, AND TYPED NUMBERS ARE NOT COUNTED UNTIL THEY ARE COMMITTED. IF THE TEXT IS NOT A NUMBER WE STOP.
+				// the spinner is editable, and typed numbers are not counted until they are committed
+				// if the text is not a number we stop
 				try {
 					spinner.commitValue();
 				} catch (NumberFormatException e) {
@@ -123,15 +149,13 @@ public class AddProductWindow {
 				Product addedProduct = sourceDatabase.getProductById(addId); // grabs the product from the database
 				System.out.println("Product with that id in the source database is: " + addedProduct.getName());
 				if (limited) {
-					// ADDED: STOP IF THE USER TYPED MORE THAN THE SOURCE HAS.
-					// WHY: TYPING A NUMBER BY HAND CAN GO OVER THE MAX, AND THE STOCK WOULD GO NEGATIVE.
+					// stop if the user typed more than the source has, or the stock would go negative
 					if (addAmount > addedProduct.getStock()) return;
 					sourceDatabase.remove(addedProduct, addAmount);
 					// since we're taking stock from the source, we need to remove stocks from the source
 				}
 				targetDatabase.add(addedProduct, addAmount); // add the product with its specific data
-				// CHANGED: WAS table.setItems(...) AND table.refresh(). NOW WE CALL refresh.
-				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
+				// the screen redraws itself, there is no table anymore
 				if (refresh != null) refresh.run();
 				manager.saveProductContainers();
 				addWindow.close();
@@ -139,6 +163,11 @@ public class AddProductWindow {
 		});
 
         exit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * closes the window without changing anything
+			 *
+			 * @param event the mouse click on the cancel button
+			 */
 			public void handle (MouseEvent event) {
 				addWindow.close();
 			}
@@ -150,8 +179,9 @@ public class AddProductWindow {
 
 	}
 
+	/** shows the window */
 	public void show() { // just to make things simpler
 		// make the new window actually appear
         addWindow.show();
 	}
-}	
+}

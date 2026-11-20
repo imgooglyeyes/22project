@@ -2,13 +2,12 @@ package backend;
 
 import application.Product;
 import application.ProductContainer;
-import application.ProductFilesHandler;
+import application.ProductsFileHandler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-// CHANGED: TABLEVIEW IMPORT REMOVED. THE NEW SCREENS USE ROWS, NOT A TABLEVIEW, SO THIS WINDOW NO LONGER NEEDS ONE.
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,6 +16,16 @@ import javafx.stage.Stage;
 import ui.LabelledTextField;
 import ui.Styles;
 
+/**
+ * popup window to create a new product in the database
+ *
+ * <p>the create button stays disabled while a field is empty, contains |, the price
+ * is not a valid number, or the name already exists. only the database file is saved
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see ProductsFileHandler#saveAll(ProductContainer, ProductContainer, ProductContainer)
+ */
 public class ProductCreationWindow {
 
 	private LabelledTextField nameField;
@@ -30,8 +39,14 @@ public class ProductCreationWindow {
 	private Scene createScene;
 	private Stage createWindow;
 
-	// CHANGED: THE TABLEVIEW PARAMETER IS NOW A RUNNABLE CALLED refresh (LAST PARAMETER).
-	// WHY: THE SCREEN PASSES ITS OWN REFRESH METHOD, SO THE WINDOW CAN TELL THE SCREEN TO REDRAW WITHOUT KNOWING WHAT THE SCREEN LOOKS LIKE.
+	/**
+	 * creates the window, call show() to display it
+	 * <p>the screen passes its own refresh method so the window can tell it to redraw
+	 *
+	 * @param stage the main window, this window blocks it while open
+	 * @param database the database that receives the new product
+	 * @param refresh called after the product is created so the screen redraws, can be null
+	 */
 	public ProductCreationWindow(Stage stage, ProductContainer database, Runnable refresh) {
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
@@ -60,17 +75,26 @@ public class ProductCreationWindow {
 
         // Handle submission / closing
         create.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * adds the new product to the database and saves it
+			 *
+			 * @param event the mouse click on the create button
+			 */
 			public void handle (MouseEvent event) {
 				database.add(new Product(nameField.getText(), descriptionField.getText(), Double.parseDouble(priceField.getText()), 0), 0);
-				// CHANGED: WAS table.setItems(database.getObservableList()). NOW WE CALL refresh.
-				// WHY: THERE IS NO TABLE ANYMORE. THE SCREEN REDRAWS ITSELF.
+				// the screen redraws itself, there is no table anymore
 				if (refresh != null) refresh.run();
-				ProductFilesHandler.save(database, null, null);
+				ProductsFileHandler.saveAll(database, null, null); // only the database file is written
 				createWindow.close();
 			}
 		});
 
         exit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			/**
+			 * closes the window without creating anything
+			 *
+			 * @param event the mouse click on the cancel button
+			 */
 			public void handle (MouseEvent event) {
 				createWindow.close();
 			}
@@ -82,6 +106,7 @@ public class ProductCreationWindow {
 
 	}
 
+	/** shows the window */
 	public void show() { // just to make things simpler
 		// make the new window actually appear
         createWindow.show();

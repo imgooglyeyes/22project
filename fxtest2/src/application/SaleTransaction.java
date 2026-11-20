@@ -3,6 +3,16 @@ package application;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * this is the purchase request made by customers.
+ * <p> this stores a copy of the product name and price at request time
+ * 
+ * @author Shawn Alfred Padilla
+ * @version 1.0
+ * 
+ */
+
+
 // one purchase request made by a customer
 // it stores a copy of the product name and price at request time,
 // so the record stays correct even if the product is edited or deleted later
