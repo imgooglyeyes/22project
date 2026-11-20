@@ -212,6 +212,17 @@ public class SceneManager {
         stage.setScene(scene);
         stage.setTitle("Transactions History");
     }
+    
+    /** opens the staff list, does nothing if the user is not a manager */
+    public void showStaffList() {
+
+        if (!currentUser.getUserType().equals(User.MANAGER)) return;
+
+        StaffListScene scene = new StaffListScene(stage, this, userData, currentUser);
+
+        stage.setScene(scene);
+        stage.setTitle("Transactions History");
+    }
 
     /** opens the cash balance, does nothing if the user is not a clerk or manager */
     public void showCash() {

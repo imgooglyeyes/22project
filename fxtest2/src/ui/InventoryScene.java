@@ -39,7 +39,7 @@ public class InventoryScene extends Scene {
             SceneManager manager,
             User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);
@@ -54,7 +54,7 @@ public class InventoryScene extends Scene {
 
         header.getChildren().addAll(
             createLabel("Name", 150),
-            createLabel("Description", 400),
+            createLabel("Description", 600),
             createLabel("Price", 100),
             createLabel("Stock", 80)
         );
@@ -158,7 +158,7 @@ public class InventoryScene extends Scene {
         HBox row = new HBox(10);
 
         Label name = createLabel(product.getName(), 150);
-        Label description = createLabel(product.getDescription(), 400);
+        Label description = createLabel(product.getDescription(), 600);
         Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         Label stock = createLabel(String.valueOf(product.getStock()), 80);
 

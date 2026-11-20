@@ -39,7 +39,7 @@ public class DatabaseScene extends Scene {
             SceneManager manager,
             User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);
@@ -55,7 +55,7 @@ public class DatabaseScene extends Scene {
         header.getChildren().addAll(
         	createLabel("ID", 50),
         	createLabel("Name", 150),
-            createLabel("Description", 400),
+            createLabel("Description", 600),
             createLabel("Price", 100)
         );
 
@@ -178,7 +178,7 @@ public class DatabaseScene extends Scene {
 
         Label id = createLabel(String.valueOf(product.getId()), 50);
         Label name = createLabel(product.getName(), 150);
-        Label description = createLabel(product.getDescription(), 400);
+        Label description = createLabel(product.getDescription(), 600);
         Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         
 

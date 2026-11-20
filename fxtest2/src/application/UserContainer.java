@@ -60,4 +60,18 @@ public class UserContainer {
 		}
 		return null; // if not, return null
 	}
+	
+	/**
+	 * creates a list of user by their role/type
+	 *
+	 * @param type the user type to look for
+	 * @return the a list of users that have the type
+	 */
+    public ArrayList<User> getUsersByType(String type) {
+        ArrayList<User> result = new ArrayList<>();
+        for (User u : userList) {
+            if (u.getUserType().equals(type)) result.add(u);
+        }
+        return result;
+    }
 }
