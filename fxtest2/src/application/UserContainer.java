@@ -30,7 +30,7 @@ public class UserContainer {
 	}
 
 	/**
-	 * adds a new user to the list
+	 * adds a new user to the list (does not make a copy of the parameter)
 	 *
 	 * <p> other classes are responsible for not allowing duplicates.
 	 * There is no way to remove users as we do not have account deletion in our scope.
@@ -38,7 +38,7 @@ public class UserContainer {
 	 * @param user the user to add
 	 */
 	public void add(User user) {
-		userList.add(new User(user.getUsername(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getUserType()));
+		userList.add(user);
 		return;
 	}
 

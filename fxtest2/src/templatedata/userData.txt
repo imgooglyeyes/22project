@@ -1,0 +1,5 @@
+MainManager|maxgalactica|Billy Bob|Jones|Manager
+Clerk1|coughup|Angel|Starr|Clerk
+Clerk2|sl9|Jake|Marshall|Clerk
+Customer1|yourhonor|Beard|Gentleman|Customer
+Customer2|7777777|Damon|Gant|Customer
