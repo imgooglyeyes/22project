@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 /**
  * changes the current user if login credentials match an existing account
  *
- * <p>also has the Sign Up button where new accounts can be made
  *
  * @author Jian Carranza
  * @version 1.0
@@ -23,6 +22,14 @@ import javafx.stage.Stage;
  */
 public class LoginScene extends Scene {
 	
+	/**
+     * creates the login scene
+     *
+     * @param stage the main window
+     * @param manager the scene manager, used for the header
+     * @param userData every user and their details
+     * @param currentUser the user who is not yet logged in
+     */
 	public LoginScene(
             Stage stage,
             SceneManager manager,
