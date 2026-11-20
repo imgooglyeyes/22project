@@ -85,7 +85,7 @@ public class Main extends Application {
         
         UserContainer userData = new UserContainer(hardcodedusers);
         
-        User currentUser = userData.getUserByUsername("MainManager");
+        User currentUser = userData.getUserByUsername("MainGuest");
 
         // creates the scene manager
         SceneManager manager = new SceneManager(
