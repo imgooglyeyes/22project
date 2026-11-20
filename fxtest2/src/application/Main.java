@@ -1,6 +1,8 @@
 
 package application;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -37,13 +39,39 @@ public class Main extends Application {
         TransactionContainer transactionData = TransactionFilesHandler.load();
 
         // temporary for testing
-        User currentUser = new User(
-            "customer1",
-            "password",
-            "Billy Bob",
-            "Jones",
-            User.MANAGER
-        );
+        ArrayList<User> hardcodedusers = new ArrayList<>();
+        hardcodedusers.add(new User(
+                "MainManager",
+                "maxgalactica",
+                "Billy Bob",
+                "Jones",
+                User.MANAGER
+            ));
+        hardcodedusers.add(new User(
+                "MainClerk",
+                "coughup",
+                "Angel",
+                "Starr",
+                User.CLERK
+            ));
+        hardcodedusers.add(new User(
+                "MainCustomer",
+                "yourhonor",
+                "Beard",
+                "Gentleman",
+                User.CUSTOMER
+            ));
+        hardcodedusers.add(new User(
+                "MainGuest",
+                "-",
+                "-",
+                "-",
+                User.GUEST
+            ));
+        
+        UserContainer userData = new UserContainer(hardcodedusers);
+        
+        User currentUser = userData.getUserByUsername("MainCustomer");
 
         // creates the scene manager
         SceneManager manager = new SceneManager(
@@ -52,6 +80,7 @@ public class Main extends Application {
             inventoryData,
             shelfData,
             transactionData,
+            userData,
             currentUser
         );
 
