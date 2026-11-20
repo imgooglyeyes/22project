@@ -105,8 +105,7 @@ public class ShelfScene extends Scene {
 
         // customers get their own buttons, they can only request to buy and quit
         Button requestToBuy = new Button("Request To Buy");
-        Button customerQuit = new Button("Quit");
-        HBox customerButtons = new HBox(10, requestToBuy, customerQuit);
+        HBox customerButtons = new HBox(10, requestToBuy, quit);
 
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
@@ -157,7 +156,6 @@ public class ShelfScene extends Scene {
 
         manualSave.setOnAction(event -> saveData());
         quit.setOnAction(event -> Platform.exit());
-        customerQuit.setOnAction(event -> Platform.exit());
 
         boolean isManager = currentUser.getUserType().equals(User.MANAGER);
         boolean isClerk = currentUser.getUserType().equals(User.CLERK);
@@ -169,6 +167,8 @@ public class ShelfScene extends Scene {
             root.setBottom(buttons);
         } else if (isCustomer) {
             root.setBottom(customerButtons);
+        } else {
+        	root.setBottom(quit);
         }
 
         refreshShelf();

@@ -5,6 +5,7 @@ import application.ProductContainer;
 import application.ProductsFileHandler;
 import application.TransactionContainer;
 import application.User;
+import application.UserContainer;
 import javafx.stage.Stage;
 
 /**
@@ -26,6 +27,7 @@ public class SceneManager {
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
+    private UserContainer userData;
 
     private FarmSystem farmSystem;
 
@@ -41,6 +43,7 @@ public class SceneManager {
      * @param inventoryData the products and stock in the inventory
      * @param shelfData the products and stock on the shelf
      * @param transactionData every sale transaction
+     * @param userData every user and their details
      * @param currentUser the user who is logged in
      */
     public SceneManager(
@@ -49,6 +52,7 @@ public class SceneManager {
             ProductContainer inventoryData,
             ProductContainer shelfData,
             TransactionContainer transactionData,
+            UserContainer userData,
             User currentUser) {
 
         this.stage = stage;
@@ -56,6 +60,7 @@ public class SceneManager {
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
         this.transactionData = transactionData; // must be set before the shelf scene is created
+        this.userData = userData;
         this.currentUser = currentUser;
 
         // one shared farm system for all the sales actions
@@ -159,6 +164,20 @@ public class SceneManager {
 
         stage.setScene(scene);
         stage.setTitle("Database");
+    }
+    
+    /** opens the log in, a new scene is created each time */
+    public void showLogin() {
+
+        LoginScene scene = new LoginScene(
+            stage,
+            this,
+            userData,
+            currentUser
+        );
+
+        stage.setScene(scene);
+        stage.setTitle("Log In");
     }
 
     /** opens the customer's own requests, does nothing if the user is not a customer */
