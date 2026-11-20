@@ -137,6 +137,8 @@ public class SceneManager {
     /** opens the inventory, a new scene is created each time */
     public void showInventory() {
 
+    	if (!isStaff()) return; // just in case
+    	
         InventoryScene scene = new InventoryScene(
             stage,
             database,
@@ -153,6 +155,8 @@ public class SceneManager {
     /** opens the database, a new scene is created each time */
     public void showDatabase() {
 
+    	if (!currentUser.getUserType().equals(User.MANAGER)) return; // just in case
+    	
         DatabaseScene scene = new DatabaseScene(
             stage,
             database,
