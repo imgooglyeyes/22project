@@ -3,12 +3,12 @@ package ui;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import application.ProductsFileHandler;
 import application.SaleTransaction;
 import application.User;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,11 +18,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-// screen where a clerk sees only transaction requests that they took action with
-// a manager can also use this screen to look into the history of other clerks
-// it is read only, managers and clerks can't confirm or void anything from here
-// the scene is created again every time it opens, so the list is always up to date
 
+/**
+ * screen where a clerk sees only transaction requests that they took action with.
+ * <p>a manager can also use this screen to look into the history of other clerks.
+ * 
+ * <p>it is read only, managers and clerks can't confirm or void anything from here.
+ * <p>the scene is created again every time it opens, so the list is always up to date.
+ *
+ * @author Jian Carranza
+ * @version 1.0
+ * @see SceneManager
+ */
 public class HistoryScene extends Scene {
 
     private VBox transactionRows = new VBox(5);
@@ -65,7 +72,7 @@ public class HistoryScene extends Scene {
         });
         quit.setOnAction(event -> Platform.exit());
 
-        root.setTop(manager.createHeader("My Requests"));
+        root.setTop(manager.createHeader("History"));
         root.setCenter(scrollPane);
         root.setBottom(new HBox(10, logout, quit));
 
