@@ -48,17 +48,31 @@ public class Main extends Application {
                 User.MANAGER
             ));
         hardcodedusers.add(new User(
-                "MainClerk",
+                "Clerk1",
                 "coughup",
                 "Angel",
                 "Starr",
                 User.CLERK
             ));
         hardcodedusers.add(new User(
-                "MainCustomer",
+                "Clerk2",
+                "sl9",
+                "Jake",
+                "Marshall",
+                User.CLERK
+            ));
+        hardcodedusers.add(new User(
+                "Customer1",
                 "yourhonor",
                 "Beard",
                 "Gentleman",
+                User.CUSTOMER
+            ));
+        hardcodedusers.add(new User(
+                "Customer2",
+                "7777777",
+                "Damon",
+                "Gant",
                 User.CUSTOMER
             ));
         hardcodedusers.add(new User(

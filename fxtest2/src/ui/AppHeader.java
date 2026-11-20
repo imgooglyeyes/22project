@@ -19,6 +19,7 @@ public class AppHeader extends HBox {
         Button shelfButton = new Button("Shelf");
         Button inventoryButton = new Button("Inventory");
         Button transactionsButton = new Button("Transactions");
+        Button historyButton = new Button("History");
         Button cashButton = new Button("Cash");
         Button databaseButton = new Button("Database");
         Button loginButton = new Button("Log In");
@@ -31,6 +32,7 @@ public class AppHeader extends HBox {
         signUpButton.setOnAction(e -> System.out.println("To be implemented!"));
         inventoryButton.setOnAction(e -> manager.showInventory());
         transactionsButton.setOnAction(e -> manager.showTransactions());
+        historyButton.setOnAction(e -> manager.showHistory(user)); // by default, it should show the currentUser's history
         cashButton.setOnAction(e -> manager.showCash());
         databaseButton.setOnAction(e -> manager.showDatabase());
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
@@ -41,6 +43,7 @@ public class AppHeader extends HBox {
         setActive(signUpButton, currentScene.equals("Sign Up"));
         setActive(inventoryButton, currentScene.equals("Inventory"));
         setActive(transactionsButton, currentScene.equals("Transactions"));
+        setActive(historyButton, currentScene.equals("History"));
         setActive(cashButton, currentScene.equals("Cash"));
         setActive(databaseButton, currentScene.equals("Database"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
@@ -54,12 +57,13 @@ public class AppHeader extends HBox {
         getChildren().add(title);
         getChildren().add(shelfButton);
 
-        // customers can see their own requests
+        
         if (isGuest) {
             getChildren().add(loginButton);
             getChildren().add(signUpButton);
         }
         
+        // customers can see their own requests
         if (isCustomer) {
             getChildren().add(myRequestsButton);
         }
@@ -67,6 +71,13 @@ public class AppHeader extends HBox {
         if (isManager || isClerk) {
             getChildren().add(inventoryButton);
             getChildren().add(transactionsButton);
+        }
+        
+        if (isClerk) {
+            getChildren().add(historyButton);
+        }
+        
+        if (isManager || isClerk) {
             getChildren().add(cashButton);
         }
 

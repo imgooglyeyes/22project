@@ -201,6 +201,17 @@ public class SceneManager {
         stage.setScene(scene);
         stage.setTitle("Transactions");
     }
+    
+    /** opens all transactions that the target user has interacted with, does nothing if the user is not a clerk or manager */
+    public void showHistory(User targetUser) {
+
+        if (!isStaff()) return;
+
+        HistoryScene scene = new HistoryScene(stage, this, currentUser, targetUser);
+
+        stage.setScene(scene);
+        stage.setTitle("Transactions History");
+    }
 
     /** opens the cash balance, does nothing if the user is not a clerk or manager */
     public void showCash() {
