@@ -26,15 +26,16 @@
 - [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
 
 ### in progress (wip)
-- [ ] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
-- [ ] login, sign up, manager approval, customer role
+- [x] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
+- [x] login, sign up, customer role
 - [ ] product "made from" field
 
 ### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
+- [ ] manager approval of sign ups
 
 ### not started
-- [ ] sale history and clerk list
+- [x] sale history and clerk list
 - [ ] dashboards
 - [ ] shelf filter by made from harvest
 
@@ -64,12 +65,12 @@
 - [ ] `AddProductWindow` uses a `HashMap` of names, and the list order is random
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
-- [ ] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
-- [ ] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
+- [x] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
+- [x] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
 - [ ] no confirm before "delete all instances"
 - [x] `templatedata/` is unused, use it as the "reset to default data" source (wip)
 - [ ] stock logic lives inside the windows, move it so screens and windows only call it
-- [ ] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
+- [x] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
 ---
 
@@ -111,24 +112,21 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
 - [ ] extend `application/FarmSystem.java` (it already has the sales methods) with `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
 - [ ] windows call `FarmSystem` instead of touching containers directly
-- [ ] tighten role checks in `SceneManager` and the scene buttons (use section 3)
+- [x] tighten role checks in `SceneManager` and the scene buttons (use section 3)
   - phase 3 and phase 5 reuse these checks, do this before the dashboard
 
 ### phase 2: richer products
 - [ ] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
 - [ ] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
 - [ ] show made-from on the shelf rows
-<<<<<<< HEAD
-- [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set
-=======
 - [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
->>>>>>> branch 'master' of https://github.com/imgooglyeyes/22project.git
 
 ### phase 3: accounts
 - [ ] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)
-- [ ] `LoginScene` and `SignUpScene` (customer active at once, clerk / manager pending) (wip)
-- [ ] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default (wip)
-- [ ] header: login / logout buttons (wip)
+- [x] `LoginScene`
+- [ ] `SignUpScene` (customer active at once, clerk / manager pending) (wip)
+- [x] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default (wip)
+- [x] header: login / logout buttons (wip)
 - [ ] `SignUpRequestsScene` for managers: approve or reject pending users (wip)
 
 ### phase 4: sales and cash
@@ -160,9 +158,9 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] `DashboardScene` with tiles by role
   - needs the phase 1 role checks, add a sign-up requests tile once `SignUpRequestsScene` exists
   - edits `SceneManager` and `AppHeader`, same files as phase 1 and phase 3
-- [ ] `SaleHistoryScene`: transactions confirmed or voided by one clerk
+- [x] `SaleHistoryScene`: transactions confirmed or voided by one clerk
   - only reads transactions, no phase 1 to 3 needed, uses the current username for a clerk's own history
-- [ ] `ClerkListScene` for the manager, opens a clerk's history
+- [x] `ClerkListScene` for the manager, opens a clerk's history
   - reads the clerks from `users.txt` (phase 3)
 - [ ] login lands on the dashboard for the role
   - needs the phase 3 login
