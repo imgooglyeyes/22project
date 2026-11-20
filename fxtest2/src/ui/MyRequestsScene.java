@@ -27,7 +27,7 @@ public class MyRequestsScene extends Scene {
 
     public MyRequestsScene(Stage stage, SceneManager manager, User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);
@@ -50,11 +50,17 @@ public class MyRequestsScene extends Scene {
         scrollPane.setFitToWidth(true);
 
         Button quit = new Button("Quit");
+        Button logout = new Button("Log Out");
+        
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
         quit.setOnAction(event -> Platform.exit());
 
         root.setTop(manager.createHeader("My Requests"));
         root.setCenter(scrollPane);
-        root.setBottom(new HBox(10, quit));
+        root.setBottom(new HBox(10, logout, quit));
 
         // loads this customer's requests
         loadRequests(manager, currentUser);

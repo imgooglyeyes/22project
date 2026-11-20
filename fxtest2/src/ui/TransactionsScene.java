@@ -75,6 +75,7 @@ public class TransactionsScene extends Scene {
         // creates the buttons
         Button confirmButton = new Button("Confirm");
         Button voidButton = new Button("Void");
+        Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
 
         // confirm only works on requested transactions
@@ -91,11 +92,15 @@ public class TransactionsScene extends Scene {
 
         confirmButton.setOnAction(event -> confirmSelected());
         voidButton.setOnAction(event -> voidSelected());
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
         quit.setOnAction(event -> Platform.exit());
 
         root.setTop(manager.createHeader("Transactions"));
         root.setCenter(scrollPane);
-        root.setBottom(new HBox(10, confirmButton, voidButton, quit));
+        root.setBottom(new HBox(10, confirmButton, voidButton, logout, quit));
 
         // loads the transactions
         refreshTransactions();
