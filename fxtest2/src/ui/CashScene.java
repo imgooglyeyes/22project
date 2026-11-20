@@ -46,7 +46,7 @@ public class CashScene extends Scene {
 
     public CashScene(Stage stage, SceneManager manager, User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);

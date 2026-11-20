@@ -21,6 +21,7 @@ public class AppHeader extends HBox {
         Button transactionsButton = new Button("Transactions");
         Button historyButton = new Button("History");
         Button cashButton = new Button("Cash");
+        Button staffListButton = new Button("Staff List");
         Button databaseButton = new Button("Database");
         Button loginButton = new Button("Log In");
         Button signUpButton = new Button("Sign Up");
@@ -35,6 +36,7 @@ public class AppHeader extends HBox {
         historyButton.setOnAction(e -> manager.showHistory(user)); // by default, it should show the currentUser's history
         cashButton.setOnAction(e -> manager.showCash());
         databaseButton.setOnAction(e -> manager.showDatabase());
+        staffListButton.setOnAction(e -> manager.showStaffList());
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
         // highlights the current scene
@@ -46,6 +48,7 @@ public class AppHeader extends HBox {
         setActive(historyButton, currentScene.equals("History"));
         setActive(cashButton, currentScene.equals("Cash"));
         setActive(databaseButton, currentScene.equals("Database"));
+        setActive(staffListButton, currentScene.equals("Staff List"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
 
         // checks which buttons the user can access
@@ -76,6 +79,7 @@ public class AppHeader extends HBox {
         }
 
         if (isManager) {
+        	getChildren().add(staffListButton);
             getChildren().add(databaseButton);
         }
     }

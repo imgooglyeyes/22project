@@ -36,7 +36,7 @@ public class LoginScene extends Scene {
             UserContainer userData,
             User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
         
         // loads the shared stylesheet
         Styles.apply(this);
