@@ -94,18 +94,11 @@ public class ShelfScene extends Scene {
         Button addProduct = new Button("Add Product From Inventory");
         Button moveStocks = new Button("Move Stocks To Inventory");
         Button manualSave = new Button("Manual Save");
+        Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
-
-        HBox buttons = new HBox(10,
-            addProduct,
-            moveStocks,
-            manualSave,
-            quit
-        );
 
         // customers get their own buttons, they can only request to buy and quit
         Button requestToBuy = new Button("Request To Buy");
-        HBox customerButtons = new HBox(10, requestToBuy, quit);
 
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
@@ -155,6 +148,10 @@ public class ShelfScene extends Scene {
         });
 
         manualSave.setOnAction(event -> saveData());
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
         quit.setOnAction(event -> Platform.exit());
 
         boolean isManager = currentUser.getUserType().equals(User.MANAGER);
@@ -164,10 +161,10 @@ public class ShelfScene extends Scene {
         root.setTop(manager.createHeader("Shelf"));
         root.setCenter(scrollPane);
         if (isManager || isClerk) {
-            root.setBottom(buttons);
+            root.setBottom(new HBox(10, addProduct, moveStocks, manualSave, logout, quit));
         } else if (isCustomer) {
-            root.setBottom(customerButtons);
-        } else {
+            root.setBottom(new HBox(10, requestToBuy, logout, quit));
+        } else { // guest
         	root.setBottom(quit);
         }
 

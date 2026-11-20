@@ -33,8 +33,6 @@ public class SceneManager {
 
     private User currentUser;
 
-    private ShelfScene shelfScene;
-
     /**
      * creates the scene manager and the shelf scene
      *
@@ -66,15 +64,7 @@ public class SceneManager {
         // one shared farm system for all the sales actions
         this.farmSystem = new FarmSystem(database, shelfData, transactionData);
 
-        // creates the shelf scene
-        shelfScene = new ShelfScene(
-            stage,
-            this,
-            database,
-            inventoryData,
-            shelfData,
-            currentUser
-        );
+        showShelf(); // initial screen
     }
 
     /** @return every sale transaction, scenes read and save from it */
@@ -127,9 +117,19 @@ public class SceneManager {
         return new AppHeader(this, currentScene, currentUser);
     }
 
-    /** opens the shelf, it redraws first so it shows the latest stock */
+    /** opens the shelf, a new scene us created each time*/
     public void showShelf() {
-        shelfScene.refreshShelf();
+    	
+        ShelfScene shelfScene = new ShelfScene(
+            stage,
+            this,
+            database,
+            inventoryData,
+            shelfData,
+            currentUser
+        );
+    	
+    	//shelfScene.refreshShelf();
         stage.setScene(shelfScene);
         stage.setTitle("The Shelf");
     }
@@ -207,7 +207,7 @@ public class SceneManager {
 
         if (!isStaff()) return;
 
-        CashScene scene = new CashScene(stage, this);
+        CashScene scene = new CashScene(stage, this, currentUser);
 
         stage.setScene(scene);
         stage.setTitle("Cash");
