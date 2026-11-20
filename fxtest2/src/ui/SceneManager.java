@@ -5,6 +5,7 @@ import application.ProductContainer;
 import application.ProductsFileHandler;
 import application.TransactionContainer;
 import application.User;
+import application.UserContainer;
 import javafx.stage.Stage;
 
 /**
@@ -26,21 +27,21 @@ public class SceneManager {
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
+    private UserContainer userData;
 
     private FarmSystem farmSystem;
 
     private User currentUser;
 
-    private ShelfScene shelfScene;
-
     /**
-     * creates the scene manager and the shelf scene
+     * creates the scene manager and its shared data
      *
      * @param stage the main window
      * @param database every product and its details
      * @param inventoryData the products and stock in the inventory
      * @param shelfData the products and stock on the shelf
      * @param transactionData every sale transaction
+     * @param userData every user and their details
      * @param currentUser the user who is logged in
      */
     public SceneManager(
@@ -49,27 +50,18 @@ public class SceneManager {
             ProductContainer inventoryData,
             ProductContainer shelfData,
             TransactionContainer transactionData,
+            UserContainer userData,
             User currentUser) {
 
         this.stage = stage;
         this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
-        this.transactionData = transactionData; // must be set before the shelf scene is created
+        this.transactionData = transactionData;
+        this.userData = userData;
         this.currentUser = currentUser;
 
-        // one shared farm system for all the sales actions
         this.farmSystem = new FarmSystem(database, shelfData, transactionData);
-
-        // creates the shelf scene
-        shelfScene = new ShelfScene(
-            stage,
-            this,
-            database,
-            inventoryData,
-            shelfData,
-            currentUser
-        );
     }
 
     /** @return every sale transaction, scenes read and save from it */
@@ -81,13 +73,13 @@ public class SceneManager {
     public FarmSystem getFarmSystem() {
         return farmSystem;
     }
-    
+
     /**
      * saves the database, inventory and shelf
      * <p>used by AddProductWindow and MoveProductWindow because they do not know what containers they work with
      */
     public void saveProductContainers() {
-    	ProductsFileHandler.saveAll(database, inventoryData, shelfData);
+        ProductsFileHandler.saveAll(database, inventoryData, shelfData);
     }
 
     /**
@@ -99,11 +91,10 @@ public class SceneManager {
      * @since 1.2
      */
     public boolean resetToDefaults() {
-        if (!currentUser.getUserType().equals(User.MANAGER)) return false; // managers only
+        if (!currentUser.getUserType().equals(User.MANAGER)) return false;
 
-        if (!ProductsFileHandler.resetToDefaults()) return false; // copying the files failed
+        if (!ProductsFileHandler.resetToDefaults()) return false;
 
-        // load the fresh files, then copy them into the containers the scenes already use
         ProductContainer[] fresh = ProductsFileHandler.loadAll();
         database.replaceWith(fresh[0]);
         inventoryData.replaceWith(fresh[1]);
@@ -122,15 +113,24 @@ public class SceneManager {
         return new AppHeader(this, currentScene, currentUser);
     }
 
-    /** opens the shelf, it redraws first so it shows the latest stock */
+    /** opens the shelf */
     public void showShelf() {
-        shelfScene.refreshShelf();
-        stage.setScene(shelfScene);
+        ShelfScene scene = new ShelfScene(
+            stage,
+            this,
+            database,
+            inventoryData,
+            shelfData,
+            currentUser
+        );
+
+        stage.setScene(scene);
         stage.setTitle("The Shelf");
     }
 
-    /** opens the inventory, a new scene is created each time */
+    /** opens the inventory, doing nothing unless the current user is staff */
     public void showInventory() {
+        if (!isStaff()) return;
 
         InventoryScene scene = new InventoryScene(
             stage,
@@ -145,8 +145,9 @@ public class SceneManager {
         stage.setTitle("Inventory");
     }
 
-    /** opens the database, a new scene is created each time */
+    /** opens the database, doing nothing unless the current user is a manager */
     public void showDatabase() {
+        if (!currentUser.getUserType().equals(User.MANAGER)) return;
 
         DatabaseScene scene = new DatabaseScene(
             stage,
@@ -161,35 +162,54 @@ public class SceneManager {
         stage.setTitle("Database");
     }
 
-    /** opens the customer's own requests, does nothing if the user is not a customer */
-    public void showMyRequests() {
+    /** opens the login scene */
+    public void showLogin() {
+        LoginScene scene = new LoginScene(stage, this, userData, currentUser);
+        stage.setScene(scene);
+        stage.setTitle("Log In");
+    }
 
+    /** opens the customer's own requests, doing nothing unless the user is a customer */
+    public void showMyRequests() {
         if (!currentUser.getUserType().equals(User.CUSTOMER)) return;
 
         MyRequestsScene scene = new MyRequestsScene(stage, this, currentUser);
-
         stage.setScene(scene);
         stage.setTitle("My Requests");
     }
 
-    /** opens all transactions, does nothing if the user is not a clerk or manager */
+    /** opens all transactions, doing nothing unless the current user is staff */
     public void showTransactions() {
-
         if (!isStaff()) return;
 
         TransactionsScene scene = new TransactionsScene(stage, this, currentUser);
-
         stage.setScene(scene);
         stage.setTitle("Transactions");
     }
 
-    /** opens the cash balance, does nothing if the user is not a clerk or manager */
-    public void showCash() {
-
+    /** opens the target user's transaction history, doing nothing unless the current user is staff */
+    public void showHistory(User targetUser) {
         if (!isStaff()) return;
 
-        CashScene scene = new CashScene(stage, this);
+        HistoryScene scene = new HistoryScene(stage, this, currentUser, targetUser);
+        stage.setScene(scene);
+        stage.setTitle("Transactions History");
+    }
 
+    /** opens the staff list, doing nothing unless the current user is a manager */
+    public void showStaffList() {
+        if (!currentUser.getUserType().equals(User.MANAGER)) return;
+
+        StaffListScene scene = new StaffListScene(stage, this, userData, currentUser);
+        stage.setScene(scene);
+        stage.setTitle("Staff List");
+    }
+
+    /** opens the cash balance, doing nothing unless the current user is staff */
+    public void showCash() {
+        if (!isStaff()) return;
+
+        CashScene scene = new CashScene(stage, this, currentUser);
         stage.setScene(scene);
         stage.setTitle("Cash");
     }

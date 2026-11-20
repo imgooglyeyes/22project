@@ -66,7 +66,7 @@ public class ShelfScene extends Scene {
             ProductContainer shelfData,
             User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);
@@ -82,7 +82,7 @@ public class ShelfScene extends Scene {
         HBox header = new HBox(10);
         header.getChildren().addAll(
             createLabel("Name", 150),
-            createLabel("Description", 400),
+            createLabel("Description", 600),
             createLabel("Price", 100),
             createLabel("Stock", 80)
         );
@@ -94,19 +94,11 @@ public class ShelfScene extends Scene {
         Button addProduct = new Button("Add Product From Inventory");
         Button moveStocks = new Button("Move Stocks To Inventory");
         Button manualSave = new Button("Manual Save");
+        Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
-
-        HBox buttons = new HBox(10,
-            addProduct,
-            moveStocks,
-            manualSave,
-            quit
-        );
 
         // customers get their own buttons, they can only request to buy and quit
         Button requestToBuy = new Button("Request To Buy");
-        Button customerQuit = new Button("Quit");
-        HBox customerButtons = new HBox(10, requestToBuy, customerQuit);
 
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
@@ -156,8 +148,11 @@ public class ShelfScene extends Scene {
         });
 
         manualSave.setOnAction(event -> saveData());
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
         quit.setOnAction(event -> Platform.exit());
-        customerQuit.setOnAction(event -> Platform.exit());
 
         boolean isManager = currentUser.getUserType().equals(User.MANAGER);
         boolean isClerk = currentUser.getUserType().equals(User.CLERK);
@@ -166,9 +161,11 @@ public class ShelfScene extends Scene {
         root.setTop(manager.createHeader("Shelf"));
         root.setCenter(scrollPane);
         if (isManager || isClerk) {
-            root.setBottom(buttons);
+            root.setBottom(new HBox(10, addProduct, moveStocks, manualSave, logout, quit));
         } else if (isCustomer) {
-            root.setBottom(customerButtons);
+            root.setBottom(new HBox(10, requestToBuy, logout, quit));
+        } else { // guest
+        	root.setBottom(quit);
         }
 
         refreshShelf();
@@ -195,7 +192,7 @@ public class ShelfScene extends Scene {
     private void addProductRow(Product product) {
         HBox row = new HBox(10);
         Label name = createLabel(product.getName(), 150);
-        Label description = createLabel(product.getDescription(), 400);
+        Label description = createLabel(product.getDescription(), 600);
         Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         Label stock = createLabel(String.valueOf(product.getStock()), 80);
 

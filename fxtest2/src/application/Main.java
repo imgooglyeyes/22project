@@ -34,16 +34,19 @@ public class Main extends Application {
 
         // loads the saved transactions (empty if the file doesn't exist yet)
         TransactionContainer transactionData = TransactionFilesHandler.load();
-
-        // temporary for testing
+       
+        // loads the saved user data
+        UserContainer userData = UsersFileHandler.load();
+        
+        // always start as a guest
         User currentUser = new User(
-            "customer1",
-            "password",
-            "Billy Bob",
-            "Jones",
-            User.MANAGER
-        );
-
+        		"guest",
+        		"",
+        		"guest",
+        		"",
+        		User.GUEST
+        	);
+        
         // creates the scene manager
         SceneManager manager = new SceneManager(
             stage,
@@ -51,6 +54,7 @@ public class Main extends Application {
             inventoryData,
             shelfData,
             transactionData,
+            userData,
             currentUser
         );
 

@@ -45,7 +45,7 @@ public class TestLoginWindow {
         this.welcomeText = new Label();
         welcomeText.setStyle("-fx-font-size: 20;");
         
-        login.disableProperty().bind(usernameField.invalid.or(passwordField.empty));
+        login.disableProperty().bind(usernameField.invalid.or(passwordField.invalid));
         
         this.buttonsHBox = new HBox(10, exit, login);
         this.loginArea = new VBox(10, usernameField, passwordField, buttonsHBox); // creates a vbox with a 10px spacing with these as children

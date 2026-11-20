@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import application.SaleTransaction;
-
+import application.User;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -44,9 +44,9 @@ public class CashScene extends Scene {
 
     private VBox entryRows = new VBox(5);
 
-    public CashScene(Stage stage, SceneManager manager) {
+    public CashScene(Stage stage, SceneManager manager, User currentUser) {
 
-        super(new BorderPane(), 900, 500);
+        super(new BorderPane(), 1000, 500);
 
         // loads the shared stylesheet
         Styles.apply(this);
@@ -94,11 +94,16 @@ public class CashScene extends Scene {
         VBox center = new VBox(10, balanceLabel, scrollPane);
 
         Button quit = new Button("Quit");
+        Button logout = new Button("Log Out");
         quit.setOnAction(event -> Platform.exit());
+        logout.setOnAction(event -> {
+        	currentUser.logOut();
+        	manager.showShelf();
+        });
 
         root.setTop(manager.createHeader("Cash"));
         root.setCenter(center);
-        root.setBottom(new HBox(10, quit));
+        root.setBottom(new HBox(10, logout, quit));
     }
 
     // works out the cash entries from the transactions, newest first
