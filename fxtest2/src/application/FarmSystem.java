@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * a made product can't be the source of another product, so the chain is never deeper than one level
  *
  * @author Shawn Alfred Padilla
- * @version 1.4
+ * @version 1.5
  * @see SaleTransaction
  * @see ProductsFileHandler
  */
@@ -100,6 +100,22 @@ public class FarmSystem {
             if (p.getMadeFrom() != null && p.getMadeFrom() == id) return true;
         }
         return false;
+    }
+
+    /**
+     * gets the name of the product a product is made from
+     * <p>screens use this to show made-from, the source is looked up in the database
+     * because it may not be in the inventory or on the shelf
+     *
+     * @param product the product to look at, can be null
+     * @return the name of the source product, or null if the product is a harvest item or the source is not found
+     * @since 1.5
+     */
+    public String getMadeFromName(Product product) {
+        if (product == null || product.getMadeFrom() == null) return null;
+
+        Product source = database.getProductById(product.getMadeFrom());
+        return source == null ? null : source.getName();
     }
 
     /**
