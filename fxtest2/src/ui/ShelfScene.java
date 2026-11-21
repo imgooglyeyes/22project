@@ -1,5 +1,6 @@
 package ui;
 
+import application.FarmSystem;
 import application.Product;
 import application.ProductContainer;
 import application.TransactionContainer;
@@ -27,21 +28,30 @@ import javafx.stage.Stage;
 /**
  * the main screen, it shows the products on the shelf
  *
+ * <p>each row shows the name, description, where the product comes from, price and stock.
+ * the made-from column shows the name of the harvest product it is made from,
+ * or "Harvest item" if it is not made from anything
+ *
  * <p>which buttons appear follows the permission table in SceneManager:
  * clerks and managers can add stock from the inventory and save by hand, only managers can move
  * stock back to the inventory, and only customers can send a request to buy.
  * every stock change goes through FarmSystem, this screen only shows the shelf
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.3
+ * @version 1.4
  * @see SceneManager
  * @see application.FarmSystem
  */
 public class ShelfScene extends Scene {
 
+    /** text shown in the made-from column for a product that is not made from anything */
+    private static final String HARVEST_TEXT = "Harvest item";
+
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
+    /** used to look up the name of the source product of a made product */
+    private FarmSystem farmSystem;
 
     private ObjectProperty<Product> selectedProduct =
             new SimpleObjectProperty<>();
@@ -73,6 +83,7 @@ public class ShelfScene extends Scene {
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
         this.transactionData = manager.getTransactions(); // used by manual save
+        this.farmSystem = manager.getFarmSystem();
 
         BorderPane root = (BorderPane) getRoot();
         root.setPadding(new Insets(12));
@@ -80,7 +91,8 @@ public class ShelfScene extends Scene {
         HBox header = new HBox(10);
         header.getChildren().addAll(
             createLabel("Name", 150),
-            createLabel("Description", 600),
+            createLabel("Description", 360),
+            createLabel("Made From", 200),
             createLabel("Price", 100),
             createLabel("Stock", 80)
         );
@@ -187,6 +199,21 @@ public class ShelfScene extends Scene {
     }
 
     /**
+     * gets the text for the made-from column of a product
+     * <p>a made product whose source can't be found shows "Unknown" instead of crashing
+     *
+     * @param product the shelf product to describe
+     * @return the name of the source product, "Harvest item" if it has none, or "Unknown" if the source is missing
+     * @since 1.4
+     */
+    private String madeFromText(Product product) {
+        if (!product.isMade()) return HARVEST_TEXT;
+
+        String sourceName = farmSystem.getMadeFromName(product);
+        return sourceName == null ? "Unknown" : sourceName;
+    }
+
+    /**
      * creates a row for one product, clicking the row selects the product
      *
      * @param product the shelf product to show
@@ -194,11 +221,12 @@ public class ShelfScene extends Scene {
     private void addProductRow(Product product) {
         HBox row = new HBox(10);
         Label name = createLabel(product.getName(), 150);
-        Label description = createLabel(product.getDescription(), 600);
+        Label description = createLabel(product.getDescription(), 360);
+        Label madeFrom = createLabel(madeFromText(product), 200);
         Label price = createLabel(product.getFormattedPrice(), 100); // formatted as ₱0.00
         Label stock = createLabel(String.valueOf(product.getStock()), 80);
 
-        row.getChildren().addAll(name, description, price, stock);
+        row.getChildren().addAll(name, description, madeFrom, price, stock);
         row.setPadding(new Insets(8));
         row.setStyle("-fx-border-color: lightgray;");
 
