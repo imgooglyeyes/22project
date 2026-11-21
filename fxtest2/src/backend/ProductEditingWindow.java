@@ -8,29 +8,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui.LabelledTextField;
+import ui.MadeFromPicker;
 import ui.Styles;
 
 /**
- * popup window to edit the name, description and price of a product
+ * popup window to edit the name, description, price and source of a product
  *
- * <p>the confirm button stays disabled while a field is invalid or the name belongs to
+ * <p>the made-from picker starts on the current source and does not list the product itself.
+ * it is locked when other products are made from this one, because that product has to stay a harvest item.
+ * the confirm button stays disabled while a field is invalid or the name belongs to
  * another product. FarmSystem checks everything again, updates every copy of the product
  * and does the saving
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
- * @see FarmSystem#editProduct(Product, String, String, double)
+ * @version 1.3
+ * @see MadeFromPicker
+ * @see FarmSystem#editProduct(Product, String, String, double, Integer)
  * @see FarmSystem#isNameTaken(String, Integer)
  */
 public class ProductEditingWindow {
 	private LabelledTextField nameField;
 	private LabelledTextField descriptionField;
 	private LabelledTextField priceField;
+	private MadeFromPicker madeFromPicker;
 
 	private Button confirm;
 	private Button exit;
@@ -59,6 +65,16 @@ public class ProductEditingWindow {
 		descriptionField.setText(targetProduct.getDescription());
 		priceField.setText(Double.toString(targetProduct.getPrice()));
 
+		// the product itself is left out of the list, it can't be made from itself
+		this.madeFromPicker = new MadeFromPicker(
+			farmSystem.getHarvestProducts(targetProduct.getId()),
+			targetProduct.getMadeFrom()
+		);
+
+		// a product that others are made from has to stay a harvest item, so the picker is locked
+		boolean hasMadeProducts = farmSystem.isSourceOfOthers(targetProduct.getId());
+		madeFromPicker.setDisable(hasMadeProducts);
+
 		// true while the name belongs to another product, the product's own name is fine
 		BooleanBinding invalidName = Bindings.createBooleanBinding(
 			() -> farmSystem.isNameTaken(this.nameField.getTextField().getText(), targetProduct.getId()),
@@ -69,7 +85,15 @@ public class ProductEditingWindow {
 		confirm.disableProperty().bind(nameField.invalid.or(descriptionField.invalid).or(priceField.invalid).or(priceField.NaN).or(invalidName));
 
 		this.buttonsHBox = new HBox(10, exit, confirm);
-		this.vbox = new VBox(10, nameField, descriptionField, priceField, buttonsHBox); // creates a vbox with a 10px spacing with these as children
+		this.vbox = new VBox(10, nameField, descriptionField, priceField, madeFromPicker); // creates a vbox with a 10px spacing with these as children
+
+		if (hasMadeProducts) { // tells the user why the picker is locked
+			Label lockedNote = new Label("Other products are made from this one, so it stays a harvest item");
+			lockedNote.setWrapText(true);
+			vbox.getChildren().add(lockedNote);
+		}
+
+		vbox.getChildren().add(buttonsHBox);
 		vbox.setStyle("-fx-padding: 20;");
 
 		this.editScene = new Scene(vbox, 500, 350);
@@ -86,7 +110,8 @@ public class ProductEditingWindow {
 				targetProduct,
 				nameField.getText(),
 				descriptionField.getText(),
-				Double.parseDouble(priceField.getText()) // safe, the button is disabled when the price is not a number
+				Double.parseDouble(priceField.getText()), // safe, the button is disabled when the price is not a number
+				madeFromPicker.getSelectedId() // null means a harvest item
 			);
 
 			if (error != null) {
@@ -109,4 +134,4 @@ public class ProductEditingWindow {
 		// make the new window actually appear
 		editWindow.show();
 	}
-}
+}	
