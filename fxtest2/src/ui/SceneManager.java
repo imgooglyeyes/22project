@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  * FarmSystem does not check roles, it trusts the screens
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.5
+ * @version 1.6
  * @see FarmSystem
  * @see ProductsFileHandler
  */
@@ -82,6 +82,11 @@ public class SceneManager {
 
     // ---------- role checks ----------
 
+    /** @return true if the current user is a guest, someone who is not logged in */
+    private boolean isGuest() {
+        return currentUser.getUserType().equals(User.GUEST);
+    }
+
     /** @return true if the current user is a manager */
     private boolean isManager() {
         return currentUser.getUserType().equals(User.MANAGER);
@@ -100,6 +105,16 @@ public class SceneManager {
     /** @return true if the current user is a clerk or a manager */
     private boolean isStaff() {
         return isManager() || isClerk();
+    }
+
+    /**
+     * sign up, only guests can create an account, someone who is logged in has one already
+     *
+     * @return true if the current user can open the sign up screen
+     * @since 1.6
+     */
+    public boolean canSignUp() {
+        return isGuest();
     }
 
     /**
@@ -235,7 +250,7 @@ public class SceneManager {
 
     /**
      * approve sign-ups, only managers
-     * <p>sign-up comes in phase 3, nothing calls this yet
+     * <p>the screen for this comes later in phase 3, nothing calls this yet
      *
      * @return true if the current user can approve new accounts
      * @since 1.5
@@ -337,6 +352,19 @@ public class SceneManager {
         LoginScene scene = new LoginScene(stage, this, userData, currentUser);
         stage.setScene(scene);
         stage.setTitle("Log In");
+    }
+
+    /**
+     * opens the sign up scene, doing nothing unless the current user is a guest
+     *
+     * @since 1.6
+     */
+    public void showSignUp() {
+        if (!canSignUp()) return;
+
+        SignUpScene scene = new SignUpScene(stage, this, userData);
+        stage.setScene(scene);
+        stage.setTitle("Sign Up");
     }
 
     /** opens the customer's own requests, doing nothing unless the user is a customer */

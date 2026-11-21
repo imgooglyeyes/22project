@@ -122,9 +122,9 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
 
 ### phase 3: accounts
-- [ ] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)
+- [x] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)
 - [x] `LoginScene`
-- [ ] `SignUpScene` (customer active at once, clerk / manager pending) (wip)
+- [x] `SignUpScene` (customer active at once, clerk / manager pending) (wip)
 - [x] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default (wip)
 - [x] header: login / logout buttons (wip)
 - [ ] `SignUpRequestsScene` for managers: approve or reject pending users (wip)

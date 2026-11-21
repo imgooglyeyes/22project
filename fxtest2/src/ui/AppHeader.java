@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox;
  * the button of the open scene is highlighted and disabled
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @see SceneManager
  */
 public class AppHeader extends HBox {
@@ -47,7 +47,7 @@ public class AppHeader extends HBox {
         // opens the selected scene
         shelfButton.setOnAction(e -> manager.showShelf());
         loginButton.setOnAction(e -> manager.showLogin());
-        signUpButton.setOnAction(e -> System.out.println("To be implemented!"));
+        signUpButton.setOnAction(e -> manager.showSignUp());
         inventoryButton.setOnAction(e -> manager.showInventory());
         transactionsButton.setOnAction(e -> manager.showTransactions());
         historyButton.setOnAction(e -> manager.showHistory(user)); // by default, it should show the currentUser's history
