@@ -1,7 +1,7 @@
 package application;
 
 /**
- * holds the business rules for sales and stock moves, screens call these instead of changing stock themselves
+ * holds the business rules for products, stock moves and sales, screens call these instead of changing data themselves
  *
  * <p>each method returns null when it worked, or a short error message when it didn't.
  * role checks are not done here, the screens decide who sees which button.
@@ -11,7 +11,7 @@ package application;
  * addToInventory and addToShelf move stock forward, moveToInventory moves it back
  *
  * @author Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @see SaleTransaction
  * @see ProductsFileHandler
  */
@@ -42,6 +42,103 @@ public class FarmSystem {
         this.transactionData = transactionData;
     }
 
+    // ---------- product details ----------
+
+    /**
+     * checks if a product name is already used, spaces at the ends are ignored
+     * <p>windows use this to disable their confirm button while the name is a duplicate
+     *
+     * @param name the name to look for
+     * @param exceptId the id of a product that is allowed to keep this name (the one being edited), null for none
+     * @return true if another product already has this name
+     * @since 1.3
+     */
+    public boolean isNameTaken(String name, Integer exceptId) {
+        String wanted = name.trim();
+
+        for (Product p : database.getProducts()) {
+            if (exceptId != null && p.getId() == exceptId) continue; // a product can keep its own name
+            if (p.getName().equals(wanted)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * creates a new harvest product in the database, it starts with no stock anywhere
+     * <p>only the database file is saved
+     *
+     * @param name the name of the product, must be unique
+     * @param desc the description of the product
+     * @param price the price of one unit, 0 or higher
+     * @return null if the product was created, or an error message
+     * @since 1.3
+     */
+    public String createProduct(String name, String desc, double price) {
+        String error = checkDetails(name, desc, price);
+        if (error != null) return error;
+
+        if (isNameTaken(name, null)) return "A product with this name already exists";
+
+        // the database keeps its own copy, so the stock here does not matter
+        database.add(new Product(name.trim(), desc.trim(), price, 0), 0);
+        ProductsFileHandler.saveAll(database, null, null); // only the database file is written
+        return null;
+    }
+
+    /**
+     * changes the name, description and price of a product everywhere it exists
+     * <p>the database, inventory and shelf copies are all updated, then all three files are saved.
+     * the stock and madeFrom of the copies are not touched
+     *
+     * @param product the product to edit, looked up in the database by its id
+     * @param name the new name, must not belong to another product
+     * @param desc the new description
+     * @param price the new price of one unit, 0 or higher
+     * @return null if the product was edited, or an error message
+     * @since 1.3
+     */
+    public String editProduct(Product product, String name, String desc, double price) {
+        if (product == null) return "No product selected";
+
+        String error = checkDetails(name, desc, price);
+        if (error != null) return error;
+
+        Product target = database.getProductById(product.getId());
+        if (target == null) return "This product no longer exists";
+
+        if (isNameTaken(name, target.getId())) return "Another product already has this name";
+
+        ProductContainer[] containers = { database, inventoryData, shelfData };
+        for (ProductContainer container : containers) {
+            Product copy = container.getProductById(target.getId());
+            if (copy == null) continue; // not stocked in this container
+
+            copy.setName(name.trim());
+            copy.setDescription(desc.trim());
+            copy.setPrice(price);
+        }
+
+        ProductsFileHandler.saveAll(database, inventoryData, shelfData);
+        return null;
+    }
+
+    /**
+     * checks the details of a product before it is created or edited
+     * <p>a | is not allowed because it separates the fields in the save file
+     *
+     * @param name the name to check
+     * @param desc the description to check
+     * @param price the price to check
+     * @return null if everything is fine, or an error message
+     */
+    private String checkDetails(String name, String desc, double price) {
+        if (name == null || name.trim().isEmpty()) return "Name can't be empty";
+        if (desc == null || desc.trim().isEmpty()) return "Description can't be empty";
+        if (name.contains("|") || desc.contains("|")) return "Name and description can't contain |";
+        if (Double.isNaN(price) || Double.isInfinite(price) || price < 0) return "Price must be a number, 0 or higher";
+        return null;
+    }
+
     // ---------- stock moves ----------
 
     /**
@@ -62,6 +159,28 @@ public class FarmSystem {
         if (source == null) return "This product no longer exists";
 
         inventoryData.add(source, quantity);
+        ProductsFileHandler.saveAll(null, inventoryData, null); // only the inventory file is written
+        return null;
+    }
+
+    /**
+     * throws away stock from the inventory, nothing goes to the shelf
+     * <p>only the inventory file is saved
+     *
+     * @param product the product to remove stock from, looked up in the inventory by its id
+     * @param quantity how many to remove, at least 1 and at most the inventory stock
+     * @return null if the stock was removed, or an error message
+     * @since 1.3
+     */
+    public String removeFromInventory(Product product, int quantity) {
+        if (product == null) return "No product selected";
+        if (quantity < 1) return "Quantity must be at least 1";
+
+        Product source = inventoryData.getProductById(product.getId());
+        if (source == null) return "This product is not in the inventory";
+        if (quantity > source.getStock()) return "Only " + source.getStock() + " left in the inventory";
+
+        inventoryData.remove(source, quantity);
         ProductsFileHandler.saveAll(null, inventoryData, null); // only the inventory file is written
         return null;
     }

@@ -1,11 +1,11 @@
 package ui;
 
+import application.FarmSystem;
 import application.Product;
 import application.ProductContainer;
 import application.User;
 import backend.ProductCreationWindow;
 import backend.ProductEditingWindow;
-import backend.UniversalDeleter;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -14,6 +14,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -22,6 +24,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * shows every product in the database, managers can create, edit and delete products here
+ *
+ * <p>every change goes through FarmSystem, this screen only shows the database
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see SceneManager
+ * @see FarmSystem
+ */
 public class DatabaseScene extends Scene {
 
     private ProductContainer database;
@@ -31,11 +43,18 @@ public class DatabaseScene extends Scene {
 
     private VBox productRows = new VBox(5);
 
+    /**
+     * creates the database scene with the buttons that fit the user type
+     *
+     * @param stage the main window
+     * @param database every product and its details
+     * @param manager the scene manager, used for the header and the farm system
+     * @param currentUser the user who is logged in
+     * @since 1.1 the inventoryData and shelfData parameters were removed, FarmSystem handles them
+     */
     public DatabaseScene(
             Stage stage,
             ProductContainer database,
-            ProductContainer inventoryData,
-            ProductContainer shelfData,
             SceneManager manager,
             User currentUser) {
 
@@ -45,6 +64,8 @@ public class DatabaseScene extends Scene {
         Styles.apply(this);
 
         this.database = database;
+
+        FarmSystem farmSystem = manager.getFarmSystem();
 
         BorderPane root = (BorderPane) getRoot();
         root.setPadding(new Insets(12));
@@ -74,17 +95,13 @@ public class DatabaseScene extends Scene {
 
         HBox buttons = new HBox(10);
 
-        // creates the deleter used to remove a product everywhere
-        UniversalDeleter deleter =
-            new UniversalDeleter(database, inventoryData, shelfData);
-
         // opens the product creation window
         createProduct.setOnAction(event -> {
 
             ProductCreationWindow window =
                 new ProductCreationWindow(
                     stage,
-                    database,
+                    farmSystem,
                     this::refreshDatabase
                 );
 
@@ -110,9 +127,7 @@ public class DatabaseScene extends Scene {
                 ProductEditingWindow window =
                     new ProductEditingWindow(
                         stage,
-                        database,
-                        inventoryData,
-                        shelfData,
+                        farmSystem,
                         product,
                         this::refreshDatabase
                     );
@@ -127,7 +142,13 @@ public class DatabaseScene extends Scene {
             Product product = selectedProduct.get();
 
             if (product != null) {
-                deleter.delete(product);
+                // FarmSystem returns null when it worked, or an error message
+                String error = farmSystem.deleteEverywhere(product);
+
+                if (error != null) {
+                    new Alert(AlertType.ERROR, error).showAndWait();
+                }
+
                 refreshDatabase();
             }
         });

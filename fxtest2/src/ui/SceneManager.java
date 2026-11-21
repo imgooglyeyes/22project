@@ -12,10 +12,10 @@ import javafx.stage.Stage;
  * creates and opens every scene, and holds the shared containers
  *
  * <p>scenes ask it for the header, the transactions and the farm system.
- * it also saves the product containers and resets them to the template data
+ * it also saves the product containers by hand and resets them to the template data
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.3
+ * @version 1.4
  * @see FarmSystem
  * @see ProductsFileHandler
  */
@@ -70,14 +70,14 @@ public class SceneManager {
         return transactionData;
     }
 
-    /** @return the shared farm system, scenes call the sales and stock actions on it */
+    /** @return the shared farm system, scenes and windows call the product, stock and sales actions on it */
     public FarmSystem getFarmSystem() {
         return farmSystem;
     }
 
     /**
      * saves the database, inventory and shelf
-     * <p>used by AddProductWindow and MoveProductWindow because they do not know what containers they work with
+     * <p>used by the manual save button, every other change is saved by FarmSystem
      */
     public void saveProductContainers() {
         ProductsFileHandler.saveAll(database, inventoryData, shelfData);
@@ -119,7 +119,6 @@ public class SceneManager {
         ShelfScene scene = new ShelfScene(
             stage,
             this,
-            database,
             inventoryData,
             shelfData,
             currentUser
@@ -137,7 +136,6 @@ public class SceneManager {
             stage,
             database,
             inventoryData,
-            shelfData,
             this,
             currentUser
         );
@@ -153,8 +151,6 @@ public class SceneManager {
         DatabaseScene scene = new DatabaseScene(
             stage,
             database,
-            inventoryData,
-            shelfData,
             this,
             currentUser
         );
