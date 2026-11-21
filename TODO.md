@@ -111,8 +111,8 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [ ] reset to default data: copy `src/templatedata/` over `src/data/` (wip)
 - [x] save automatically after every change (add, move, edit, delete, confirm, void), keep manual save as a backup
 - [ ] extend `application/FarmSystem.java` (it already has the sales methods) with `addToShelf`, `moveToInventory`, `addToInventory`, `deleteEverywhere`
-- [ ] windows call `FarmSystem` instead of touching containers directly
-- [x] tighten role checks in `SceneManager` and the scene buttons (use section 3)
+- [ ] windows call `  FarmSystem` instead of touching containers directly
+- [ ] tighten role checks in `SceneManager` and the scene buttons (use section 3)
   - phase 3 and phase 5 reuse these checks, do this before the dashboard
 
 ### phase 2: richer products

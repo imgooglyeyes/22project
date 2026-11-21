@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  * it also saves the product containers and resets them to the template data
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @see FarmSystem
  * @see ProductsFileHandler
  */
@@ -61,7 +61,8 @@ public class SceneManager {
         this.userData = userData;
         this.currentUser = currentUser;
 
-        this.farmSystem = new FarmSystem(database, shelfData, transactionData);
+        // the farm system gets the same container objects, so it and the scenes always see the same data
+        this.farmSystem = new FarmSystem(database, inventoryData, shelfData, transactionData);
     }
 
     /** @return every sale transaction, scenes read and save from it */
@@ -69,7 +70,7 @@ public class SceneManager {
         return transactionData;
     }
 
-    /** @return the shared farm system, scenes call the sales actions on it */
+    /** @return the shared farm system, scenes call the sales and stock actions on it */
     public FarmSystem getFarmSystem() {
         return farmSystem;
     }
