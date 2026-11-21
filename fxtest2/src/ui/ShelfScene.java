@@ -18,10 +18,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -32,13 +34,17 @@ import javafx.stage.Stage;
  * the made-from column shows the name of the harvest product it is made from,
  * or "Harvest item" if it is not made from anything
  *
+ * <p>a filter above the list can show every product or only the products made from a harvest item.
+ * a product counts as made when its madeFrom is set. the filter only hides rows,
+ * it never changes the shelf, and it goes back to "all" when the screen is opened again
+ *
  * <p>which buttons appear follows the permission table in SceneManager:
  * clerks and managers can add stock from the inventory and save by hand, only managers can move
  * stock back to the inventory, and only customers can send a request to buy.
  * every stock change goes through FarmSystem, this screen only shows the shelf
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.4
+ * @version 1.5
  * @see SceneManager
  * @see application.FarmSystem
  */
@@ -47,11 +53,19 @@ public class ShelfScene extends Scene {
     /** text shown in the made-from column for a product that is not made from anything */
     private static final String HARVEST_TEXT = "Harvest item";
 
+    /** filter choice that shows every product on the shelf */
+    private static final String FILTER_ALL = "All products";
+    /** filter choice that shows only the products made from a harvest item */
+    private static final String FILTER_MADE = "Made from harvest";
+
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
     /** used to look up the name of the source product of a made product */
     private FarmSystem farmSystem;
+
+    /** the filter choice, refreshShelf reads it every time the list is drawn */
+    private ComboBox<String> filterBox;
 
     private ObjectProperty<Product> selectedProduct =
             new SimpleObjectProperty<>();
@@ -100,6 +114,16 @@ public class ShelfScene extends Scene {
         VBox shelfList = new VBox(10, header, productRows);
         ScrollPane scrollPane = new ScrollPane(shelfList);
         scrollPane.setFitToWidth(true);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS); // the list takes the space left under the filter
+
+        // the filter starts on "all", picking another choice redraws the list
+        this.filterBox = new ComboBox<>();
+        filterBox.getItems().addAll(FILTER_ALL, FILTER_MADE);
+        filterBox.setValue(FILTER_ALL);
+        filterBox.setOnAction(event -> refreshShelf());
+
+        HBox filterRow = new HBox(10, new Label("Show:"), filterBox);
+        VBox center = new VBox(10, filterRow, scrollPane);
 
         Button addProduct = new Button("Add Product From Inventory");
         Button moveStocks = new Button("Move Stocks To Inventory");
@@ -179,7 +203,7 @@ public class ShelfScene extends Scene {
         buttons.getChildren().add(quit);
 
         root.setTop(manager.createHeader("Shelf"));
-        root.setCenter(scrollPane);
+        root.setCenter(center);
         root.setBottom(buttons);
 
         refreshShelf();
@@ -214,6 +238,19 @@ public class ShelfScene extends Scene {
     }
 
     /**
+     * checks if a product passes the filter that is picked right now
+     * <p>a product counts as made when its madeFrom is set
+     *
+     * @param product the shelf product to check
+     * @return true if the product should be shown
+     * @since 1.5
+     */
+    private boolean passesFilter(Product product) {
+        if (FILTER_MADE.equals(filterBox.getValue())) return product.isMade();
+        return true; // "all" shows everything
+    }
+
+    /**
      * creates a row for one product, clicking the row selects the product
      *
      * @param product the shelf product to show
@@ -244,12 +281,21 @@ public class ShelfScene extends Scene {
         productRows.getChildren().add(row);
     }
 
-    /** redraws the shelf from the shelf container and clears the selection */
+    /**
+     * redraws the shelf from the shelf container and clears the selection
+     * <p>only the products that pass the filter get a row, and a note is shown
+     * when the shelf has products but none of them match
+     */
     public void refreshShelf() {
         productRows.getChildren().clear();
-        selectedProduct.set(null);
+        selectedProduct.set(null); // a hidden product must not stay selected
+
         for (Product product : shelfData.getProducts()) {
-            addProductRow(product);
+            if (passesFilter(product)) addProductRow(product);
+        }
+
+        if (productRows.getChildren().isEmpty() && !shelfData.getProducts().isEmpty()) {
+            productRows.getChildren().add(new Label("No products on the shelf match this filter."));
         }
     }
 
