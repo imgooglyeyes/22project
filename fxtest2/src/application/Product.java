@@ -15,7 +15,7 @@ package application;
  * </ul>
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @see ProductContainer
  */
 public class Product {
@@ -132,4 +132,12 @@ public class Product {
     public void setDescription(String desc)		{ this.desc = desc;}
     /** @param price the new price of one unit */
     public void setPrice(double price)	{ this.price = price;}
+    
+    /**
+     * sets the source product, used when the source is deleted or the made-from is edited
+     *
+     * @param madeFrom id of the source product, null to make this a harvest item
+     * @since 1.2
+     */
+    public void setMadeFrom(Integer madeFrom)	{ this.madeFrom = madeFrom; }
 }
