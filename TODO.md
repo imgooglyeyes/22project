@@ -116,8 +116,8 @@ note: right now the code lets clerks add and delete inventory stock and move she
   - phase 3 and phase 5 reuse these checks, do this before the dashboard
 
 ### phase 2: richer products
-- [ ] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
-- [ ] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
+- [x] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
+- [x] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
 - [ ] show made-from on the shelf rows
 - [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
 

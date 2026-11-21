@@ -12,18 +12,21 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui.LabelledTextField;
+import ui.MadeFromPicker;
 import ui.Styles;
 
 /**
  * popup window to create a new product in the database
  *
- * <p>the create button stays disabled while a field is empty, contains |, the price
+ * <p>the product can be a harvest item or made from one harvest item, picked with the made-from picker.
+ * the create button stays disabled while a field is empty, contains |, the price
  * is not a valid number, or the name already exists. FarmSystem checks everything again
  * and does the saving
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
- * @see FarmSystem#createProduct(String, String, double)
+ * @version 1.3
+ * @see MadeFromPicker
+ * @see FarmSystem#createProduct(String, String, double, Integer)
  * @see FarmSystem#isNameTaken(String, Integer)
  */
 public class ProductCreationWindow {
@@ -31,6 +34,7 @@ public class ProductCreationWindow {
 	private LabelledTextField nameField;
 	private LabelledTextField descriptionField;
 	private LabelledTextField priceField;
+	private MadeFromPicker madeFromPicker;
 
 	private Button create;
 	private Button exit;
@@ -51,6 +55,10 @@ public class ProductCreationWindow {
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
 		this.priceField = new LabelledTextField("Price:", true);
+
+		// every harvest product can be the source, a new product starts as a harvest item
+		this.madeFromPicker = new MadeFromPicker(farmSystem.getHarvestProducts(null), null);
+
 		this.create = new Button("Create");
 		this.exit = new Button("Cancel");
 
@@ -64,7 +72,7 @@ public class ProductCreationWindow {
 		create.disableProperty().bind(nameField.invalid.or(descriptionField.invalid).or(priceField.invalid).or(priceField.NaN).or(duplicateName));
 
 		this.buttonsHBox = new HBox(10, exit, create);
-		this.vbox = new VBox(10, nameField, descriptionField, priceField, buttonsHBox); // creates a vbox with a 10px spacing with these as children
+		this.vbox = new VBox(10, nameField, descriptionField, priceField, madeFromPicker, buttonsHBox); // creates a vbox with a 10px spacing with these as children
 		vbox.setStyle("-fx-padding: 20;");
 
 		this.createScene = new Scene(vbox, 500, 350);
@@ -80,7 +88,8 @@ public class ProductCreationWindow {
 			String error = farmSystem.createProduct(
 				nameField.getText(),
 				descriptionField.getText(),
-				Double.parseDouble(priceField.getText()) // safe, the button is disabled when the price is not a number
+				Double.parseDouble(priceField.getText()), // safe, the button is disabled when the price is not a number
+				madeFromPicker.getSelectedId() // null means a harvest item
 			);
 
 			if (error != null) {
@@ -103,4 +112,4 @@ public class ProductCreationWindow {
 		// make the new window actually appear
 		createWindow.show();
 	}
-}	
+}
