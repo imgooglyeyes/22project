@@ -1,0 +1,2 @@
+MainManager|maxgalactica|Billy Bob|Jones|Manager|Active
+Clerk1|coughup|Angel|Starr|Clerk|Active
