@@ -17,30 +17,32 @@ import java.util.List;
  *
  * <p>file formats, one user per line, fields separated by |
  * <ul>
- * <li>users.txt: username|password|firstName|lastName|userType
+ * <li>users.txt: username|password|firstName|lastName|userType|status
  * </ul>
+ * status is active, pending or rejected, old lines with only 5 fields still load as active
  *
  * @author Jian Carranza
- * @version 1.0
+ * @version 1.1
  * @see UserContainer
  * @see User
  */
 public class UsersFileHandler {
 
 	/** save file for the user container */
-	public static final String USERDATA		= "src/data/userData.txt";
+	public static final String USERDATA		= "src/data/users.txt";
 
 	/** starting data for the user container, used when the save file does not exist */
-	public static final String TEMPLATE_USERDATA	= "src/templatedata/userData.txt";
+	public static final String TEMPLATE_USERDATA	= "src/templatedata/users.txt";
 
 	/**
-	 * saves the user containers, a null container is ignored to avoid errors
-	 * 
+	 * saves the user container, a null container is ignored to avoid errors
+	 * <p>an io error is printed and not thrown, so a failed save never crashes the app
+	 *
 	 * @param userData the user container to save
 	 */
 	public static void save(UserContainer userData) {
 		try {
-			// username|password|firstName|lastName|userType
+			// username|password|firstName|lastName|userType|status
 			if (userData != null) {
 				List<String> lines = new ArrayList<>();
 				for (User u : userData.getUsers()) {
@@ -49,7 +51,8 @@ public class UsersFileHandler {
 						u.getPassword() + "|" +
 						u.getFirstName() + "|" +
 						u.getLastName() + "|" +
-						u.getUserType()
+						u.getUserType() + "|" +
+						u.getStatus()
 					);
 				}
 				writeLines(USERDATA, lines);
@@ -63,31 +66,41 @@ public class UsersFileHandler {
 
 	/**
 	 * loads user data
+	 * <p>a line with 5 fields is an old line and gets the active status
+	 * <p>a bad line is skipped and printed, it does not stop the load
 	 *
 	 * @return user data as a UserContainer
 	 */
 	public static UserContainer load() {
-		UserContainer load = new UserContainer(); 
+		UserContainer load = new UserContainer();
 
 		for (String line : readLines(USERDATA, TEMPLATE_USERDATA)) {
 			// -1 keeps empty fields at the end of the line
 			String[] parts = line.split("\\|", -1);
 
 			try {
-				if (parts.length != 5) {
+				if (parts.length != 5 && parts.length != 6) {
 					System.out.println("Skipped a bad user data line: " + line);
-                    continue;
+					continue;
 				}
 
-				// the existing-id constructor keeps ids from changing
+				// old lines have no status, those accounts already worked so they stay active
+				String status = parts.length == 6 ? parts[5].trim() : User.ACTIVE;
+
+				if (!User.isValidStatus(status)) { // a typo in the file would lock the account out silently
+					System.out.println("Skipped a user data line with an unknown status: " + line);
+					continue;
+				}
+
 				load.add(new User(
 					parts[0],						// username
 					parts[1],						// password
 					parts[2],						// firstName
 					parts[3],						// lastName
-					parts[4]						// userType
+					parts[4],						// userType
+					status							// status
 				));
-			} catch (RuntimeException e) { // bad number or missing field
+			} catch (RuntimeException e) { // missing field
 				System.out.println("Skipped a bad user data line: " + line);
 			}
 		}
@@ -96,8 +109,8 @@ public class UsersFileHandler {
 	}
 
 	/**
-	 * copies the the template file over to the save file
-	 * <p>this only changes the files, the caller has to load them again to update the app
+	 * copies the template file over the save file
+	 * <p>this only changes the file, the caller has to load it again to update the app
 	 *
 	 * @return true if the file was copied, false if something went wrong
 	 * @since 1.0
@@ -169,7 +182,7 @@ public class UsersFileHandler {
 				lines.add(line);
 			}
 		} catch (IOException e) {
-			System.out.println("Something went wrong while loading all product containers.");
+			System.out.println("Something went wrong while loading user data.");
 			e.printStackTrace();
 		}
 
