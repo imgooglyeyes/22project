@@ -2,7 +2,6 @@ package ui;
 
 import application.Product;
 import application.ProductContainer;
-import application.ProductsFileHandler;
 import application.TransactionContainer;
 import application.TransactionFilesHandler;
 import application.User;
@@ -29,16 +28,16 @@ import javafx.stage.Stage;
  * the main screen, it shows the products on the shelf
  *
  * <p>managers and clerks can move stock between the shelf and the inventory and save by hand.
- * customers can only select a product and send a request to buy it
+ * customers can only select a product and send a request to buy it.
+ * every stock change goes through FarmSystem, this screen only shows the shelf
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @see SceneManager
- * @see ProductsFileHandler
+ * @see application.FarmSystem
  */
 public class ShelfScene extends Scene {
 
-    private ProductContainer database;
     private ProductContainer inventoryData;
     private ProductContainer shelfData;
     private TransactionContainer transactionData;
@@ -53,15 +52,14 @@ public class ShelfScene extends Scene {
      *
      * @param stage the main window
      * @param manager the scene manager, used for the header, saving and the farm system
-     * @param database every product and its details
-     * @param inventoryData the products and stock in the inventory
+     * @param inventoryData the products and stock in the inventory, the source when adding to the shelf
      * @param shelfData the products and stock on the shelf
      * @param currentUser the user who is logged in
+     * @since 1.2 the database parameter was removed, this screen no longer needs it
      */
     public ShelfScene(
             Stage stage,
             SceneManager manager,
-            ProductContainer database,
             ProductContainer inventoryData,
             ProductContainer shelfData,
             User currentUser) {
@@ -71,7 +69,6 @@ public class ShelfScene extends Scene {
         // loads the shared stylesheet
         Styles.apply(this);
 
-        this.database = database;
         this.inventoryData = inventoryData;
         this.shelfData = shelfData;
         this.transactionData = manager.getTransactions(); // used by manual save
@@ -100,11 +97,11 @@ public class ShelfScene extends Scene {
         // customers get their own buttons, they can only request to buy and quit
         Button requestToBuy = new Button("Request To Buy");
 
+        // moves stock from the inventory to the shelf
         addProduct.setOnAction(event -> {
             AddProductWindow window = new AddProductWindow(
                 stage,
-                manager,
-                shelfData,
+                manager.getFarmSystem(),
                 inventoryData,
                 true,
                 this::refreshShelf
@@ -114,15 +111,15 @@ public class ShelfScene extends Scene {
 
         moveStocks.disableProperty().bind(Bindings.isNull(selectedProduct));
 
+        // moves stock from the shelf back to the inventory
         moveStocks.setOnAction(event -> {
             Product product = selectedProduct.get();
             if (product != null) {
                 MoveProductWindow window = new MoveProductWindow(
                     stage,
-                    manager,
-                    shelfData,
-                    inventoryData,
+                    manager.getFarmSystem(),
                     product,
+                    true,
                     this::refreshShelf
                 );
                 window.show();
@@ -147,7 +144,7 @@ public class ShelfScene extends Scene {
             }
         });
 
-        manualSave.setOnAction(event -> saveData());
+        manualSave.setOnAction(event -> saveData(manager));
         logout.setOnAction(event -> {
         	currentUser.logOut();
         	manager.showShelf();
@@ -223,9 +220,13 @@ public class ShelfScene extends Scene {
         }
     }
 
-    /** manual save, writes every product file and the transactions as a backup */
-    private void saveData() {
-    	ProductsFileHandler.saveAll(database, inventoryData, shelfData);
+    /**
+     * manual save, writes every product file and the transactions as a backup
+     *
+     * @param manager the scene manager that knows the product containers
+     */
+    private void saveData(SceneManager manager) {
+        manager.saveProductContainers();
         TransactionFilesHandler.save(transactionData);
     }
 }

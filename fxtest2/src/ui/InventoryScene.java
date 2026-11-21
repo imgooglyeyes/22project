@@ -1,4 +1,3 @@
-
 package ui;
 
 import application.Product;
@@ -22,6 +21,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * shows the products in the inventory
+ *
+ * <p>managers and clerks can add stock from the database and delete stock.
+ * every stock change goes through FarmSystem, this screen only shows the inventory
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see SceneManager
+ * @see application.FarmSystem
+ */
 public class InventoryScene extends Scene {
 
     private ProductContainer inventoryData;
@@ -31,11 +41,20 @@ public class InventoryScene extends Scene {
 
     private VBox productRows = new VBox(5);
 
+    /**
+     * creates the inventory scene with the buttons that fit the user type
+     *
+     * @param stage the main window
+     * @param database every product and its details, the source when adding to the inventory
+     * @param inventoryData the products and stock in the inventory
+     * @param manager the scene manager, used for the header and the farm system
+     * @param currentUser the user who is logged in
+     * @since 1.1 the shelfData parameter was removed, this screen no longer needs it
+     */
     public InventoryScene(
             Stage stage,
             ProductContainer database,
             ProductContainer inventoryData,
-            ProductContainer shelfData,
             SceneManager manager,
             User currentUser) {
 
@@ -73,13 +92,12 @@ public class InventoryScene extends Scene {
 
         HBox buttons = new HBox(10);
 
-        // adds a product from the database
+        // adds new stock of a product from the database
         addProduct.setOnAction(event -> {
 
             AddProductWindow window = new AddProductWindow(
                 stage,
-                manager,
-                inventoryData,
+                manager.getFarmSystem(),
                 database,
                 false,
                 this::refreshInventory
@@ -102,10 +120,9 @@ public class InventoryScene extends Scene {
 
                 MoveProductWindow window = new MoveProductWindow(
                     stage,
-                    manager,
-                    inventoryData,
-                    null,
+                    manager.getFarmSystem(),
                     product,
+                    false,
                     this::refreshInventory
                 );
 
