@@ -119,7 +119,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] add `madeFrom` to `Product` (id of the harvest product it is made from, none for a harvest item) (wip)
 - [x] update `productsDB.txt` and `templatedata/productsDB.txt` to the new format, and the create / edit windows (wip)
 - [x] show made-from on the shelf rows
-- [ ] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
+- [x] shelf: filter (all / made from harvest), a product counts as made when `madeFrom` is set  
 
 ### phase 3: accounts
 - [ ] add `status` to `User` and a `users.txt` file in `src/data/` with one default clerk and one default manager (wip)
