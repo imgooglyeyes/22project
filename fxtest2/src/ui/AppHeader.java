@@ -1,4 +1,3 @@
-
 package ui;
 
 import application.User;
@@ -7,8 +6,26 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
+/**
+ * the shared header with the navigation buttons shown at the top of every scene
+ *
+ * <p>which buttons appear is decided by the can... methods of SceneManager,
+ * so the header and the scenes always follow the same permission table.
+ * the button of the open scene is highlighted and disabled
+ *
+ * @author Jian Carranza, Shawn Alfred Padilla
+ * @version 1.1
+ * @see SceneManager
+ */
 public class AppHeader extends HBox {
 
+    /**
+     * creates the header with the buttons that fit the user
+     *
+     * @param manager the scene manager, opens the scenes and answers the role checks
+     * @param currentScene the name of the open scene, its button is highlighted
+     * @param user the user who is logged in
+     */
     public AppHeader(SceneManager manager, String currentScene, User user) {
 
         setSpacing(10);
@@ -51,40 +68,54 @@ public class AppHeader extends HBox {
         setActive(staffListButton, currentScene.equals("Staff List"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
 
-        // checks which buttons the user can access
-        boolean isManager = user.getUserType().equals(User.MANAGER);
-        boolean isClerk = user.getUserType().equals(User.CLERK);
-        boolean isCustomer = user.getUserType().equals(User.CUSTOMER);
+        // only guests have no account yet, so only they see log in and sign up
         boolean isGuest = user.getUserType().equals(User.GUEST);
 
         getChildren().add(title);
         getChildren().add(shelfButton);
 
-        
         if (isGuest) {
             getChildren().add(loginButton);
             getChildren().add(signUpButton);
         }
-        
-        // customers can see their own requests
-        if (isCustomer) {
+
+        // every other button follows the permission table in SceneManager
+        if (manager.canViewMyRequests()) {
             getChildren().add(myRequestsButton);
         }
 
-        if (isManager || isClerk) {
+        if (manager.canViewInventory()) {
             getChildren().add(inventoryButton);
+        }
+
+        if (manager.canHandleTransactions()) {
             getChildren().add(transactionsButton);
+        }
+
+        // the history button opens the user's own history, which every staff member may see
+        if (manager.canViewHistoryOf(user)) {
             getChildren().add(historyButton);
+        }
+
+        if (manager.canViewCash()) {
             getChildren().add(cashButton);
         }
 
-        if (isManager) {
-        	getChildren().add(staffListButton);
+        if (manager.canViewStaffList()) {
+            getChildren().add(staffListButton);
+        }
+
+        if (manager.canManageDatabase()) {
             getChildren().add(databaseButton);
         }
     }
 
-    // highlights the active button
+    /**
+     * highlights the active button and disables it
+     *
+     * @param button the button to check
+     * @param active true if its scene is the open one
+     */
     private void setActive(Button button, boolean active) {
 
         if (active) {

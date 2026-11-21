@@ -24,11 +24,12 @@ import javafx.stage.Stage;
 /**
  * shows the products in the inventory
  *
- * <p>managers and clerks can add stock from the database and delete stock.
+ * <p>clerks and managers can look at the inventory, but only managers get the buttons
+ * to add stock from the database and to delete stock (see SceneManager#canManageInventory()).
  * every stock change goes through FarmSystem, this screen only shows the inventory
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @see SceneManager
  * @see application.FarmSystem
  */
@@ -42,12 +43,12 @@ public class InventoryScene extends Scene {
     private VBox productRows = new VBox(5);
 
     /**
-     * creates the inventory scene with the buttons that fit the user type
+     * creates the inventory scene with the buttons that fit the user
      *
      * @param stage the main window
      * @param database every product and its details, the source when adding to the inventory
      * @param inventoryData the products and stock in the inventory
-     * @param manager the scene manager, used for the header and the farm system
+     * @param manager the scene manager, used for the header, the farm system and the role checks
      * @param currentUser the user who is logged in
      * @since 1.1 the shelfData parameter was removed, this screen no longer needs it
      */
@@ -144,12 +145,8 @@ public class InventoryScene extends Scene {
         // displays the product list
         root.setCenter(scrollPane);
 
-        // displays the buttons
-        boolean canManageInventory =
-            currentUser.getUserType().equals(User.MANAGER) ||
-            currentUser.getUserType().equals(User.CLERK);
-
-        if (canManageInventory) {
+        // only managers change the inventory stock, clerks just look at it
+        if (manager.canManageInventory()) {
             buttons.getChildren().addAll(addProduct, deleteStocks);
         }
 
