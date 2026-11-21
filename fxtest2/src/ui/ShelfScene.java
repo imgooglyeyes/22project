@@ -27,12 +27,13 @@ import javafx.stage.Stage;
 /**
  * the main screen, it shows the products on the shelf
  *
- * <p>managers and clerks can move stock between the shelf and the inventory and save by hand.
- * customers can only select a product and send a request to buy it.
+ * <p>which buttons appear follows the permission table in SceneManager:
+ * clerks and managers can add stock from the inventory and save by hand, only managers can move
+ * stock back to the inventory, and only customers can send a request to buy.
  * every stock change goes through FarmSystem, this screen only shows the shelf
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @see SceneManager
  * @see application.FarmSystem
  */
@@ -48,10 +49,10 @@ public class ShelfScene extends Scene {
     private VBox productRows = new VBox(5);
 
     /**
-     * creates the shelf scene with the buttons that fit the user type
+     * creates the shelf scene with the buttons that fit the user
      *
      * @param stage the main window
-     * @param manager the scene manager, used for the header, saving and the farm system
+     * @param manager the scene manager, used for the header, saving, the farm system and the role checks
      * @param inventoryData the products and stock in the inventory, the source when adding to the shelf
      * @param shelfData the products and stock on the shelf
      * @param currentUser the user who is logged in
@@ -94,7 +95,7 @@ public class ShelfScene extends Scene {
         Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
 
-        // customers get their own buttons, they can only request to buy and quit
+        // customers get their own button, they can only request to buy
         Button requestToBuy = new Button("Request To Buy");
 
         // moves stock from the inventory to the shelf
@@ -151,19 +152,23 @@ public class ShelfScene extends Scene {
         });
         quit.setOnAction(event -> Platform.exit());
 
-        boolean isManager = currentUser.getUserType().equals(User.MANAGER);
-        boolean isClerk = currentUser.getUserType().equals(User.CLERK);
-        boolean isCustomer = currentUser.getUserType().equals(User.CUSTOMER);
+        // each button is added only if the permission table allows it for this user
+        HBox buttons = new HBox(10);
+
+        if (manager.canRequestToBuy()) buttons.getChildren().add(requestToBuy);
+        if (manager.canAddToShelf()) buttons.getChildren().add(addProduct);
+        if (manager.canMoveToInventory()) buttons.getChildren().add(moveStocks);
+        if (manager.canManualSave()) buttons.getChildren().add(manualSave);
+
+        // a guest has no account, so there is nothing to log out of
+        boolean isGuest = currentUser.getUserType().equals(User.GUEST);
+        if (!isGuest) buttons.getChildren().add(logout);
+
+        buttons.getChildren().add(quit);
 
         root.setTop(manager.createHeader("Shelf"));
         root.setCenter(scrollPane);
-        if (isManager || isClerk) {
-            root.setBottom(new HBox(10, addProduct, moveStocks, manualSave, logout, quit));
-        } else if (isCustomer) {
-            root.setBottom(new HBox(10, requestToBuy, logout, quit));
-        } else { // guest
-        	root.setBottom(quit);
-        }
+        root.setBottom(buttons);
 
         refreshShelf();
     }

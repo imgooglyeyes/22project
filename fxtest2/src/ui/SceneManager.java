@@ -14,8 +14,13 @@ import javafx.stage.Stage;
  * <p>scenes ask it for the header, the transactions and the farm system.
  * it also saves the product containers by hand and resets them to the template data
  *
+ * <p>every role rule lives here in the can... methods, one method per row of the permission table.
+ * the header and the scenes use them to decide which buttons to show, and the show... methods
+ * use them again so a scene can't be opened by a user who should not see it.
+ * FarmSystem does not check roles, it trusts the screens
+ *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.4
+ * @version 1.5
  * @see FarmSystem
  * @see ProductsFileHandler
  */
@@ -75,6 +80,172 @@ public class SceneManager {
         return farmSystem;
     }
 
+    // ---------- role checks ----------
+
+    /** @return true if the current user is a manager */
+    private boolean isManager() {
+        return currentUser.getUserType().equals(User.MANAGER);
+    }
+
+    /** @return true if the current user is a clerk */
+    private boolean isClerk() {
+        return currentUser.getUserType().equals(User.CLERK);
+    }
+
+    /** @return true if the current user is a customer */
+    private boolean isCustomer() {
+        return currentUser.getUserType().equals(User.CUSTOMER);
+    }
+
+    /** @return true if the current user is a clerk or a manager */
+    private boolean isStaff() {
+        return isManager() || isClerk();
+    }
+
+    /**
+     * request to buy, only customers can send a request
+     *
+     * @return true if the current user can request to buy a shelf product
+     * @since 1.5
+     */
+    public boolean canRequestToBuy() {
+        return isCustomer();
+    }
+
+    /**
+     * lets a customer open their own requests, the scene only shows what they requested
+     *
+     * @return true if the current user can open the my requests screen
+     * @since 1.5
+     */
+    public boolean canViewMyRequests() {
+        return isCustomer();
+    }
+
+    /**
+     * add product to shelf, moves stock from the inventory to the shelf
+     *
+     * @return true if the current user can stock the shelf
+     * @since 1.5
+     */
+    public boolean canAddToShelf() {
+        return isStaff();
+    }
+
+    /**
+     * move shelf stock back to inventory, only managers
+     *
+     * @return true if the current user can take stock off the shelf
+     * @since 1.5
+     */
+    public boolean canMoveToInventory() {
+        return isManager();
+    }
+
+    /**
+     * the manual save button on the shelf, it is a backup for staff
+     *
+     * @return true if the current user can save by hand
+     * @since 1.5
+     */
+    public boolean canManualSave() {
+        return isStaff();
+    }
+
+    /**
+     * view inventory, staff can look at it
+     *
+     * @return true if the current user can open the inventory screen
+     * @since 1.5
+     */
+    public boolean canViewInventory() {
+        return isStaff();
+    }
+
+    /**
+     * add and remove inventory stock, only managers
+     *
+     * @return true if the current user can change the inventory stock
+     * @since 1.5
+     */
+    public boolean canManageInventory() {
+        return isManager();
+    }
+
+    /**
+     * product database, create, edit and delete, only managers
+     *
+     * @return true if the current user can open and change the database
+     * @since 1.5
+     */
+    public boolean canManageDatabase() {
+        return isManager();
+    }
+
+    /**
+     * confirm and void transactions
+     *
+     * @return true if the current user can open the transactions screen and act on them
+     * @since 1.5
+     */
+    public boolean canHandleTransactions() {
+        return isStaff();
+    }
+
+    /**
+     * cash balance
+     *
+     * @return true if the current user can open the cash screen
+     * @since 1.5
+     */
+    public boolean canViewCash() {
+        return isStaff();
+    }
+
+    /**
+     * sale history, a clerk can only see their own, a manager can see any manager or clerk
+     * <p>customers and guests have no history
+     *
+     * @param target the staff member whose history is wanted
+     * @return true if the current user can open the history of the target
+     * @since 1.5
+     */
+    public boolean canViewHistoryOf(User target) {
+        if (target == null) return false;
+
+        if (isManager()) { // any staff member, the staff list only shows staff
+            return target.getUserType().equals(User.MANAGER) ||
+                   target.getUserType().equals(User.CLERK);
+        }
+        if (isClerk()) { // only their own history
+            return target.getUsername().equals(currentUser.getUsername());
+        }
+        return false;
+    }
+
+    /**
+     * the staff list is where a manager picks whose history to open
+     *
+     * @return true if the current user can open the staff list
+     * @since 1.5
+     */
+    public boolean canViewStaffList() {
+        return isManager();
+    }
+
+    /**
+     * approve sign-ups, only managers
+     * <p>sign-up comes in phase 3, nothing calls this yet
+     *
+     * @return true if the current user can approve new accounts
+     * @since 1.5
+     */
+    public boolean canApproveSignUps() {
+        return isManager();
+    }
+
+    // ---------- saving ----------
+
     /**
      * saves the database, inventory and shelf
      * <p>used by the manual save button, every other change is saved by FarmSystem
@@ -92,7 +263,7 @@ public class SceneManager {
      * @since 1.2
      */
     public boolean resetToDefaults() {
-        if (!currentUser.getUserType().equals(User.MANAGER)) return false;
+        if (!canManageDatabase()) return false;
 
         if (!ProductsFileHandler.resetToDefaults()) return false;
 
@@ -103,6 +274,8 @@ public class SceneManager {
 
         return true;
     }
+
+    // ---------- scenes ----------
 
     /**
      * creates the shared header
@@ -128,9 +301,9 @@ public class SceneManager {
         stage.setTitle("The Shelf");
     }
 
-    /** opens the inventory, doing nothing unless the current user is staff */
+    /** opens the inventory, doing nothing unless the current user can view it */
     public void showInventory() {
-        if (!isStaff()) return;
+        if (!canViewInventory()) return;
 
         InventoryScene scene = new InventoryScene(
             stage,
@@ -144,9 +317,9 @@ public class SceneManager {
         stage.setTitle("Inventory");
     }
 
-    /** opens the database, doing nothing unless the current user is a manager */
+    /** opens the database, doing nothing unless the current user can manage it */
     public void showDatabase() {
-        if (!currentUser.getUserType().equals(User.MANAGER)) return;
+        if (!canManageDatabase()) return;
 
         DatabaseScene scene = new DatabaseScene(
             stage,
@@ -168,52 +341,52 @@ public class SceneManager {
 
     /** opens the customer's own requests, doing nothing unless the user is a customer */
     public void showMyRequests() {
-        if (!currentUser.getUserType().equals(User.CUSTOMER)) return;
+        if (!canViewMyRequests()) return;
 
         MyRequestsScene scene = new MyRequestsScene(stage, this, currentUser);
         stage.setScene(scene);
         stage.setTitle("My Requests");
     }
 
-    /** opens all transactions, doing nothing unless the current user is staff */
+    /** opens all transactions, doing nothing unless the current user can handle them */
     public void showTransactions() {
-        if (!isStaff()) return;
+        if (!canHandleTransactions()) return;
 
         TransactionsScene scene = new TransactionsScene(stage, this, currentUser);
         stage.setScene(scene);
         stage.setTitle("Transactions");
     }
 
-    /** opens the target user's transaction history, doing nothing unless the current user is staff */
+    /**
+     * opens the target user's transaction history
+     * <p>does nothing if the current user is not allowed to see that history,
+     * a clerk asking for another clerk's history is stopped here
+     *
+     * @param targetUser the staff member whose history to show
+     */
     public void showHistory(User targetUser) {
-        if (!isStaff()) return;
+        if (!canViewHistoryOf(targetUser)) return;
 
         HistoryScene scene = new HistoryScene(stage, this, currentUser, targetUser);
         stage.setScene(scene);
         stage.setTitle("Transactions History");
     }
 
-    /** opens the staff list, doing nothing unless the current user is a manager */
+    /** opens the staff list, doing nothing unless the current user can view it */
     public void showStaffList() {
-        if (!currentUser.getUserType().equals(User.MANAGER)) return;
+        if (!canViewStaffList()) return;
 
         StaffListScene scene = new StaffListScene(stage, this, userData, currentUser);
         stage.setScene(scene);
         stage.setTitle("Staff List");
     }
 
-    /** opens the cash balance, doing nothing unless the current user is staff */
+    /** opens the cash balance, doing nothing unless the current user can view it */
     public void showCash() {
-        if (!isStaff()) return;
+        if (!canViewCash()) return;
 
         CashScene scene = new CashScene(stage, this, currentUser);
         stage.setScene(scene);
         stage.setTitle("Cash");
-    }
-
-    /** @return true if the current user is a clerk or a manager */
-    private boolean isStaff() {
-        return currentUser.getUserType().equals(User.MANAGER) ||
-               currentUser.getUserType().equals(User.CLERK);
     }
 }
