@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Optional;
+
 import application.FarmSystem;
 import application.Product;
 import application.ProductContainer;
@@ -17,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -26,12 +29,15 @@ import javafx.stage.Stage;
 
 /**
  * shows every product in the database, managers can create, edit and delete products here
+ * and put all product data back to the template data
  *
- * <p>every change goes through FarmSystem, this screen only shows the database
+ * <p>every product change goes through FarmSystem, this screen only shows the database.
+ * the reset asks for a confirmation first because it replaces the database, inventory and
+ * shelf with the template files, transactions and users are not touched
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
- * @see SceneManager
+ * @version 1.2
+ * @see SceneManager#resetToDefaults()
  * @see FarmSystem
  */
 public class DatabaseScene extends Scene {
@@ -48,9 +54,8 @@ public class DatabaseScene extends Scene {
      *
      * @param stage the main window
      * @param database every product and its details
-     * @param manager the scene manager, used for the header and the farm system
+     * @param manager the scene manager, used for the header, the farm system and the reset
      * @param currentUser the user who is logged in
-     * @since 1.1 the inventoryData and shelfData parameters were removed, FarmSystem handles them
      */
     public DatabaseScene(
             Stage stage,
@@ -90,6 +95,7 @@ public class DatabaseScene extends Scene {
         Button createProduct = new Button("Create New Product");
         Button editSelected = new Button("Edit Product Data");
         Button deleteSelected = new Button("Delete All Instances");
+        Button resetData = new Button("Reset To Default Data");
         Button logout = new Button("Log Out");
         Button quit = new Button("Quit");
 
@@ -153,6 +159,26 @@ public class DatabaseScene extends Scene {
             }
         });
 
+        // puts the database, inventory and shelf back to the template data
+        resetData.setOnAction(event -> {
+
+            if (!askToProceed(
+                    "Reset the database, inventory and shelf to the template data?\n" +
+                    "Every product change and stock change will be lost.\n" +
+                    "Transactions and users are not changed.")) {
+                return;
+            }
+
+            // SceneManager returns false if the user is not a manager or a file failed
+            if (manager.resetToDefaults()) {
+                new Alert(AlertType.INFORMATION, "Product data was reset to the template data.").showAndWait();
+            } else {
+                new Alert(AlertType.ERROR, "The reset failed, nothing was changed.").showAndWait();
+            }
+
+            refreshDatabase();
+        });
+
         logout.setOnAction(event -> {
         	currentUser.logOut();
         	manager.showShelf();
@@ -172,7 +198,8 @@ public class DatabaseScene extends Scene {
             buttons.getChildren().addAll(
                 createProduct,
                 editSelected,
-                deleteSelected
+                deleteSelected,
+                resetData
             );
         }
 
@@ -190,6 +217,20 @@ public class DatabaseScene extends Scene {
         label.setPrefWidth(width);
 
         return label;
+    }
+
+    /**
+     * asks the manager to confirm an action
+     *
+     * @param message what is about to happen
+     * @return true if they pressed ok
+     */
+    private boolean askToProceed(String message) {
+        Alert alert = new Alert(AlertType.CONFIRMATION, message);
+        alert.setHeaderText(null);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
     // creates a row for one product
