@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class TransactionFilesHandler {
 
     // same folder the shelf save button already uses
-    private static final String FILE = "src/data/transactions.txt";
+    private static final String FILE = "fxtest2/src/data/transactions.txt";
 
     // writes every transaction to the file, replacing the old content
     public static void save(TransactionContainer container) {

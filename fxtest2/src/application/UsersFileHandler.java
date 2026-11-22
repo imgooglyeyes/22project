@@ -30,10 +30,10 @@ import java.util.List;
 public class UsersFileHandler {
 
 	/** save file for the user container */
-	public static final String USERDATA		= "src/data/users.txt";
+	public static final String USERDATA		= "fxtest2/src/data/users.txt";
 
 	/** starting data for the user container, used when the save file does not exist */
-	public static final String TEMPLATE_USERDATA	= "src/templatedata/users.txt";
+	public static final String TEMPLATE_USERDATA	= "fxtest2/src/templatedata/users.txt";
 
 	/**
 	 * saves the user container, a null container is ignored to avoid errors

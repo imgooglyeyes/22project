@@ -34,18 +34,18 @@ import java.util.List;
 public class ProductsFileHandler {
 
 	/** save file for the database container */
-	public static final String DATABASE		= "src/data/productsDB.txt";
+	public static final String DATABASE		= "fxtest2/src/data/productsDB.txt";
 	/** save file for the inventory container */
-	public static final String INVENTORY	= "src/data/inventory.txt";
+	public static final String INVENTORY	= "fxtest2/src/data/inventory.txt";
 	/** save file for the shelf container */
-	public static final String SHELF		= "src/data/shelf.txt";
+	public static final String SHELF		= "fxtest2/src/data/shelf.txt";
 
 	/** starting data for the database, used when the save file does not exist */
-	public static final String TEMPLATE_DATABASE	= "src/templatedata/productsDB.txt";
+	public static final String TEMPLATE_DATABASE	= "fxtest2/src/templatedata/productsDB.txt";
 	/** starting data for the inventory, used when the save file does not exist */
-	public static final String TEMPLATE_INVENTORY	= "src/templatedata/inventory.txt";
+	public static final String TEMPLATE_INVENTORY	= "fxtest2/src/templatedata/inventory.txt";
 	/** starting data for the shelf, used when the save file does not exist */
-	public static final String TEMPLATE_SHELF		= "src/templatedata/shelf.txt";
+	public static final String TEMPLATE_SHELF		= "fxtest2/src/templatedata/shelf.txt";
 
 	/**
 	 * saves the given containers, a null container is skipped and its file is left alone
