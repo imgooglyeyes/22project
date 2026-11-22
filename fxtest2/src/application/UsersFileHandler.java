@@ -21,11 +21,12 @@ import java.util.List;
  * </ul>
  * status is active, pending or rejected, old lines with only 5 fields still load as active
  *
- * @author Jian Carranza
- * @version 1.1
+ * @author Jian Carranza, Matthew Prado
+ * @version 1.2
  * @see UserContainer
  * @see User
  */
+
 public class UsersFileHandler {
 
 	/** save file for the user container */
@@ -36,6 +37,7 @@ public class UsersFileHandler {
 
 	/**
 	 * saves the user container, a null container is ignored to avoid errors
+	 * 
 	 * <p>an io error is printed and not thrown, so a failed save never crashes the app
 	 *
 	 * @param userData the user container to save
@@ -46,6 +48,10 @@ public class UsersFileHandler {
 			if (userData != null) {
 				List<String> lines = new ArrayList<>();
 				for (User u : userData.getUsers()) {
+					if (u==null){
+						System.out.println("Skipped a null user while saving.");
+						continue;
+					}
 					lines.add(
 						u.getUsername() + "|" +
 						u.getPassword() + "|" +
@@ -56,8 +62,8 @@ public class UsersFileHandler {
 					);
 				}
 				writeLines(USERDATA, lines);
+				System.out.println("Saved user data.");
 			}
-			System.out.println("Saved user data.");
 		} catch (IOException e) {
 			System.out.println("Something went wrong while saving user data.");
 			e.printStackTrace();
@@ -137,7 +143,10 @@ public class UsersFileHandler {
 	 */
 	private static void copyFile(String from, String to) throws IOException {
 		Path target = Paths.get(to);
-		Files.createDirectories(target.getParent()); // makes sure the folder exists
+		Path parent = target.getParent();
+		if (parent != null){
+			Files.createDirectories(parent); // makes sure the folder exists
+		}
 		Files.copy(Paths.get(from), target, StandardCopyOption.REPLACE_EXISTING);
 	}
 
@@ -151,7 +160,11 @@ public class UsersFileHandler {
 	 */
 	private static void writeLines(String file, List<String> lines) throws IOException {
 		Path path = Paths.get(file);
-		Files.createDirectories(path.getParent()); // makes sure the folder exists
+		Path parent = path.getParent();
+
+		if (parent != null) {
+			Files.createDirectories(parent); // makes sure the folder exists
+		}
 
 		try (BufferedWriter writer = Files.newBufferedWriter(path)) {
 			for (String line : lines) {
