@@ -19,8 +19,8 @@ import javafx.stage.Stage;
  * use them again so a scene can't be opened by a user who should not see it.
  * FarmSystem does not check roles, it trusts the screens
  *
- * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.6
+ * @author Jian Carranza, Shawn Alfred Padilla, Matthew Prado
+ * @version 1.7
  * @see FarmSystem
  * @see ProductsFileHandler
  */
