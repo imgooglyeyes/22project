@@ -1,6 +1,8 @@
 package ui;
 
 import application.User;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,8 +15,8 @@ import javafx.scene.layout.HBox;
  * so the header and the scenes always follow the same permission table.
  * the button of the open scene is highlighted and disabled
  *
- * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @author Jian Carranza, Shawn Alfred Padilla, Matthew Prado
+ * @version 1.3
  * @see SceneManager
  */
 public class AppHeader extends HBox {
@@ -43,6 +45,7 @@ public class AppHeader extends HBox {
         Button loginButton = new Button("Log In");
         Button signUpButton = new Button("Sign Up");
         Button myRequestsButton = new Button("My Requests");
+        Button signUpRequestsButton = new Button("Sign-Up Requests");
 
         // opens the selected scene
         shelfButton.setOnAction(e -> manager.showShelf());
@@ -55,6 +58,7 @@ public class AppHeader extends HBox {
         databaseButton.setOnAction(e -> manager.showDatabase());
         staffListButton.setOnAction(e -> manager.showStaffList());
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
+        signUpRequestsButton.setOnAction(e -> manager.showSignUpRequests());
 
         // highlights the current scene
         setActive(shelfButton, currentScene.equals("Shelf"));
@@ -67,6 +71,7 @@ public class AppHeader extends HBox {
         setActive(databaseButton, currentScene.equals("Database"));
         setActive(staffListButton, currentScene.equals("Staff List"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
+        setActive(signUpRequestsButton, currentScene.equals("Sign-Up Requests"));
 
         // only guests have no account yet, so only they see log in and sign up
         boolean isGuest = user.getUserType().equals(User.GUEST);
@@ -105,6 +110,10 @@ public class AppHeader extends HBox {
             getChildren().add(staffListButton);
         }
 
+        if (manager.canApproveSignUps() == true) {
+            getChildren().add(signUpRequestsButton);
+        }
+        
         if (manager.canManageDatabase()) {
             getChildren().add(databaseButton);
         }
