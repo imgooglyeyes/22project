@@ -417,4 +417,14 @@ public class SceneManager {
         stage.setScene(scene);
         stage.setTitle("Cash");
     }
+    /** this opens the sign-up requests screen, doing nothing unless the current user can approve sign-ups */
+    public void showSignUpRequests() {
+        if (canApproveSignUps() == false) {
+            return;
+        }
+
+        SignUpRequestScene scene = new SignUpRequestScene(stage, this, userData, currentUser);
+        stage.setScene(scene);
+        stage.setTitle("Sign-Up Requests");
+    }
 }
