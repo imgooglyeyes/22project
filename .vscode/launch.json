@@ -1,0 +1,26 @@
+{
+    // this file tells VS Code how to start the JavaFX app
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "application.Main",
+            "projectName": "fxtest2"
+        },
+        {
+            "type": "java",
+            "name": "Launch fxtest2 JavaFX application",
+            "request": "launch",
+            "mainClass": "application.Main",
+            "classPaths": [
+                "${workspaceFolder}\\fxtest2\\bin"
+            ],
+            "modulePaths": [
+                "C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\lib"
+            ],
+            "vmArgs": "--add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics -Djava.library.path=\"C:\\Users\\Shawneee\\Documents\\eclipse-java\\eclipse\\javafx-27_windows-x64_bin-sdk\\javafx-sdk-27.0.1\\bin\""
+        }
+    ]
+}
