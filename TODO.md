@@ -25,6 +25,8 @@
 - [x] `templatedata/` is unused, use it as the "reset to default data" source
 - [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
 - [x] manager approval of sign ups (`SignUpRequestsScene`)
+- [x] `DashboardScene` with tiles by role
+- [x] login lands on the dashboard
 
 ### in progress (wip)
 - [x] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login

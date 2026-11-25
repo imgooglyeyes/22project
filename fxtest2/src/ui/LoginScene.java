@@ -18,9 +18,12 @@ import javafx.stage.Stage;
  * <p>only active accounts can log in, a pending or rejected account gets its own message
  * so the user knows the password was right
  *
+ * <p>a successful login opens the dashboard, which shows the tiles that fit the role of the new user
+ *
  * @author Jian Carranza
- * @version 1.1
+ * @version 1.2
  * @see SceneManager
+ * @see DashboardScene
  * @see User#isActive()
  */
 public class LoginScene extends Scene {
@@ -88,7 +91,7 @@ public class LoginScene extends Scene {
 					}
 
 					currentUser.replaceWith(u); // change current user with new log in
-					manager.showShelf();
+					manager.showDashboard(); // the user is logged in now, so the dashboard is allowed
 					return;
 				}
 			}
