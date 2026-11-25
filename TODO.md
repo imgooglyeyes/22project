@@ -27,19 +27,23 @@
 - [x] manager approval of sign ups (`SignUpRequestsScene`)
 - [x] `DashboardScene` with tiles by role
 - [x] login lands on the dashboard
+- [x] product "made from" field
+- [x] shelf filter by made from harvest
+- [x] add product window lists products sorted by name
+- [x] confirm before "delete all instances"
 
 ### in progress (wip)
 - [x] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
 - [x] login, sign up, customer role
-- [ ] product "made from" field
+- [x] product "made from" field
 
 ### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
 
 ### not started
 - [x] sale history and clerk list
-- [ ] dashboards
-- [ ] shelf filter by made from harvest
+- [x] dashboards
+- [x] shelf filter by made from harvest
 
 ### dropped
 - product unit, crop and type fields
@@ -64,14 +68,17 @@
 - [x] `Main` hardcodes 27 products and ignores `data/*.txt`, so saved changes are lost on restart (wip)
 - [x] `ShelfScene.saveData()` duplicates the file writing, make Manual Save call `ProductsFileHandler` once it exists
 - [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
-- [ ] `AddProductWindow` uses a `HashMap` of names, and the list order is random
+- [x] `AddProductWindow` uses a `HashMap` of names, and the list order is random
+  - now a `LinkedHashMap` filled from a copy of the source sorted by name, the real container keeps its own order
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block the `|` character in the name and description (it would break the txt format) (wip)
 - [x] `ProductCreationWindow` and `ProductEditingWindow` do not block duplicate names, editing must still allow the product's own name (wip, if time)
 - [x] `ShelfScene` is built once with the user in the constructor, it must be rebuilt after login / logout (wip, with login)
 - [x] `SceneManager.showInventory()` and `showDatabase()` do not check permissions
-- [ ] no confirm before "delete all instances"
+- [x] no confirm before "delete all instances"
+  - `DatabaseScene` asks first and says what will be removed, cancel deletes nothing
 - [x] `templatedata/` is unused, use it as the "reset to default data" source (wip)
-- [ ] stock logic lives inside the windows, move it so screens and windows only call it
+- [x] stock logic lives inside the windows, move it so screens and windows only call it
+  - every window calls `FarmSystem`, the windows only pick the product and the amount
 - [x] `LabelledPasswordField` is unused for now, keep it for the real login screen in phase 3
 
 ---
@@ -93,6 +100,7 @@ changed from the old table so it matches what the code can do now and keeps the 
 | cash balance | no | no | yes | yes |
 | sale history | no | no | own only | any clerk |
 | approve sign-ups | no | no | no | yes |
+| dashboard | no | yes | yes | yes |
 
 note: right now the code lets clerks add and delete inventory stock and move shelf stock back, phase 1 fixes this using this table
 
@@ -158,17 +166,20 @@ note: right now the code lets clerks add and delete inventory stock and move she
 
 ### phase 5: dashboards and history
 - [x] `DashboardScene` with tiles by role
-  - needs the phase 1 role checks, `SignUpRequestsScene` now exists so add a sign-up requests tile
-  - edits `SceneManager` and `AppHeader`, same files as phase 1 and phase 3
+  - created `ui/DashboardScene.java`, one tile per screen the user may open, each with a live number
+  - added `canViewDashboard()` and `showDashboard()` to `SceneManager`
+  - `AppHeader` shows a dashboard button instead of the title for logged in users
 - [x] `SaleHistoryScene`: transactions confirmed or voided by one clerk
   - only reads transactions, no phase 1 to 3 needed, uses the current username for a clerk's own history
 - [x] `ClerkListScene` for the manager, opens a clerk's history
   - reads the clerks from `users.txt` (phase 3)
-- [ ] login lands on the dashboard for the role
-  - needs the phase 3 login
+- [x] login lands on the dashboard for the role
+  - `LoginScene` now calls `manager.showDashboard()` after a successful login
+  - logout still goes back to the shelf, because a guest has no dashboard
 
 ### phase 6: polish and demo
 - [ ] final css pass
+  - this is the same work as the half done styling item, remove the inline `setStyle` colors that override `application.css`
 - [ ] update `README.md` (features, layout, how to run)
 - [ ] rehearse the demo run below
 
@@ -184,4 +195,3 @@ note: right now the code lets clerks add and delete inventory stock and move she
 6. log in as the manager and void it
 7. check that stock came back and cash was reversed
 8. close and reopen the app, all data is still there
-

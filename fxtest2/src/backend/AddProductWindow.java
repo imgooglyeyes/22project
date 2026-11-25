@@ -1,6 +1,8 @@
 package backend;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 
 import application.FarmSystem;
 import application.Product;
@@ -31,8 +33,10 @@ import ui.Styles;
  * change and the saving. the source container is only read, to fill the product list and to
  * cap the amount when stock is taken from it
  *
+ * <p>the product list is sorted by name (ignoring letter case), so it always shows in the same order
+ *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @see MoveProductWindow
  * @see FarmSystem#addToShelf(Product, int)
  * @see FarmSystem#addToInventory(Product, int)
@@ -58,10 +62,16 @@ public class AddProductWindow {
 	 * @param sourceContainer the container the products are picked from (inventory for the shelf, database for the inventory)
 	 * @param toShelf true to move stock from the inventory to the shelf (amount is capped to the source stock), false to add new stock to the inventory
 	 * @param refresh called after a successful add so the screen redraws, can be null
+	 * @since 1.3 the product list is sorted by name instead of being in random order
 	 */
 	public AddProductWindow(Stage stage, FarmSystem farmSystem, ProductContainer sourceContainer, boolean toShelf, Runnable refresh) {
-		HashMap<String, Integer> products = new HashMap<>();
-		for (Product p : sourceContainer.getProducts()) { // go through every product in the source
+		// sort a copy of the source, so the real container keeps its own order
+		ArrayList<Product> sortedProducts = new ArrayList<>(sourceContainer.getProducts());
+		sortedProducts.sort(Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER));
+
+		// a linked map keeps the order the products were put in, so the combo box shows them sorted
+		LinkedHashMap<String, Integer> products = new LinkedHashMap<>();
+		for (Product p : sortedProducts) { // go through every product in the source, sorted by name
 			products.put(p.getName(), p.getId()); // add their name and corresponding internal id
 		}
 

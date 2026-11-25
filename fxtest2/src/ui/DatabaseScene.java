@@ -32,11 +32,12 @@ import javafx.stage.Stage;
  * and put all product data back to the template data
  *
  * <p>every product change goes through FarmSystem, this screen only shows the database.
- * the reset asks for a confirmation first because it replaces the database, inventory and
- * shelf with the template files, transactions and users are not touched
+ * the delete and the reset both ask for a confirmation first, because a delete removes the product
+ * from the database, inventory and shelf, and the reset replaces all three with the template files.
+ * transactions and users are not touched by either
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @see SceneManager#resetToDefaults()
  * @see FarmSystem
  */
@@ -143,11 +144,21 @@ public class DatabaseScene extends Scene {
         });
 
         // deletes the selected product from the database, inventory, and shelf
+        // the manager has to confirm first because this can't be undone
         deleteSelected.setOnAction(event -> {
 
             Product product = selectedProduct.get();
 
             if (product != null) {
+
+                if (!askToProceed(
+                        "Delete " + product.getName() + " everywhere?\n" +
+                        "It will be removed from the database, inventory and shelf.\n" +
+                        "Products made from it will become harvest items.\n" +
+                        "Old transactions are kept.")) {
+                    return; // the manager changed their mind, nothing is deleted
+                }
+
                 // FarmSystem returns null when it worked, or an error message
                 String error = farmSystem.deleteEverywhere(product);
 
@@ -221,6 +232,7 @@ public class DatabaseScene extends Scene {
 
     /**
      * asks the manager to confirm an action
+     * <p>used before the delete and the reset, because both can't be undone
      *
      * @param message what is about to happen
      * @return true if they pressed ok
