@@ -1,8 +1,6 @@
 package ui;
 
 import application.User;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,7 +13,7 @@ import javafx.scene.layout.HBox;
  * so the header and the scenes always follow the same permission table.
  * the button of the open scene is highlighted and disabled
  *
- * @author Jian Carranza, Shawn Alfred Padilla, Matthew Prado
+ * @author Jian Carranza, Shawn Alfred Padilla
  * @version 1.3
  * @see SceneManager
  */
@@ -41,11 +39,11 @@ public class AppHeader extends HBox {
         Button historyButton = new Button("History");
         Button cashButton = new Button("Cash");
         Button staffListButton = new Button("Staff List");
+        Button signUpRequestsButton = new Button("Sign-Ups"); // short label so the manager header still fits
         Button databaseButton = new Button("Database");
         Button loginButton = new Button("Log In");
         Button signUpButton = new Button("Sign Up");
         Button myRequestsButton = new Button("My Requests");
-        Button signUpRequestsButton = new Button("Sign-Up Requests");
 
         // opens the selected scene
         shelfButton.setOnAction(e -> manager.showShelf());
@@ -57,8 +55,8 @@ public class AppHeader extends HBox {
         cashButton.setOnAction(e -> manager.showCash());
         databaseButton.setOnAction(e -> manager.showDatabase());
         staffListButton.setOnAction(e -> manager.showStaffList());
-        myRequestsButton.setOnAction(e -> manager.showMyRequests());
         signUpRequestsButton.setOnAction(e -> manager.showSignUpRequests());
+        myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
         // highlights the current scene
         setActive(shelfButton, currentScene.equals("Shelf"));
@@ -70,8 +68,8 @@ public class AppHeader extends HBox {
         setActive(cashButton, currentScene.equals("Cash"));
         setActive(databaseButton, currentScene.equals("Database"));
         setActive(staffListButton, currentScene.equals("Staff List"));
+        setActive(signUpRequestsButton, currentScene.equals("Sign Up Requests"));
         setActive(myRequestsButton, currentScene.equals("My Requests"));
-        setActive(signUpRequestsButton, currentScene.equals("Sign-Up Requests"));
 
         // only guests have no account yet, so only they see log in and sign up
         boolean isGuest = user.getUserType().equals(User.GUEST);
@@ -110,10 +108,10 @@ public class AppHeader extends HBox {
             getChildren().add(staffListButton);
         }
 
-        if (manager.canApproveSignUps() == true) {
+        if (manager.canApproveSignUps()) {
             getChildren().add(signUpRequestsButton);
         }
-        
+
         if (manager.canManageDatabase()) {
             getChildren().add(databaseButton);
         }

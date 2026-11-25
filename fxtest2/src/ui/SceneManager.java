@@ -19,7 +19,7 @@ import javafx.stage.Stage;
  * use them again so a scene can't be opened by a user who should not see it.
  * FarmSystem does not check roles, it trusts the screens
  *
- * @author Jian Carranza, Shawn Alfred Padilla, Matthew Prado
+ * @author Jian Carranza, Shawn Alfred Padilla
  * @version 1.7
  * @see FarmSystem
  * @see ProductsFileHandler
@@ -249,8 +249,8 @@ public class SceneManager {
     }
 
     /**
-     * approve sign-ups, only managers
-     * <p>the screen for this comes later in phase 3, nothing calls this yet
+     * approve or reject sign ups, only managers
+     * <p>the sign up requests screen and its header button use this
      *
      * @return true if the current user can approve new accounts
      * @since 1.5
@@ -367,6 +367,19 @@ public class SceneManager {
         stage.setTitle("Sign Up");
     }
 
+    /**
+     * opens the sign up requests, doing nothing unless the current user can approve sign ups
+     *
+     * @since 1.7
+     */
+    public void showSignUpRequests() {
+        if (!canApproveSignUps()) return;
+
+        SignUpRequestsScene scene = new SignUpRequestsScene(stage, this, userData, currentUser);
+        stage.setScene(scene);
+        stage.setTitle("Sign Up Requests");
+    }
+
     /** opens the customer's own requests, doing nothing unless the user is a customer */
     public void showMyRequests() {
         if (!canViewMyRequests()) return;
@@ -416,15 +429,5 @@ public class SceneManager {
         CashScene scene = new CashScene(stage, this, currentUser);
         stage.setScene(scene);
         stage.setTitle("Cash");
-    }
-    /** this opens the sign-up requests screen, doing nothing unless the current user can approve sign-ups */
-    public void showSignUpRequests() {
-        if (canApproveSignUps() == false) {
-            return;
-        }
-
-        SignUpRequestScene scene = new SignUpRequestScene(stage, this, userData, currentUser);
-        stage.setScene(scene);
-        stage.setTitle("Sign-Up Requests");
     }
 }

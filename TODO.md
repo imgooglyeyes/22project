@@ -24,6 +24,7 @@
 - [x] persistence: files are written but never read back (`Main` still hardcodes everything)
 - [x] `templatedata/` is unused, use it as the "reset to default data" source
 - [x] shelf and inventory stock is not saved after a confirm or void, so those changes are lost on restart while the transactions stay
+- [x] manager approval of sign ups (`SignUpRequestsScene`)
 
 ### in progress (wip)
 - [x] roles: `User` has a role, but the user is hardcoded in `Main` and there is no login
@@ -32,7 +33,6 @@
 
 ### half done
 - [ ] styling: stylesheet is loaded everywhere, but inline `setStyle` colors are still in the scenes and override it
-- [ ] manager approval of sign ups
 
 ### not started
 - [x] sale history and clerk list
@@ -127,7 +127,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 - [x] `SignUpScene` (customer active at once, clerk / manager pending) (wip)
 - [x] `SceneManager`: hold the current user, rebuild scenes on login / logout, guest by default (wip)
 - [x] header: login / logout buttons (wip)
-- [ ] `SignUpRequestsScene` for managers: approve or reject pending users (wip)
+- [x] `SignUpRequestsScene` for managers: approve or reject pending users
 
 ### phase 4: sales and cash
 - [x] `SaleTransaction` model: id, product, quantity, price, requester, status, confirmer, voider, times
@@ -156,7 +156,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 
 ### phase 5: dashboards and history
 - [ ] `DashboardScene` with tiles by role
-  - needs the phase 1 role checks, add a sign-up requests tile once `SignUpRequestsScene` exists
+  - needs the phase 1 role checks, `SignUpRequestsScene` now exists so add a sign-up requests tile
   - edits `SceneManager` and `AppHeader`, same files as phase 1 and phase 3
 - [x] `SaleHistoryScene`: transactions confirmed or voided by one clerk
   - only reads transactions, no phase 1 to 3 needed, uses the current username for a clerk's own history
@@ -182,3 +182,4 @@ note: right now the code lets clerks add and delete inventory stock and move she
 6. log in as the manager and void it
 7. check that stock came back and cash was reversed
 8. close and reopen the app, all data is still there
+
