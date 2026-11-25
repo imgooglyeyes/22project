@@ -155,7 +155,7 @@ note: right now the code lets clerks add and delete inventory stock and move she
 
 
 ### phase 5: dashboards and history
-- [ ] `DashboardScene` with tiles by role
+- [x] `DashboardScene` with tiles by role
   - needs the phase 1 role checks, `SignUpRequestsScene` now exists so add a sign-up requests tile
   - edits `SceneManager` and `AppHeader`, same files as phase 1 and phase 3
 - [x] `SaleHistoryScene`: transactions confirmed or voided by one clerk

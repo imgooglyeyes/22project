@@ -13,8 +13,12 @@ import javafx.scene.layout.HBox;
  * so the header and the scenes always follow the same permission table.
  * the button of the open scene is highlighted and disabled
  *
+ * <p>a logged in user gets a dashboard button where the title label would be,
+ * this keeps the manager header from growing wider than the window.
+ * a guest still sees the title label because a guest has no dashboard
+ *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.3
+ * @version 1.4
  * @see SceneManager
  */
 public class AppHeader extends HBox {
@@ -33,6 +37,7 @@ public class AppHeader extends HBox {
 
         Label title = new Label("Inventory System");
 
+        Button dashboardButton = new Button("Dashboard");
         Button shelfButton = new Button("Shelf");
         Button inventoryButton = new Button("Inventory");
         Button transactionsButton = new Button("Transactions");
@@ -46,6 +51,7 @@ public class AppHeader extends HBox {
         Button myRequestsButton = new Button("My Requests");
 
         // opens the selected scene
+        dashboardButton.setOnAction(e -> manager.showDashboard());
         shelfButton.setOnAction(e -> manager.showShelf());
         loginButton.setOnAction(e -> manager.showLogin());
         signUpButton.setOnAction(e -> manager.showSignUp());
@@ -59,6 +65,7 @@ public class AppHeader extends HBox {
         myRequestsButton.setOnAction(e -> manager.showMyRequests());
 
         // highlights the current scene
+        setActive(dashboardButton, currentScene.equals("Dashboard"));
         setActive(shelfButton, currentScene.equals("Shelf"));
         setActive(loginButton, currentScene.equals("Log In"));
         setActive(signUpButton, currentScene.equals("Sign Up"));
@@ -74,7 +81,12 @@ public class AppHeader extends HBox {
         // only guests have no account yet, so only they see log in and sign up
         boolean isGuest = user.getUserType().equals(User.GUEST);
 
-        getChildren().add(title);
+        // the dashboard button takes the place of the title for logged in users
+        if (manager.canViewDashboard()) {
+            getChildren().add(dashboardButton);
+        } else {
+            getChildren().add(title);
+        }
         getChildren().add(shelfButton);
 
         if (isGuest) {

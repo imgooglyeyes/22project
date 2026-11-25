@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  * FarmSystem does not check roles, it trusts the screens
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.7
+ * @version 1.8
  * @see FarmSystem
  * @see ProductsFileHandler
  */
@@ -115,6 +115,17 @@ public class SceneManager {
      */
     public boolean canSignUp() {
         return isGuest();
+    }
+
+    /**
+     * dashboard, every logged in user has one, a guest has nothing to show on it
+     * <p>the tiles on the dashboard follow the other can... methods, so this only decides if the screen opens at all
+     *
+     * @return true if the current user can open the dashboard
+     * @since 1.8
+     */
+    public boolean canViewDashboard() {
+        return !isGuest();
     }
 
     /**
@@ -314,6 +325,28 @@ public class SceneManager {
 
         stage.setScene(scene);
         stage.setTitle("The Shelf");
+    }
+
+    /**
+     * opens the dashboard, doing nothing unless the current user can view it
+     *
+     * @since 1.8
+     */
+    public void showDashboard() {
+        if (!canViewDashboard()) return;
+
+        DashboardScene scene = new DashboardScene(
+            stage,
+            this,
+            database,
+            inventoryData,
+            shelfData,
+            userData,
+            currentUser
+        );
+
+        stage.setScene(scene);
+        stage.setTitle("Dashboard");
     }
 
     /** opens the inventory, doing nothing unless the current user can view it */
