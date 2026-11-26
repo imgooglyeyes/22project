@@ -87,7 +87,7 @@ public class CashPage extends BorderPane implements Searchable {
             balance += entry.amount;
         }
 
-        // the balance card on top of the list
+        // balance on top of the list
         Label caption = new Label("Cash balance");
         caption.getStyleClass().add("caption");
 

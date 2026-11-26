@@ -66,8 +66,8 @@ public class TransactionContainer {
     }
 
     /**
-     * lists only the transactions that a staff member took action on, by confirming or by voiding
-     * <p>confirmedBy and voidedBy can be null, so the username is the one that is compared.
+     * returns only the requests that have been acted upon by the actor
+     * <p>confirmedBy and voidedBy can be null, which makes equals throw, so each check has its own try and catch.
      * it is the same rule as FarmSystem#countHandledBy, so the numbers match the rows of the history page
      *
      * @param username the username of the clerk or manager

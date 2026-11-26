@@ -134,7 +134,7 @@ public class Product {
     public boolean hasImage()			{ return image != null; }
     
     /**
-     * gets the price as text for the screens, with the peso sign and two decimals
+     * gets the price as text for the screens, example: ₱30.00
      *
      * <p>\u20B1 is the peso sign, written as an escape so the file encoding can't break it
      *

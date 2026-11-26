@@ -336,7 +336,7 @@ public class SceneManager {
     }
 
     /**
-     * approve or reject sign ups, only managers
+     * approve sign-ups, only managers
      * <p>the sign-ups tab of the staff page and the home tile use this
      *
      * @return true if the current user can approve new accounts
@@ -565,7 +565,8 @@ public class SceneManager {
     }
 
     /**
-     * opens the staff page on the sign-ups tab, doing nothing unless the current user can approve sign ups
+     * this opens the sign-up requests screen, doing nothing unless the current user can approve sign-ups
+     * <p>the screen is the sign-ups tab of the staff page
      *
      * @since 1.7
      */

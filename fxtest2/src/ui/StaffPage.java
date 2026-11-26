@@ -13,26 +13,30 @@ import javafx.scene.layout.StackPane;
 /**
  * the page where a manager sees the staff and decides on the accounts that wait for approval
  *
- * <p>it has two tabs in one segmented toggle. members lists the active managers first and then the active clerks,
- * and the manager picks one to open their dashboard or their transaction history. sign-ups lists the pending accounts
- * (the clerk and manager accounts made in the sign up form), an approved account becomes active and can log in,
+ * <p>it has two tabs in one segmented toggle. members shows the list of staff (managers first, then the active clerks),
+ * and managers can click on any staff member in the list to view their transaction history or open their dashboard.
+ * sign-ups lists the pending accounts (the clerk and manager accounts made in the sign up form), an approved account
+ * becomes active and can log in,
  * a rejected account stays in the save file as rejected, so its username can't be taken by someone else
  *
- * <p>every decision is saved to users.txt right away and answered with a toast.
+ * <p>approve and reject both ask for a confirmation first, the same way the old sign up requests scene did.
+ * every decision is saved to users.txt right away and answered with a toast.
  * the search box of the top bar filters the open tab.
  * the page is created again every time it opens, so the lists are always up to date
  *
- * @author Jian Carranza, Shawn Alfred Padilla
- * @version 2.2
+ * @author Jian Carranza, Matthew Prado, Shawn Alfred Padilla
+ * @version 2.3
  * @since 2.0 the page replaces the old staff list scene and the old sign up requests scene
  * @since 2.1 the open dashboard button and the toasts were added
  * @since 2.2 show and owner moved to Ui
+ * @since 2.3 approve and reject use one handleDecision with the confirm message of the old sign up requests scene
  * @see UserTable
  * @see Ui
  * @see SceneManager#showStaffList()
  * @see SceneManager#showSignUpRequests()
  * @see SceneManager#showStaffDashboard(User)
- * @see UsersFileHandler
+ * @see SceneManager#canApproveSignUps()
+ * @see UsersFileHandler#save(UserContainer)
  */
 public class StaffPage extends BorderPane implements Searchable {
 
@@ -79,9 +83,11 @@ public class StaffPage extends BorderPane implements Searchable {
         membersTable.setEmptyText("There are no staff members yet");
         signUpTable.setEmptyText("There are no sign-ups waiting");
 
-        // each button needs a selected row in its own table
+        // the dashboard and the history need a selected staff member
         dashboardButton.disableProperty().bind(membersTable.getSelectionModel().selectedItemProperty().isNull());
         historyButton.disableProperty().bind(membersTable.getSelectionModel().selectedItemProperty().isNull());
+
+        // approve and reject require a selected pending request
         approveButton.disableProperty().bind(signUpTable.getSelectionModel().selectedItemProperty().isNull());
         rejectButton.disableProperty().bind(signUpTable.getSelectionModel().selectedItemProperty().isNull());
 
@@ -135,14 +141,15 @@ public class StaffPage extends BorderPane implements Searchable {
     private void refresh() {
         // only active accounts are staff, a pending or rejected account can't log in so it has no history
         ArrayList<User> members = new ArrayList<>();
-        for (User user : userData.getUsersByType(User.MANAGER)) { // managers first
+        for (User user : userData.getUsersByType(User.MANAGER)) { // add managers first
             if (user.isActive()) members.add(user);
         }
-        for (User user : userData.getUsersByType(User.CLERK)) { // clerks next
+        for (User user : userData.getUsersByType(User.CLERK)) { // add clerks next
             if (user.isActive()) members.add(user);
         }
         membersTable.setRows(members);
 
+        // loads the pending sign-up requests
         ArrayList<User> pending = new ArrayList<>();
         for (User user : userData.getUsers()) {
             if (User.PENDING.equals(user.getStatus())) pending.add(user);
@@ -190,8 +197,10 @@ public class StaffPage extends BorderPane implements Searchable {
     // ---------- actions ----------
 
     /**
-     * approves or rejects the selected pending account, saves the users and shows a toast
-     * <p>the manager has to confirm first, the message names the role, the full name and the username.
+     * approves or rejects the selected pending account and saves users.txt
+     * <p>approving sets the status to active so the user can log in, rejecting sets it to rejected.
+     * the change is saved immediately through UsersFileHandler.
+     * the manager has to confirm first, the message names the role, the full name and the username.
      * nothing happens unless the current user can approve sign ups and the account is still pending,
      * so a stale selection can't change an account that was already decided
      *
@@ -208,6 +217,7 @@ public class StaffPage extends BorderPane implements Searchable {
                 " account for " + target.getFirstName() + " " + target.getLastName() +
                 " (" + target.getUsername() + ")?";
 
+        // asks the manager to confirm an action, true if they pressed ok
         if (!Dialogs.confirm(Ui.windowOf(this), message)) return;
 
         String name = target.getUsername();
@@ -215,7 +225,7 @@ public class StaffPage extends BorderPane implements Searchable {
         target.setStatus(approve ? User.ACTIVE : User.REJECTED);
         UsersFileHandler.save(userData);
 
-        refresh();
+        refresh(); // refreshes the list of pending users
         manager.toast(approve ? name + " was approved" : name + " was rejected");
     }
 }
