@@ -1,7 +1,10 @@
 package backend;
 
+import java.io.IOException;
+
 import application.FarmSystem;
 import application.Product;
+import application.ProductImages;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
@@ -10,6 +13,7 @@ import javafx.stage.Stage;
 import ui.Dialogs;
 import ui.LabelledTextField;
 import ui.MadeFromPicker;
+import ui.ImagePicker;
 
 /**
  * popup window to edit the name, description, price and source of a product
@@ -26,7 +30,7 @@ import ui.MadeFromPicker;
  * @since 1.4 the window extends PopupWindow and tells why the save button is disabled
  * @see PopupWindow
  * @see MadeFromPicker
- * @see FarmSystem#editProduct(Product, String, String, double, Integer)
+ * @see FarmSystem#editProduct(Product, String, String, double, Integer, String)
  * @see FarmSystem#isNameTaken(String, Integer)
  */
 public class ProductEditingWindow extends PopupWindow {
@@ -34,6 +38,7 @@ public class ProductEditingWindow extends PopupWindow {
 	private LabelledTextField descriptionField;
 	private LabelledTextField priceField;
 	private MadeFromPicker madeFromPicker;
+	private ImagePicker imagePicker;
 
 	private Button confirm;
 
@@ -47,7 +52,7 @@ public class ProductEditingWindow extends PopupWindow {
 	 * @param refresh called after the edit so the screen redraws, can be null
 	 */
 	public ProductEditingWindow(Stage stage, FarmSystem farmSystem, Product targetProduct, Runnable refresh) {
-		super(stage, "Edit Product", "Edit " + targetProduct.getName(), 480, 480);
+		super(stage, "Edit Product", "Edit " + targetProduct.getName(), 480, 580);
 
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
@@ -67,6 +72,7 @@ public class ProductEditingWindow extends PopupWindow {
 		// a product that others are made from has to stay a harvest item, so the picker is locked
 		boolean hasMadeProducts = farmSystem.isSourceOfOthers(targetProduct.getId());
 		madeFromPicker.setDisable(hasMadeProducts);
+		this.imagePicker = new ImagePicker(targetProduct.getImage());
 
 		// true while the name belongs to another product, the product's own name is fine
 		BooleanBinding invalidName = Bindings.createBooleanBinding(
@@ -90,7 +96,7 @@ public class ProductEditingWindow extends PopupWindow {
 			priceField.getTextField().textProperty()
 		));
 
-		form.getChildren().addAll(nameField, descriptionField, priceField, madeFromPicker);
+		form.getChildren().addAll(nameField, descriptionField, priceField, madeFromPicker, imagePicker);
 
 		if (hasMadeProducts) { // tells the user why the picker is locked
 			Label lockedNote = new Label("Other products are made from this one, so it stays a harvest item");
@@ -104,19 +110,32 @@ public class ProductEditingWindow extends PopupWindow {
 
 		// asks the farm system to apply the edit, stays open if it says no
 		confirm.setOnAction(event -> {
+			String original = targetProduct.getImage();
+			String image;
+			try {
+				image = imagePicker.commit();
+			} catch (IOException e) {
+				Dialogs.error(window, e.getMessage());
+				return;
+			}
+
 			// FarmSystem returns null when it worked, or an error message
 			String error = farmSystem.editProduct(
 				targetProduct,
 				nameField.getText(),
 				descriptionField.getText(),
 				Double.parseDouble(priceField.getText()), // safe, the button is disabled when the price is not a number
-				madeFromPicker.getSelectedId() // null means a harvest item
+				madeFromPicker.getSelectedId(), // null means a harvest item
+				image
 			);
 
 			if (error != null) {
+				if (image != null && !image.equals(original)) ProductImages.delete(image);
 				Dialogs.error(window, error);
 				return;
 			}
+
+			if (original != null && !original.equals(image)) ProductImages.delete(original);
 
 			if (refresh != null) refresh.run();
 			window.close();

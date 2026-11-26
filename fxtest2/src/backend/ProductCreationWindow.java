@@ -1,6 +1,9 @@
 package backend;
 
+import java.io.IOException;
+
 import application.FarmSystem;
+import application.ProductImages;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Button;
@@ -9,6 +12,7 @@ import javafx.stage.Stage;
 import ui.Dialogs;
 import ui.LabelledTextField;
 import ui.MadeFromPicker;
+import ui.ImagePicker;
 
 /**
  * popup window to create a new product in the database
@@ -24,7 +28,7 @@ import ui.MadeFromPicker;
  * @since 1.4 the window extends PopupWindow and tells why the create button is disabled
  * @see PopupWindow
  * @see MadeFromPicker
- * @see FarmSystem#createProduct(String, String, double, Integer)
+ * @see FarmSystem#createProduct(String, String, double, Integer, String)
  * @see FarmSystem#isNameTaken(String, Integer)
  */
 public class ProductCreationWindow extends PopupWindow {
@@ -33,6 +37,7 @@ public class ProductCreationWindow extends PopupWindow {
 	private LabelledTextField descriptionField;
 	private LabelledTextField priceField;
 	private MadeFromPicker madeFromPicker;
+	private ImagePicker imagePicker;
 
 	private Button create;
 
@@ -45,7 +50,7 @@ public class ProductCreationWindow extends PopupWindow {
 	 * @param refresh called after the product is created so the screen redraws, can be null
 	 */
 	public ProductCreationWindow(Stage stage, FarmSystem farmSystem, Runnable refresh) {
-		super(stage, "Create New Product", "Create a new product", 480, 440);
+		super(stage, "Create New Product", "Create a new product", 480, 540);
 
 		this.nameField = new LabelledTextField("Name:", true);
 		this.descriptionField = new LabelledTextField("Description:", true);
@@ -54,6 +59,7 @@ public class ProductCreationWindow extends PopupWindow {
 
 		// every harvest product can be the source, a new product starts as a harvest item
 		this.madeFromPicker = new MadeFromPicker(farmSystem.getHarvestProducts(null), null);
+		this.imagePicker = new ImagePicker(null);
 
 		this.create = new Button("Create");
 
@@ -79,20 +85,30 @@ public class ProductCreationWindow extends PopupWindow {
 			priceField.getTextField().textProperty()
 		));
 
-		form.getChildren().addAll(nameField, descriptionField, priceField, madeFromPicker, problem);
+		form.getChildren().addAll(nameField, descriptionField, priceField, madeFromPicker, imagePicker, problem);
 		finish(create);
 
 		// asks the farm system to create the product, stays open if it says no
 		create.setOnAction(event -> {
 			// FarmSystem returns null when it worked, or an error message
+			String image;
+			try {
+				image = imagePicker.commit();
+			} catch (IOException e) {
+				Dialogs.error(window, e.getMessage());
+				return;
+			}
+
 			String error = farmSystem.createProduct(
 				nameField.getText(),
 				descriptionField.getText(),
 				Double.parseDouble(priceField.getText()), // safe, the button is disabled when the price is not a number
-				madeFromPicker.getSelectedId() // null means a harvest item
+				madeFromPicker.getSelectedId(), // null means a harvest item
+				image
 			);
 
 			if (error != null) {
+				ProductImages.delete(image);
 				Dialogs.error(window, error);
 				return;
 			}

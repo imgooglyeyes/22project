@@ -18,10 +18,11 @@ import java.util.List;
  *
  * <p>file formats, one product per line, fields separated by |
  * <ul>
- * <li>productsDB.txt: id|name|description|price|madeFrom
+ * <li>productsDB.txt: id|name|description|price|madeFrom|image
  * <li>inventory.txt and shelf.txt: id|stock
  * </ul>
- * madeFrom is a product id, it is empty for a harvest item
+ * madeFrom is a product id, it is empty for a harvest item.
+ * image is a picture file name, it is empty for no picture
  *
  * <p>a null container is never written, so its file is left alone.
  * a null container is never written, so its file is left alone
@@ -30,9 +31,10 @@ import java.util.List;
  * @version 2.3
  * @since 2.0
  * @since 2.1 resetToDefaults was added
- * @since 2.2
+ * @since 2.2 the image field was added
  * @see ProductContainer
  * @see Product
+ * @see ProductImages
  */
 public class ProductsFileHandler {
 
@@ -61,7 +63,7 @@ public class ProductsFileHandler {
 	 */
 	public static void saveAll(ProductContainer database, ProductContainer inventoryData, ProductContainer shelfData) {
 		try {
-			// id|name|description|price|madeFrom
+			// id|name|description|price|madeFrom|image
 			if (database != null) {
 				List<String> lines = new ArrayList<>();
 				for (Product p : database.getProducts()) {
@@ -70,7 +72,8 @@ public class ProductsFileHandler {
 						p.getName() + "|" +
 						p.getDescription() + "|" +
 						p.getPrice() + "|" +
-						(p.getMadeFrom() == null ? "" : p.getMadeFrom()) // empty for a harvest item
+						(p.getMadeFrom() == null ? "" : p.getMadeFrom()) + "|" +
+						(p.getImage() == null ? "" : p.getImage())
 					);
 				}
 				writeLines(DATABASE, lines);
@@ -130,7 +133,8 @@ public class ProductsFileHandler {
 
 	/**
 	 * reads productsDB.txt into the database container
-	 * <p>old files with 4 fields still load, a missing or empty madeFrom means a harvest item
+	 * <p>old files with 4 or 5 fields still load, a missing or empty madeFrom means a harvest item
+	 * and a missing or empty image means no picture
 	 * <p>a bad line is skipped and printed, it does not stop the load
 	 *
 	 * @param database the empty container to fill
@@ -146,6 +150,11 @@ public class ProductsFileHandler {
 					madeFrom = Integer.parseInt(parts[4].trim());
 				}
 
+				String image = null;
+				if (parts.length >= 6 && !parts[5].trim().isEmpty()) {
+					image = parts[5].trim();
+				}
+
 				// the existing-id constructor keeps ids from changing
 				database.add(new Product(
 					Integer.parseInt(parts[0]),		// existing_id
@@ -153,7 +162,8 @@ public class ProductsFileHandler {
 					parts[2],						// desc
 					Double.parseDouble(parts[3]),	// price
 					0,								// stock (doesn't matter in database)
-					madeFrom						// madeFrom
+					madeFrom,						// madeFrom
+					image							// image
 				), 0);
 			} catch (RuntimeException e) { // bad number or missing field
 				System.out.println("Skipped a bad product line: " + line);

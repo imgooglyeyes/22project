@@ -2,6 +2,7 @@ package ui;
 
 import application.FarmSystem;
 import application.Product;
+import application.ProductImages;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,14 +10,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
- * one product of the shelf as a card: a placeholder picture, the name, where it comes from,
+ * one product of the shelf as a card: the picture, the name, where it comes from,
  * the description, the price, a stock badge and an optional button
  *
- * <p>there is no photo field yet, so the picture is a soft gradient tile with the first letter of the name.
+ * <p>the picture comes from ProductImages through ProductImageView. a missing picture uses the letter tile.
  * the made-from chip says "Harvest" for a harvest item or "Made from" and the source name for a made product.
  * the stock badge is amber when the stock is low (see FarmSystem#LOW_STOCK_THRESHOLD)
  *
@@ -25,7 +25,7 @@ import javafx.scene.layout.VBox;
  * the full text is in the tooltip. the look comes from css classes, there are no inline colors
  *
  * @author Shawn Alfred Padilla
- * @version 1.0
+ * @version 1.1
  * @see MarketplacePage
  * @see FarmSystem#LOW_STOCK_THRESHOLD
  */
@@ -57,12 +57,9 @@ public class ProductCard extends VBox {
         setMinWidth(WIDTH);
         setMaxWidth(WIDTH);
 
-        // the placeholder picture
-        Label initial = new Label(initialOf(product.getName()));
-        initial.getStyleClass().add("product-initial");
-        StackPane image = new StackPane(initial);
-        image.getStyleClass().add("product-image");
-        fixHeight(image, IMAGE_HEIGHT);
+        // the picture, or the placeholder letter if there is none
+        ProductImageView image = new ProductImageView(INNER_WIDTH, IMAGE_HEIGHT);
+        image.show(ProductImages.load(product.getImage()), initialOf(product.getName()));
 
         Label name = new Label(product.getName());
         name.getStyleClass().add("product-name");

@@ -141,8 +141,11 @@ public class FarmSystem {
      * @return null if the product was created, or an error message
      * @since 1.3
      */
-    public String createProduct(String name, String desc, double price, Integer madeFrom) {
+    public String createProduct(String name, String desc, double price, Integer madeFrom, String image) {
         String error = checkDetails(name, desc, price);
+        if (error != null) return error;
+
+        error = checkImage(image);
         if (error != null) return error;
 
         if (isNameTaken(name, null)) return "A product with this name already exists";
@@ -153,6 +156,7 @@ public class FarmSystem {
 
         Product created = new Product(name.trim(), desc.trim(), price, 0);
         created.setMadeFrom(madeFrom);
+        created.setImage(image);
 
         // the database keeps its own copy, so the stock here does not matter
         database.add(created, 0);
@@ -173,10 +177,13 @@ public class FarmSystem {
      * @return null if the product was edited, or an error message
      * @since 1.3
      */
-    public String editProduct(Product product, String name, String desc, double price, Integer madeFrom) {
+    public String editProduct(Product product, String name, String desc, double price, Integer madeFrom, String image) {
         if (product == null) return "No product selected";
 
         String error = checkDetails(name, desc, price);
+        if (error != null) return error;
+
+        error = checkImage(image);
         if (error != null) return error;
 
         Product target = database.getProductById(product.getId());
@@ -201,6 +208,7 @@ public class FarmSystem {
             copy.setDescription(desc.trim());
             copy.setPrice(price);
             copy.setMadeFrom(madeFrom); // every copy keeps the same madeFrom
+            copy.setImage(image);
         }
 
         ProductsFileHandler.saveAll(database, inventoryData, shelfData);
@@ -221,6 +229,11 @@ public class FarmSystem {
         if (desc == null || desc.trim().isEmpty()) return "Description can't be empty";
         if (name.contains("|") || desc.contains("|")) return "Name and description can't contain |";
         if (Double.isNaN(price) || Double.isInfinite(price) || price < 0) return "Price must be a number, 0 or higher";
+        return null;
+    }
+
+    private String checkImage(String image) {
+        if (image != null && image.contains("|")) return "Image name can't contain |";
         return null;
     }
 
@@ -333,6 +346,7 @@ public class FarmSystem {
         if (target == null) return "This product no longer exists";
 
         int id = target.getId();
+        String image = target.getImage();
         ProductContainer[] containers = { database, inventoryData, shelfData };
 
         for (ProductContainer container : containers) {
@@ -349,6 +363,7 @@ public class FarmSystem {
         }
 
         ProductsFileHandler.saveAll(database, inventoryData, shelfData);
+        ProductImages.delete(image);
         return null;
     }
 

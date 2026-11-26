@@ -8,11 +8,11 @@ import javafx.collections.ObservableList;
  * holds a list of products, used for the database, the inventory and the shelf
  *
  * <p>adding a product makes a copy, so each container has its own stock.
- * the copy keeps madeFrom so it is not lost in the inventory and shelf.
+ * the copy keeps madeFrom and the image so they are not lost in the inventory and shelf.
  * replaceWith swaps the whole content, so screens keep using the same container object
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @see Product
  */
 public class ProductContainer {
@@ -46,7 +46,7 @@ public class ProductContainer {
 
 		if (p == null) { // doesn't exist yet, just add it normally
 			// the copy keeps madeFrom so it is not lost in the inventory and shelf
-			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks, product.getMadeFrom()));
+			productList.add(new Product(product.getId(), product.getName(), product.getDescription(), product.getPrice(), stocks, product.getMadeFrom(), product.getImage()));
 			System.out.println("Added " + stocks + "x " + product.getName());
 			return;
 		}

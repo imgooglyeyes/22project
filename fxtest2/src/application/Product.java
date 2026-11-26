@@ -11,14 +11,15 @@ package application;
  * <li>price: double
  * <li>stock: int
  * <li>madeFrom: Integer, the id of the product this was made from, null for a harvest item
+ * <li>image: String, the file name of the picture, null for no picture
  * <li>AVAILABLE_ID: int, the next free id
  * </ul>
  *
  * @author Jian Carranza, Shawn Alfred Padilla
  * @version 1.3
- * @since 1.3 the price text comes from Money
+ * @since 1.3 the image file name was added
  * @see ProductContainer
- * @see Money
+ * @see ProductImages
  */
 public class Product {
     /** auto-generated id to keep track of a product item even after modification */
@@ -33,6 +34,8 @@ public class Product {
     private int stock;
     /** id of the product this one is made from, null means it is a harvest item */
     private Integer madeFrom;
+    /** file name of the picture, null means no picture */
+    private String image;
     /** ensures that a product item has a unique id  */
     public static int AVAILABLE_ID = 0; 
     
@@ -51,6 +54,7 @@ public class Product {
         this.price = price;
         this.stock = stock;
         this.madeFrom = null;
+        this.image = null;
         AVAILABLE_ID += 1; // the next product to be created will not share the id of the last product
     }
     
@@ -80,12 +84,17 @@ public class Product {
      * @since 1.1
      */
     public Product(int existing_id, String name, String desc, double price, int stock, Integer madeFrom) {
+        this(existing_id, name, desc, price, stock, madeFrom, null);
+    }
+
+    public Product(int existing_id, String name, String desc, double price, int stock, Integer madeFrom, String image) {
     	this.id = existing_id;
     	this.name = name;
         this.desc = desc;
         this.price = price;
         this.stock = stock;
         this.madeFrom = madeFrom;
+        this.image = image;
         if (AVAILABLE_ID <= existing_id) { // make sure the AVAILABLE_ID won't eventually, accidentally reach an existing ID
         	AVAILABLE_ID = existing_id + 1;
         }
@@ -117,6 +126,12 @@ public class Product {
      * @since 1.1
      */
     public boolean isMade()				{ return madeFrom != null; }
+
+    /** @return the picture file name, or null if there is none */
+    public String getImage()			{ return image; }
+
+    /** @return true if this product has a picture */
+    public boolean hasImage()			{ return image != null; }
     
     /**
      * gets the price as text for the screens, with the peso sign and two decimals
@@ -143,4 +158,7 @@ public class Product {
      * @since 1.2
      */
     public void setMadeFrom(Integer madeFrom)	{ this.madeFrom = madeFrom; }
+
+    /** @param image the picture file name, or null for no picture */
+    public void setImage(String image)	{ this.image = image; }
 }
