@@ -20,9 +20,12 @@ import java.time.LocalDateTime;
  * </ul>
  * an empty field means null, a line with the wrong number of fields is skipped and printed
  *
+ * <p>load prints the full path it reads and how many lines it loaded, so a wrong path or a rejected file is easy to spot
+ *
  * @author Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @since 1.1 the comments were turned into javadoc
+ * @since 1.2 load prints the path, a missing file and the number of loaded transactions
  * @see TransactionContainer
  * @see SaleTransaction
  */
@@ -84,18 +87,27 @@ public class TransactionFilesHandler {
         TransactionContainer container = new TransactionContainer();
         Path path = Paths.get(FILE);
 
-        if (!Files.exists(path)) return container; // first run, nothing saved yet
+        // the full path shows which folder the app really reads from
+        System.out.println("Loading transactions from " + path.toAbsolutePath());
+
+        if (!Files.exists(path)) { // first run, nothing saved yet
+            System.out.println("Transactions file not found, starting with no transactions.");
+            return container;
+        }
+
+        int readLines = 0; // every non blank line we tried to read
 
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue; // skip blank lines
+                readLines++;
 
                 // -1 keeps empty fields at the end of the line
                 String[] parts = line.split("\\|", -1);
 
                 if (parts.length != FIELD_COUNT) { // wrong number of fields, skip this line
-                    System.out.println("Skipped a bad transaction line: " + line);
+                    System.out.println("Skipped a bad transaction line (" + parts.length + " fields): " + line);
                     continue;
                 }
 
@@ -123,6 +135,7 @@ public class TransactionFilesHandler {
             e.printStackTrace();
         }
 
+        System.out.println("Loaded " + container.getTransactions().size() + " of " + readLines + " transaction lines.");
         return container;
     }
 

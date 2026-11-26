@@ -1,2 +1,9 @@
 Jian|jiancmsc22|Jian|Carranza|Manager|Active
 Matt|mattcmsc22|Matthew|Prado|Clerk|Active
+shawneee|shawneee22|Shawn Alfred|Padilla|Customer|Active
+Ana|ana22|Ana|Reyes|Clerk|Active
+mariaclara|mariaclara22|Maria Clara|Santos|Customer|Active
+juandc|juandc22|Juan|dela Cruz|Customer|Active
+liza|liza22|Liza|Mendoza|Customer|Active
+pedro|pedro22|Pedro|Garcia|Clerk|Pending
+rico|rico22|Rico|Villanueva|Clerk|Rejected
