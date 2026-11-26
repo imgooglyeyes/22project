@@ -93,17 +93,9 @@ public class StaffPage extends BorderPane implements Searchable {
             User target = membersTable.getSelected();
             if (target != null) manager.showHistory(target); // does nothing unless the manager can see that history
         });
-        approveButton.setOnAction(event -> decide(User.ACTIVE));
-
-        // a rejected account can't log in, so ask before doing it
-        rejectButton.setOnAction(event -> {
-            User user = signUpTable.getSelected();
-            if (user == null) return;
-
-            if (Dialogs.confirm(Ui.windowOf(this), "Reject the account " + user.getUsername() + "?\nThey will not be able to log in.")) {
-                decide(User.REJECTED);
-            }
-        });
+        // both decisions ask for a confirmation inside handleDecision
+        approveButton.setOnAction(event -> handleDecision(true));
+        rejectButton.setOnAction(event -> handleDecision(false));
 
         toolbar.addFilter(tabToggle);
         toolbar.addAction(dashboardButton, historyButton, approveButton, rejectButton);
@@ -198,24 +190,32 @@ public class StaffPage extends BorderPane implements Searchable {
     // ---------- actions ----------
 
     /**
-     * sets the status of the selected sign-up, saves the users and shows a toast
-     * <p>nothing happens unless the current user can approve sign ups and the account is still pending,
+     * approves or rejects the selected pending account, saves the users and shows a toast
+     * <p>the manager has to confirm first, the message names the role, the full name and the username.
+     * nothing happens unless the current user can approve sign ups and the account is still pending,
      * so a stale selection can't change an account that was already decided
      *
-     * @param newStatus the new status, active to approve or rejected to reject
+     * @param approve true to approve (the account becomes active), false to reject it
      */
-    private void decide(String newStatus) {
+    private void handleDecision(boolean approve) {
         if (!manager.canApproveSignUps()) return;
 
-        User user = signUpTable.getSelected();
-        if (user == null || !User.PENDING.equals(user.getStatus())) return;
+        User target = signUpTable.getSelected();
+        if (target == null || !User.PENDING.equals(target.getStatus())) return;
 
-        String name = user.getUsername(); // read before the refresh clears the selection
+        String actionText = approve ? "Approve" : "Reject";
+        String message = actionText + " " + target.getUserType() +
+                " account for " + target.getFirstName() + " " + target.getLastName() +
+                " (" + target.getUsername() + ")?";
 
-        user.setStatus(newStatus);
-        UsersFileHandler.save(userData); // saved right away so the decision survives a restart
+        if (!Dialogs.confirm(Ui.windowOf(this), message)) return;
+
+        String name = target.getUsername();
+
+        target.setStatus(approve ? User.ACTIVE : User.REJECTED);
+        UsersFileHandler.save(userData);
 
         refresh();
-        manager.toast(newStatus.equals(User.ACTIVE) ? name + " was approved" : name + " was rejected");
+        manager.toast(approve ? name + " was approved" : name + " was rejected");
     }
 }

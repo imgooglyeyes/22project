@@ -76,10 +76,18 @@ public class TransactionContainer {
     public ArrayList<SaleTransaction> getTransactionsByActor(String username) {
         ArrayList<SaleTransaction> result = new ArrayList<>();
         for (SaleTransaction t : transactionList) {
-            // equals on the username is safe, the saved names can be null
-            if (username.equals(t.getConfirmedBy()) || username.equals(t.getVoidedBy())) {
-                result.add(t);
-            }
+            try { // causes an error if confirmed by is null
+            	if (t.getConfirmedBy().equals(username)) {
+            		result.add(t);
+            		continue; // already added, no need to check more
+            	}
+            } catch (Exception e) {}
+            try { // causes an error if voided by is null
+            	if (t.getVoidedBy().equals(username)) { // there's the chance that it was not confirmed by but instead voided by the actor
+            		result.add(t);
+            		continue; // already added, no need to check more
+            	}
+            } catch (Exception e) {}
         }
         return result;
     }

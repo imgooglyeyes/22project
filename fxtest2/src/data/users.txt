@@ -1,2 +1,3 @@
-MainManager|maxgalactica|Billy Bob|Jones|Manager|Active
-Clerk1|coughup|Angel|Starr|Clerk|Active
+Jian|jiancmsc22|Jian|Carranza|Manager|Active
+Matt|mattcmsc22|Matthew|Prado|Clerk|Active
+shawneee|shawneee22|Shawn Alfred|Padilla|Customer|Active

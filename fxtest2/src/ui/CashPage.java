@@ -79,23 +79,31 @@ public class CashPage extends BorderPane implements Searchable {
         PageToolbar toolbar = new PageToolbar("Cash");
         toolbar.setSubtitle("Every sale and void, newest first");
 
+        ArrayList<CashEntry> entries = buildEntries(manager);
+
+        // the balance is the total of all entries
+        double balance = 0;
+        for (CashEntry entry : entries) {
+            balance += entry.amount;
+        }
+
         // the balance card on top of the list
         Label caption = new Label("Cash balance");
         caption.getStyleClass().add("caption");
 
-        Label balance = new Label(Money.format(manager.getFarmSystem().getCashBalance()));
-        balance.getStyleClass().add("page-title");
+        Label balanceLabel = new Label(Money.format(balance));
+        balanceLabel.getStyleClass().add("page-title");
 
         Label note = new Label("from confirmed sales");
         note.getStyleClass().add("caption");
 
-        VBox card = new VBox(4, caption, balance, note);
+        VBox card = new VBox(4, caption, balanceLabel, note);
         card.getStyleClass().add("card");
         card.setMaxWidth(280); // a small card on the left, not a bar across the page
 
         setTop(new VBox(16, toolbar, card));
 
-        table.setRows(buildEntries(manager));
+        table.setRows(entries);
         applyFilter();
 
         setCenter(table);

@@ -41,6 +41,7 @@ public class UserContainer {
 	 */
 	public void add(User user) {
 		userList.add(user);
+		return;
 	}
 
 	/** @return the real list of users, changing it changes the container */

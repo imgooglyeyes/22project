@@ -16,12 +16,10 @@ package application;
  * <p>only active users can log in, customers are active at once and
  * clerks and managers start as pending until a manager approves them (phase 3)
  *
- * <p>guest() creates the guest user, so the start of the app and the log out use the same values
- *
  * @author Jian Carranza, Shawn Alfred Padilla
  * @version 1.2
  * @since 1.1 the status was added
- * @since 1.2 getDisplayName and guest were added
+ * @since 1.2 getDisplayName was added
  * @see UserContainer
  * @see UsersFileHandler
  */
@@ -82,18 +80,6 @@ public class User {
 		this.lastName = lastName;
 		this.userType = userType;
 		this.status = status;
-	}
-
-	/**
-	 * creates the guest user, someone who is not logged in
-	 * <p>the app starts with it and logOut copies it into the current user.
-	 * the username guest is reserved, see UserContainer#isUsernameTaken(String)
-	 *
-	 * @return a new guest user
-	 * @since 1.2
-	 */
-	public static User guest() {
-		return new User("guest", "", "guest", "", GUEST);
 	}
 
 	/** @return the name used to log in */
@@ -170,6 +156,11 @@ public class User {
 
 	/** overwrites this user with guest data */
 	public void logOut() {
-		replaceWith(guest());
+		username = "guest";
+		password = "";
+		firstName = "guest";
+		lastName = "";
+		userType = User.GUEST;
+		status = ACTIVE;
 	}
 }

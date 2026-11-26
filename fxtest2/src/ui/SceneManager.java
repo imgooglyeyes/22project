@@ -570,7 +570,9 @@ public class SceneManager {
      * @since 1.7
      */
     public void showSignUpRequests() {
-        if (!canApproveSignUps()) return;
+        if (canApproveSignUps() == false) {
+            return;
+        }
 
         setPage("Staff", new StaffPage(this, userData, true));
         stage.setTitle("Staff");

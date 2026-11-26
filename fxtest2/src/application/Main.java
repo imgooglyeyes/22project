@@ -16,7 +16,6 @@ import ui.SceneManager;
  * @version 1.4
  * @since 1.2 the fonts are loaded before the first scene
  * @since 1.3 the app opens on the home page instead of the shelf
- * @since 1.4 the guest user comes from User.guest
  * @see Fonts
  * @see ProductsFileHandler
  * @see SceneManager
@@ -47,7 +46,13 @@ public class Main extends Application {
         UserContainer userData = UsersFileHandler.load();
         
         // always start as a guest
-        User currentUser = User.guest();
+        User currentUser = new User(
+        		"guest",
+        		"",
+        		"guest",
+        		"",
+        		User.GUEST
+        	);
         
         // creates the scene manager
         SceneManager manager = new SceneManager(
