@@ -11,46 +11,39 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ui.Styles;
+import ui.Dialogs;
 
 /**
  * popup window to add stock of a product, either from the inventory to the shelf
- * or from the database to the inventory
+ * or from the database to the inventory (a restock)
  *
  * <p>the window only picks the product and the amount, FarmSystem does the checks, the stock
  * change and the saving. the source container is only read, to fill the product list and to
  * cap the amount when stock is taken from it
  *
- * <p>the product list is sorted by name (ignoring letter case), so it always shows in the same order
+ * <p>the product list is sorted by name (ignoring letter case), so it always shows in the same order.
+ * the window itself (title, buttons, theme) comes from PopupWindow
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.3
+ * @version 1.4
+ * @since 1.3 the product list is sorted by name instead of being in random order
+ * @since 1.4 the window extends PopupWindow and uses the themed dialogs
+ * @see PopupWindow
  * @see MoveProductWindow
  * @see FarmSystem#addToShelf(Product, int)
  * @see FarmSystem#addToInventory(Product, int)
  */
-public class AddProductWindow {
+public class AddProductWindow extends PopupWindow {
 
 	private ComboBox<String> productBox;
 
 	private Button add;
-	private Button exit;
-	private VBox vbox;
-	private HBox buttonsHBox;
-	private Scene addScene;
-	private Stage addWindow;
 
 	/**
 	 * creates the window, call show() to display it
@@ -62,9 +55,10 @@ public class AddProductWindow {
 	 * @param sourceContainer the container the products are picked from (inventory for the shelf, database for the inventory)
 	 * @param toShelf true to move stock from the inventory to the shelf (amount is capped to the source stock), false to add new stock to the inventory
 	 * @param refresh called after a successful add so the screen redraws, can be null
-	 * @since 1.3 the product list is sorted by name instead of being in random order
 	 */
 	public AddProductWindow(Stage stage, FarmSystem farmSystem, ProductContainer sourceContainer, boolean toShelf, Runnable refresh) {
+		super(stage, "Add Product", toShelf ? "Add stock to the shelf" : "Restock the inventory", 460, 320);
+
 		// sort a copy of the source, so the real container keeps its own order
 		ArrayList<Product> sortedProducts = new ArrayList<>(sourceContainer.getProducts());
 		sortedProducts.sort(Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER));
@@ -77,6 +71,8 @@ public class AddProductWindow {
 
 		ObservableList<String> productNames = FXCollections.observableArrayList(products.keySet()); // convert the key set (product names) to an observable list so that the combo box can use it
 		this.productBox = new ComboBox<>(productNames);
+		productBox.setPromptText("Choose a product");
+		productBox.setMaxWidth(Double.MAX_VALUE); // fills the width of the form
 
 		// Create an integer Spinner
 		Spinner<Integer> spinner = new Spinner<>();
@@ -105,9 +101,9 @@ public class AddProductWindow {
 		}
 
 		spinner.setEditable(true); // allows the user to put their own number, FarmSystem checks it again
+		spinner.setMaxWidth(Double.MAX_VALUE);
 
 		this.add = new Button("Add");
-		this.exit = new Button("Cancel");
 
 		// the add button stays disabled until a product is selected
 		BooleanBinding productBoxEmpty = Bindings.createBooleanBinding(
@@ -116,16 +112,8 @@ public class AddProductWindow {
 		);
 		add.disableProperty().bind(productBoxEmpty);
 
-		this.buttonsHBox = new HBox(10, exit, add);
-		this.vbox = new VBox(10, productBox, spinner, buttonsHBox); // creates a vbox with a 10px spacing with these as children
-		vbox.setStyle("-fx-padding: 20;");
-
-		this.addScene = new Scene(vbox, 500, 350);
-		Styles.apply(addScene); // loads the shared stylesheet
-
-		this.addWindow = new Stage(); // creates a new window for the stock add
-		addWindow.setTitle("Add Product");
-		addWindow.setScene(addScene);
+		form.getChildren().addAll(fieldLabel("Product"), productBox, fieldLabel("Amount"), spinner);
+		finish(add);
 
 		// asks the farm system to add the stock, stays open if it says no so the amount can be fixed
 		add.setOnAction(event -> {
@@ -146,23 +134,12 @@ public class AddProductWindow {
 				: farmSystem.addToInventory(chosen, amount);
 
 			if (error != null) {
-				new Alert(AlertType.ERROR, error).showAndWait();
+				Dialogs.error(window, error);
 				return;
 			}
 
 			if (refresh != null) refresh.run();
-			addWindow.close();
+			window.close();
 		});
-
-		exit.setOnAction(event -> addWindow.close());
-
-		addWindow.initModality(Modality.WINDOW_MODAL); // blocks the user from interacting with the window below it
-		addWindow.initOwner(stage); // the window below it being the main stage
-	}
-
-	/** shows the window */
-	public void show() { // just to make things simpler
-		// make the new window actually appear
-		addWindow.show();
 	}
 }

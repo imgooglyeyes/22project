@@ -1,6 +1,8 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 
 /**
  * holds the business rules for products, stock moves and sales, screens call these instead of changing data themselves
@@ -15,12 +17,22 @@ import java.util.ArrayList;
  * <p>a product is either a harvest item (madeFrom is null) or made from one harvest item.
  * a made product can't be the source of another product, so the chain is never deeper than one level
  *
+ * <p>the reports section only reads data, it never changes or saves anything.
+ * the home pages use it for the trending list and the staff tiles
+ *
  * @author Shawn Alfred Padilla
- * @version 1.5
+ * @version 1.9
+ * @since 1.6 trending products, pending request count, low stock and cash balance were added
+ * @since 1.7 the sales total and the handled count of a staff member were added for the clerk dashboard
+ * @since 1.8 voidTransaction no longer prints when the product is gone
+ * @since 1.9 canReturnStock tells the page if a void can return the stock
  * @see SaleTransaction
  * @see ProductsFileHandler
  */
 public class FarmSystem {
+
+    /** shelf stock at or below this number counts as low stock */
+    public static final int LOW_STOCK_THRESHOLD = 3;
 
     /** every product, used to find a product that was sold or added */
     private ProductContainer database;
@@ -415,8 +427,23 @@ public class FarmSystem {
     }
 
     /**
+     * checks if voiding a transaction can put its stock back on the shelf
+     * <p>the stock goes back to the product in the database, so it can't be returned if the product was deleted.
+     * pages use this before a void to warn the staff member, voidTransaction uses the same rule
+     *
+     * @param transaction the transaction that is about to be voided
+     * @return true if the product of the transaction still exists
+     * @since 1.9
+     */
+    public boolean canReturnStock(SaleTransaction transaction) {
+        return database.getProductById(transaction.getProductId()) != null;
+    }
+
+    /**
      * staff voids a request or a confirmed sale
-     * <p>a confirmed sale gets its stock back on the shelf, if the product still exists
+     * <p>a confirmed sale gets its stock back on the shelf, if the product still exists.
+     * if the product was deleted (see canReturnStock) the stock is not returned, but the sale is still voided
+     * and the cash is taken back, because the balance only counts the confirmed sales
      *
      * @param transaction the transaction to void
      * @param staff the username of the clerk or manager
@@ -425,19 +452,194 @@ public class FarmSystem {
     public String voidTransaction(SaleTransaction transaction, String staff) {
         if (!transaction.canVoid()) return "This transaction was already voided";
 
-        if (transaction.wasConfirmed()) { // stock left the shelf before, so return it
+        // stock left the shelf before, so return it, a deleted product has nothing to return it to
+        if (transaction.wasConfirmed() && canReturnStock(transaction)) {
             Product product = database.getProductById(transaction.getProductId());
-
-            if (product != null) {
-                shelfData.add(product, transaction.getQuantity());
-            } else { // product was deleted, nothing to return the stock to
-                System.out.println("Product no longer exists, stock was not returned");
-            }
+            shelfData.add(product, transaction.getQuantity());
         }
 
         transaction.voidTransaction(staff);
         TransactionFilesHandler.save(transactionData);
         ProductsFileHandler.saveAll(null, null, shelfData); // only the shelf file is written
         return null;
+    }
+
+    // ---------- reports ----------
+
+    /**
+     * one row of the trending list, the total quantity sold of one product
+     * <p>it is a small read only summary, the numbers are worked out from the transactions
+     * every time they are asked for, nothing is saved
+     *
+     * @since 1.6
+     */
+    public static class TrendingProduct {
+        /** id of the product that was sold */
+        private final int productId;
+        /** current name of the product, or the name saved in the transaction if the product was deleted */
+        private final String name;
+        /** total quantity of the confirmed sales */
+        private int sold;
+
+        /**
+         * creates a row with nothing sold yet
+         *
+         * @param productId id of the product
+         * @param name name shown for the product
+         */
+        private TrendingProduct(int productId, String name) {
+            this.productId = productId;
+            this.name = name;
+        }
+
+        /** @param quantity how many more were sold */
+        private void addSold(int quantity) {
+            sold += quantity;
+        }
+
+        /** @return the id of the product */
+        public int getProductId()   { return productId; }
+        /** @return the name of the product */
+        public String getName()     { return name; }
+        /** @return the total quantity of confirmed sales */
+        public int getSold()        { return sold; }
+    }
+
+    /**
+     * works out the best selling products from the transactions
+     * <p>only confirmed transactions count, a request that waits or a sale that was voided sells nothing.
+     * the quantities of the same product are added up, and the most sold product comes first (ties are sorted by name).
+     * a deleted product still counts, it keeps the name saved in its transactions
+     *
+     * @param limit the most rows to return, 0 or less returns an empty list
+     * @return the top products, fewer than the limit if not enough products were sold
+     * @since 1.6
+     */
+    public ArrayList<TrendingProduct> getTrendingProducts(int limit) {
+        // a linked map keeps the first-sold order, the sort below decides the final order
+        LinkedHashMap<Integer, TrendingProduct> totals = new LinkedHashMap<>();
+
+        for (SaleTransaction t : transactionData.getTransactions()) {
+            if (!t.getStatus().equals(SaleTransaction.CONFIRMED)) continue; // waiting or voided
+
+            TrendingProduct entry = totals.get(t.getProductId());
+            if (entry == null) {
+                // prefer the current name, the product may have been renamed since the sale
+                Product current = database.getProductById(t.getProductId());
+                String name = current != null ? current.getName() : t.getProductName();
+
+                entry = new TrendingProduct(t.getProductId(), name);
+                totals.put(t.getProductId(), entry);
+            }
+            entry.addSold(t.getQuantity());
+        }
+
+        ArrayList<TrendingProduct> result = new ArrayList<>(totals.values());
+        result.sort(
+            Comparator.comparingInt((TrendingProduct e) -> e.getSold()).reversed()
+                .thenComparing(TrendingProduct::getName, String.CASE_INSENSITIVE_ORDER)
+        );
+
+        int end = Math.max(0, Math.min(limit, result.size()));
+        return new ArrayList<>(result.subList(0, end));
+    }
+
+    /**
+     * counts the requests that still wait for a clerk
+     *
+     * @param requester only count the requests of this customer, null counts everyone's
+     * @return how many transactions still have the requested status
+     * @since 1.6
+     */
+    public int countPendingRequests(String requester) {
+        int count = 0;
+
+        for (SaleTransaction t : transactionData.getTransactions()) {
+            boolean wanted = requester == null || t.getRequester().equals(requester);
+            if (wanted && t.getStatus().equals(SaleTransaction.REQUESTED)) count++;
+        }
+        return count;
+    }
+
+    /**
+     * counts every request that waits for a clerk
+     *
+     * @return how many transactions still have the requested status
+     * @since 1.6
+     */
+    public int countPendingRequests() {
+        return countPendingRequests(null);
+    }
+
+    /**
+     * lists the shelf products that are running out
+     * <p>a product with 0 stock is removed from the shelf by its container, so it never shows up here
+     *
+     * @param threshold the most stock a product can have to be listed
+     * @return the shelf products with stock at or below the threshold, these are the real products so they must only be read
+     * @since 1.6
+     */
+    public ArrayList<Product> getLowStock(int threshold) {
+        ArrayList<Product> result = new ArrayList<>();
+
+        for (Product p : shelfData.getProducts()) {
+            if (p.getStock() <= threshold) result.add(p);
+        }
+        return result;
+    }
+
+    /**
+     * works out the cash balance from the transactions
+     * <p>a confirmed sale is money in and a voided confirmed sale cancels it out,
+     * so the balance is the total of every transaction that is confirmed right now.
+     * this gives the same number as the cash screen without building its entry list
+     *
+     * @return the current cash balance
+     * @since 1.6
+     */
+    public double getCashBalance() {
+        double balance = 0;
+
+        for (SaleTransaction t : transactionData.getTransactions()) {
+            if (t.getStatus().equals(SaleTransaction.CONFIRMED)) balance += t.getTotal();
+        }
+        return balance;
+    }
+
+    /**
+     * works out the total of the sales that a staff member confirmed and that still stand
+     * <p>a sale that was voided later is not counted, even if it was this staff member who confirmed it.
+     * the clerk dashboard shows this number
+     *
+     * @param staff the username of the clerk or manager
+     * @return the total of the confirmed sales of the staff member
+     * @since 1.7
+     */
+    public double getSalesTotalBy(String staff) {
+        double total = 0;
+
+        for (SaleTransaction t : transactionData.getTransactions()) {
+            boolean confirmedNow = t.getStatus().equals(SaleTransaction.CONFIRMED);
+            if (confirmedNow && staff.equals(t.getConfirmedBy())) total += t.getTotal();
+        }
+        return total;
+    }
+
+    /**
+     * counts the requests that a staff member took action on, by confirming or by voiding
+     * <p>it is the same rule as TransactionContainer#getTransactionsByActor, so the number
+     * matches the rows of the history page
+     *
+     * @param staff the username of the clerk or manager
+     * @return how many transactions the staff member confirmed or voided
+     * @since 1.7
+     */
+    public int countHandledBy(String staff) {
+        int count = 0;
+
+        for (SaleTransaction t : transactionData.getTransactions()) {
+            if (staff.equals(t.getConfirmedBy()) || staff.equals(t.getVoidedBy())) count++;
+        }
+        return count;
     }
 }

@@ -1,95 +1,859 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+/*
+ * shopeefarm theme
+ *
+ * deep forest green with calm neutral surfaces and one small lime highlight (see ui-plan.md section 6)
+ * the palette is defined once on .root as looked-up colors, every rule below uses the tokens
+ * and never a hex value, so the whole palette can change in one place
+ *
+ * fonts: plus jakarta sans is loaded by ui.Fonts, javafx css only knows normal and bold,
+ * so the 500 and 600 weights are picked by their own family names
+ *   400 "Plus Jakarta Sans"            600 "Plus Jakarta Sans SemiBold"
+ *   500 "Plus Jakarta Sans Medium"     700 "Plus Jakarta Sans" with -fx-font-weight: bold
+ * check the names printed by Fonts.load() if a weight does not show up
+ *
+ * spacing scale is 4 / 8 / 12 / 16 / 24 only, radius is 8 for cards and inputs, 12 for panels, pill for chips
+ * type scale is title 22, section 16, body 14, caption 12
+ *
+ * rule order matters: when two rules have the same specificity the later one wins,
+ * so variants (secondary, danger, tile) come after the base rule and the focus ring comes last.
+ * the app shell, auth page and popup rules are at the end, they use the same order trick to win over the base rules
+ *
+ * every control that can be reached with tab has a visible focus ring, see the :focused rules
+ */
 
-.root{
-	-fx-font-family: "monospace";
-	-fx-font-size: 14px;
-	-fx-font-weight: bold;
+/* ---------- tokens and root ---------- */
+
+.root {
+    -sf-forest-950: #0F2F1E;  /* top bar and auth background */
+    -sf-forest-700: #1A4D2E;  /* primary buttons, active states */
+    -sf-forest-600: #236B3F;  /* primary hover, focus ring */
+    -sf-mint: #A8E6BE;        /* selected nav item, chips, selected rows */
+    -sf-mint-50: #E6F5EB;     /* row hover, soft backgrounds */
+    -sf-lime: #C8F169;        /* trending badge, dark text only */
+    -sf-amber: #F2A93B;       /* low stock, warnings, dark text only */
+    -sf-bg: #F4F7F1;          /* page background */
+    -sf-surface: #FFFFFF;     /* cards, sidebar, tables */
+    -sf-border: #E1E8DD;      /* card and table borders */
+    -sf-ink: #16241C;         /* main text */
+    -sf-muted: #5B6B61;       /* secondary text */
+    -sf-danger: #C0392B;      /* errors, void, delete */
+    -sf-danger-700: #9F2F23;  /* danger hover */
+
+    -fx-font-family: "Plus Jakarta Sans", "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-background-color: -sf-bg;
+
+    /* modena derives the controls we do not style from these */
+    -fx-base: -sf-bg;
+    -fx-accent: -sf-forest-700;
+    -fx-focus-color: -sf-forest-600;
+    -fx-faint-focus-color: transparent; /* no halo, the controls draw their own focus ring */
+    -fx-text-background-color: -sf-ink;
 }
 
-.table-view {
-    -fx-background-color: #890E38;
-    -fx-base: #890E38; 
+/* ---------- text ---------- */
+
+.label {
+    -fx-text-fill: -sf-ink;
 }
 
-.table-view .table-row-cell:odd { /*Every odd row */
-    -fx-background-color: #fafafa;
-}
-.table-view .table-row-cell:even { /*Every even row, counting starts at 0 */
-    -fx-background-color: #D3D3D3;
-}
-
-.table-view .column-header { /* The column headers */
-    -fx-background-color: #890E38;
-    -fx-size: 40;
-}
-
-.table-view .column-header .label { /* The column header's label */
-    -fx-text-fill: #FFB819;
+.page-title {
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-alignment: center;
 }
 
-.table-view:focused .table-row-cell:filled:selected { /* Clicked on */
-    -fx-background-color: #015640;
-    -fx-text-fill: #FFB819; /*This doesn't seem to work and I don't know why */
+.section-title {
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-font-size: 16px;
 }
 
-.table-view .table-row-cell:filled:selected { /* Clicked on then clicked off */
-    -fx-background-color: #57776F;
-    -fx-text-fill: #FFB819;
+.caption {
+    -fx-font-size: 12px;
+    -fx-text-fill: -sf-muted;
 }
 
+.muted {
+    -fx-text-fill: -sf-muted;
+}
+
+.error-text {
+    -fx-text-fill: -sf-danger;
+}
+
+/* ---------- buttons ---------- */
+
+/* primary, the default look of every button */
 .button {
-    -fx-background-color: #890E38;
+    -fx-background-color: -sf-forest-700;
+    -fx-background-radius: 8px;
     -fx-text-fill: white;
-    -fx-background-radius: 5px; /*Makes it rounder */
-    -fx-padding: 8px 16px; /*Better margins*/
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: #015640;
-    -fx-text-fill: #FFB819;
+    -fx-background-color: -sf-forest-600;
 }
 
-.button:armed { /* Pressed */
-    -fx-background-color: #6B1026;
+.button:armed { /* pressed */
+    -fx-background-color: -sf-forest-950;
 }
 
-.button:focused { /*Pressed or selected by pressing tab */
-	-fx-border-color: #FFB819;
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* secondary, outline only, for less important actions */
+.button.secondary {
+    -fx-background-color: -sf-surface;
+    -fx-text-fill: -sf-forest-700;
+    -fx-border-color: -sf-forest-700;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.button.secondary:hover {
+    -fx-background-color: -sf-mint-50;
+    -fx-text-fill: -sf-forest-700;
+}
+
+.button.secondary:armed {
+    -fx-background-color: -sf-mint;
+    -fx-text-fill: -sf-ink;
+}
+
+/* danger, for void, delete and reset */
+.button.danger {
+    -fx-background-color: -sf-danger;
+    -fx-text-fill: white;
+}
+
+.button.danger:hover {
+    -fx-background-color: -sf-danger-700;
+    -fx-text-fill: white;
+}
+
+.button.danger:armed {
+    -fx-background-color: -sf-danger-700;
+}
+
+/* tile, a button that looks like a card, used by the staff dashboard tiles */
+.button.tile {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 12px;
+    -fx-text-fill: -sf-ink;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+}
+
+.button.tile:hover {
+    -fx-background-color: -sf-mint-50;
+    -fx-text-fill: -sf-ink;
+}
+
+.button.tile:armed {
+    -fx-background-color: -sf-mint;
+    -fx-text-fill: -sf-ink;
+}
+
+/* focus ring, an outline drawn just outside the button, it comes last so it wins over the variants above */
+.button:focused {
+    -fx-border-color: -sf-forest-600;
     -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 10px;
+    -fx-border-radius: 11px;
+    -fx-border-insets: -3px;
 }
 
+.button.secondary:focused { /* two layers, the real border and the ring */
+    -fx-border-color: -sf-forest-700, -sf-forest-600;
+    -fx-border-width: 1px, 2px;
+    -fx-border-radius: 8px, 11px;
+    -fx-border-insets: 0px, -3px;
+}
+
+/* the tile is a big card, so its ring follows the card corners */
+.button.tile:focused {
+    -fx-border-color: -sf-forest-600;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-border-insets: 0;
+}
+
+/* ---------- inputs ---------- */
+
+.text-field,
+.password-field {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 12px;
+    -fx-text-fill: -sf-ink;
+    -fx-prompt-text-fill: -sf-muted;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: -sf-forest-600;
+    -fx-effect: dropshadow(gaussian, rgba(35, 107, 63, 0.30), 6, 0, 0, 0);
+}
 
 .combo-box {
-	-fx-background-color: #890E38;
-	-fx-background-radius: 10px;
-	-fx-text-fill: white; /*This doesn't seem to work for some reason?? */
-    -fx-padding: 5px 5px;
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+    -fx-padding: 2px 0;
+}
+
+.combo-box .list-cell { /* the shown choice */
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-ink;
+    -fx-padding: 6px 12px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px 0 4px;
+}
+
+.combo-box .arrow {
+    -fx-background-color: -sf-muted;
+}
+
+.combo-box:focused {
+    -fx-border-color: -sf-forest-600;
+}
+
+/* the open list of choices */
+.combo-box-popup .list-view {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 47, 30, 0.15), 10, 0, 0, 3);
 }
 
 .combo-box-popup .list-view .list-cell {
-    -fx-background-color: #890E38;
-    -fx-text-fill: white;
+    -fx-background-color: -sf-surface;
+    -fx-text-fill: -sf-ink;
     -fx-padding: 8px 12px;
 }
 
-.combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #e0e0e0;
-    -fx-text-fill: #000000;
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: -sf-mint-50;
 }
 
-.combo-box-popup .list-view .list-cell:selected {
-    -fx-background-color: #e0e0e0;
-    -fx-text-fill: #000000;
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -sf-mint;
+    -fx-text-fill: -sf-ink;
 }
 
-.text-field {
-	-fx-border-color: #890E38;
+.spinner {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+}
+
+.spinner .text-field { /* the box inside the spinner must not draw a second border */
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+    -fx-padding: 6px 8px;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: -sf-mint-50;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -sf-muted;
+}
+
+.spinner:focused {
+    -fx-border-color: -sf-forest-600;
+}
+
+/* ---------- chips ---------- */
+
+/* a small pill label, ink text because white on mint and lime is too low in contrast */
+.chip {
+    -fx-background-color: -sf-mint;
+    -fx-background-radius: 999px;
+    -fx-text-fill: -sf-ink;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-font-size: 12px;
+    -fx-padding: 4px 12px;
+}
+
+.chip-lime {
+    -fx-background-color: -sf-lime;
+}
+
+.chip-amber {
+    -fx-background-color: -sf-amber;
+}
+
+.chip-muted {
+    -fx-background-color: -sf-surface;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 999px;
+    -fx-text-fill: -sf-muted;
+}
+
+.chip-danger {
+    -fx-background-color: -sf-danger;
+    -fx-text-fill: white;
+}
+
+/* ---------- cards ---------- */
+
+.card {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 12px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 47, 30, 0.08), 12, 0, 0, 2);
+}
+
+/* ---------- product card, used by the marketplace ---------- */
+
+/* it is always used together with .card, so only the differences are here */
+.product-card:hover {
+    -fx-border-color: -sf-forest-600;
+}
+
+/* the placeholder picture, a soft gradient until products get a photo field */
+.product-image {
+    -fx-background-color: linear-gradient(to bottom right, -sf-mint-50, -sf-mint);
+    -fx-background-radius: 8px;
+}
+
+/* forest green on mint is about 6.8:1, above the contrast minimum */
+.product-initial {
+    -fx-text-fill: -sf-forest-700;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+
+.product-name {
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-font-size: 16px;
+}
+
+.product-price {
+    -fx-text-fill: -sf-forest-700;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- rows, the clickable rows of the trending list ---------- */
+
+.row {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+}
+
+.row:hover {
+    -fx-background-color: -sf-mint-50;
+}
+
+/* a row can be reached with tab, so it needs a ring like the buttons */
+.row:focused {
+    -fx-border-color: -sf-forest-600;
     -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 5px;
+}
+
+/* ---------- table view ---------- */
+
+.table-view {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 12px;
+    -fx-padding: 0;
+    -fx-control-inner-background: -sf-surface;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-border-color: -sf-forest-600;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -sf-mint-50;
+    -fx-background-radius: 12px 12px 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: -sf-mint-50;
+    -fx-size: 40px;
+    -fx-border-color: transparent transparent -sf-border transparent;
+}
+
+.table-view .column-header .label { /* the column header's label */
+    -fx-text-fill: -sf-forest-700;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-alignment: center-left;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: -sf-surface;
+    -fx-border-color: transparent transparent -sf-border transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .table-row-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: -sf-mint-50;
+}
+
+.table-view .table-row-cell:filled:selected,
+.table-view:focused .table-row-cell:filled:selected { /* clicked on, with or without focus */
+    -fx-background-color: -sf-mint;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: -sf-ink;
+    -fx-padding: 8px 12px;
+    -fx-alignment: center-left;
+}
+
+.table-view .table-row-cell:filled:selected .table-cell {
+    -fx-text-fill: -sf-ink;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -sf-muted;
+}
+
+/* ---------- scrolling ---------- */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #C5D1C0;
+    -fx-background-radius: 8px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -sf-muted;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button { /* no arrow buttons */
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/* ---------- segmented toggle ---------- */
+
+/* an hbox of toggle buttons in one toggle group, only one is selected at a time */
+.segmented {
+    -fx-background-color: -sf-mint-50;
+    -fx-background-radius: 999px;
+    -fx-padding: 4px;
+}
+
+.segmented .toggle-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999px;
+    -fx-text-fill: -sf-muted;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-padding: 6px 16px;
+    -fx-cursor: hand;
+}
+
+.segmented .toggle-button:hover {
+    -fx-text-fill: -sf-ink;
+}
+
+.segmented .toggle-button:selected {
+    -fx-background-color: -sf-mint;
+    -fx-text-fill: -sf-ink;
+}
+
+.segmented .toggle-button:focused {
+    -fx-border-color: -sf-forest-600;
+    -fx-border-width: 2px;
+    -fx-border-radius: 999px;
+}
+
+/* ---------- toast ---------- */
+
+/* a short message that fades out, white on dark green is far above the contrast minimum */
+.toast {
+    -fx-background-color: -sf-forest-950;
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
+    -fx-padding: 12px 16px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 47, 30, 0.25), 12, 0, 0, 4);
+}
+
+.toast .label {
+    -fx-text-fill: white;
+}
+
+/* ---------- app shell: top bar ---------- */
+
+/* dark green gradient, everything on it is white or mint, both are far above the contrast minimum */
+.top-bar {
+    -fx-background-color: linear-gradient(to right, -sf-forest-950, -sf-forest-700);
+}
+
+.top-bar .label {
+    -fx-text-fill: white;
+}
+
+.top-bar .icon {
+    -fx-fill: white;
+}
+
+.top-bar .brand {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.brand-box {
+    -fx-cursor: hand;
+    -fx-padding: 2px 4px;
+    -fx-background-radius: 8px;
+}
+
+/* the logo can be reached with tab, the ring is mint because dark green can't be seen on the bar */
+.brand-box:focused {
+    -fx-border-color: -sf-mint;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+/* the search box, a pill with a see-through white background */
+.top-search {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 999px;
+    -fx-padding: 2px 14px;
+}
+
+.top-search .icon {
+    -fx-fill: -sf-mint;
+}
+
+.top-search .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: -sf-mint;
+    -fx-padding: 6px 4px;
+}
+
+.top-search .text-field:focused {
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+/* the box has no border of its own, so the pill shows the ring while the field inside has focus */
+.top-search:focus-within {
+    -fx-border-color: -sf-mint;
+    -fx-border-width: 2px;
+    -fx-border-radius: 999px;
+}
+
+/* the log in and sign up buttons of a guest, they sit on dark green so they need their own colors */
+.top-bar .button.on-dark {
+    -fx-background-color: -sf-mint;
+    -fx-text-fill: -sf-ink;
+}
+
+.top-bar .button.on-dark:hover {
+    -fx-background-color: white;
+    -fx-text-fill: -sf-ink;
+}
+
+.top-bar .button.outline-dark {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.top-bar .button.outline-dark:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+}
+
+.top-bar .button:focused { /* the default ring is dark green, it can't be seen on the bar */
+    -fx-border-color: -sf-mint;
+}
+
+/* the user chip: avatar, name and role */
+.user-chip {
+    -fx-padding: 4px 12px 4px 4px;
+    -fx-background-radius: 999px;
+    -fx-cursor: hand;
+}
+
+.user-chip:hover,
+.user-chip:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* a tinted background alone is easy to miss, so the focused chip also gets a ring */
+.user-chip:focused {
+    -fx-border-color: -sf-mint;
+    -fx-border-width: 2px;
+    -fx-border-radius: 999px;
+}
+
+.avatar {
+    -fx-fill: -sf-mint;
+}
+
+.top-bar .avatar-letter {
+    -fx-text-fill: -sf-ink;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+}
+
+.top-bar .user-name {
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+}
+
+.top-bar .user-role {
+    -fx-text-fill: -sf-mint;
+    -fx-font-size: 12px;
+}
+
+/* the bell and its badge, the badge is lime with ink text, never white text on lime */
+.bell {
+    -fx-padding: 8px;
+    -fx-background-radius: 999px;
+    -fx-cursor: hand;
+}
+
+.bell:hover,
+.bell:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+.bell:focused {
+    -fx-border-color: -sf-mint;
+    -fx-border-width: 2px;
+    -fx-border-radius: 999px;
+}
+
+.bell-badge {
+    -fx-background-color: -sf-lime;
+    -fx-background-radius: 999px;
+    -fx-padding: 0 5px;
+}
+
+.top-bar .bell-badge-text {
+    -fx-text-fill: -sf-ink;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+/* ---------- app shell: side nav ---------- */
+
+.side-nav {
+    -fx-background-color: -sf-surface;
+    -fx-border-color: transparent -sf-border transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.nav-item {
+    -fx-padding: 10px 12px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.nav-item .icon {
+    -fx-fill: -sf-muted;
+}
+
+.nav-item .nav-label {
+    -fx-text-fill: -sf-muted;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+}
+
+.nav-item:hover {
+    -fx-background-color: -sf-mint-50;
+}
+
+.nav-item:hover .nav-label {
+    -fx-text-fill: -sf-ink;
+}
+
+/* the open page, mint background with ink text, it comes after hover so it wins */
+.nav-item-active,
+.nav-item-active:hover {
+    -fx-background-color: -sf-mint;
+}
+
+.nav-item-active .icon {
+    -fx-fill: -sf-forest-700;
+}
+
+.nav-item-active .nav-label {
+    -fx-text-fill: -sf-ink;
+}
+
+/* a locked item only dims its icons, the lock icon shows that it opens after logging in.
+   the label is not dimmed, muted text at 75 percent opacity falls below the 4.5:1 contrast minimum */
+.nav-item-locked .icon {
+    -fx-opacity: 0.75;
+}
+
+.nav-item:focused {
+    -fx-border-color: -sf-forest-600;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+/* ---------- app shell: user menu ---------- */
+
+.context-menu {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 8px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 47, 30, 0.15), 10, 0, 0, 3);
+}
+
+.context-menu .menu-item {
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 12px;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: -sf-ink;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: -sf-mint;
+}
+
+.context-menu .menu-item:focused .label {
+    -fx-text-fill: -sf-ink;
+}
+
+.context-menu .menu-item:disabled {
+    -fx-opacity: 1; /* the role line is a title, it must stay readable */
+}
+
+.context-menu .menu-item:disabled .label {
+    -fx-text-fill: -sf-muted;
+}
+
+.context-menu .separator .line {
+    -fx-border-color: -sf-border;
+}
+
+/* ---------- auth page ---------- */
+
+/* the forest gradient fills the page area, the white card sits in the middle */
+.auth-page {
+    -fx-background-color: linear-gradient(to bottom right, -sf-forest-950, -sf-forest-700);
+}
+
+/* it comes after .card, so the bigger padding and the stronger shadow win */
+.auth-card {
+    -fx-padding: 32px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 24, 0, 0, 8);
+}
+
+.field-label {
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+    -fx-font-size: 12px;
+}
+
+/* the note after a sign up, dark green on white is far above the contrast minimum */
+.success-text {
+    -fx-text-fill: -sf-forest-700;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+}
+
+/* leaves room on the right so the typed text does not go under the eye button */
+.reveal-field .password-field,
+.reveal-field .text-field {
+    -fx-padding: 8px 44px 8px 12px;
+}
+
+/* a round button with only an icon, it comes after the button rules so it wins over them */
+.button.icon-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999px;
+    -fx-padding: 6px;
+}
+
+.button.icon-button:hover {
+    -fx-background-color: -sf-mint-50;
+}
+
+.button.icon-button .icon {
+    -fx-fill: -sf-muted;
+}
+
+.button.icon-button.eye-active .icon {
+    -fx-fill: -sf-forest-700;
+}
+
+/* ---------- popup windows and dialogs ---------- */
+
+/* the form of every popup window, the window itself gets the page background from .root */
+.popup {
+    -fx-padding: 24px;
+}
+
+/* dialogs are their own windows, they get the root class from ui.Dialogs, so this one wins over the page background */
+.dialog-pane {
+    -fx-background-color: -sf-surface;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: -sf-ink;
 }

@@ -1,12 +1,6 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +8,8 @@ import java.util.List;
  * saves and loads the three product containers (database, inventory, shelf)
  *
  * <p>this class replaces ProductFilesHandler. files live in src/data, and if a
- * file is missing the matching one in src/templatedata is used instead
+ * file is missing the matching one in src/templatedata is used instead.
+ * reading, writing and copying files is done by FileUtil
  *
  * <p>file formats, one product per line, fields separated by |
  * <ul>
@@ -23,13 +18,18 @@ import java.util.List;
  * </ul>
  * madeFrom is a product id, it is empty for a harvest item
  *
- * <p>a null container is never written, so its file is left alone
+ * <p>a null container is never written, so its file is left alone.
+ * only problems are printed, a save or a reset that worked is silent
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 2.1
+ * @version 2.3
  * @since 2.0
+ * @since 2.1 resetToDefaults was added
+ * @since 2.2 the prints of a save and a reset that worked were removed
+ * @since 2.3 the file helpers moved to FileUtil
  * @see ProductContainer
  * @see Product
+ * @see FileUtil
  */
 public class ProductsFileHandler {
 
@@ -70,13 +70,11 @@ public class ProductsFileHandler {
 						(p.getMadeFrom() == null ? "" : p.getMadeFrom()) // empty for a harvest item
 					);
 				}
-				writeLines(DATABASE, lines);
+				FileUtil.writeLines(DATABASE, lines);
 			}
 
-			if (inventoryData != null) writeLines(INVENTORY, stockLines(inventoryData));
-			if (shelfData != null) writeLines(SHELF, stockLines(shelfData));
-
-			System.out.println("Saved all product containers.");
+			if (inventoryData != null) FileUtil.writeLines(INVENTORY, stockLines(inventoryData));
+			if (shelfData != null) FileUtil.writeLines(SHELF, stockLines(shelfData));
 		} catch (IOException e) {
 			System.out.println("Something went wrong while saving all product containers.");
 			e.printStackTrace();
@@ -112,30 +110,15 @@ public class ProductsFileHandler {
 	 */
 	public static boolean resetToDefaults() {
 		try {
-			copyFile(TEMPLATE_DATABASE, DATABASE);
-			copyFile(TEMPLATE_INVENTORY, INVENTORY);
-			copyFile(TEMPLATE_SHELF, SHELF);
-
-			System.out.println("Reset all product files to the template data.");
+			FileUtil.copyFile(TEMPLATE_DATABASE, DATABASE);
+			FileUtil.copyFile(TEMPLATE_INVENTORY, INVENTORY);
+			FileUtil.copyFile(TEMPLATE_SHELF, SHELF);
 			return true;
 		} catch (IOException e) {
 			System.out.println("Something went wrong while resetting to the template data.");
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	/**
-	 * copies one file and replaces the target if it already exists
-	 *
-	 * @param from path of the file to copy
-	 * @param to path of the copy, its folder is created if missing
-	 * @throws IOException if the source can't be read or the target can't be written
-	 */
-	private static void copyFile(String from, String to) throws IOException {
-		Path target = Paths.get(to);
-		Files.createDirectories(target.getParent()); // makes sure the folder exists
-		Files.copy(Paths.get(from), target, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	/**
@@ -146,7 +129,7 @@ public class ProductsFileHandler {
 	 * @param database the empty container to fill
 	 */
 	private static void loadDatabase(ProductContainer database) {
-		for (String line : readLines(DATABASE, TEMPLATE_DATABASE)) {
+		for (String line : FileUtil.readLines(DATABASE, TEMPLATE_DATABASE)) {
 			// -1 keeps empty fields at the end of the line
 			String[] parts = line.split("\\|", -1);
 
@@ -181,7 +164,7 @@ public class ProductsFileHandler {
 	 * @param templateFile path of the template used if the save file is missing
 	 */
 	private static void loadStock(ProductContainer target, ProductContainer database, String file, String templateFile) {
-		for (String line : readLines(file, templateFile)) {
+		for (String line : FileUtil.readLines(file, templateFile)) {
 			String[] parts = line.split("\\|", -1);
 
 			try {
@@ -210,53 +193,6 @@ public class ProductsFileHandler {
 		for (Product p : container.getProducts()) {
 			lines.add(p.getId() + "|" + p.getStock());
 		}
-		return lines;
-	}
-
-	/**
-	 * writes the lines to a file, replacing the old content
-	 *
-	 * @param file path of the file to write, its folder is created if missing
-	 * @param lines the lines to write
-	 * @throws IOException if the file can't be written
-	 */
-	private static void writeLines(String file, List<String> lines) throws IOException {
-		Path path = Paths.get(file);
-		Files.createDirectories(path.getParent()); // makes sure the folder exists
-
-		try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-			for (String line : lines) {
-				writer.write(line);
-				writer.newLine();
-			}
-		}
-	}
-
-	/**
-	 * reads every non-blank line of a file, uses the template if the file does not exist
-	 * <p>an io error is printed and the lines read so far are returned
-	 *
-	 * @param file path of the save file
-	 * @param templateFile path of the template used if the save file is missing
-	 * @return the non-blank lines, empty if nothing could be read
-	 */
-	private static List<String> readLines(String file, String templateFile) {
-		List<String> lines = new ArrayList<>();
-
-		Path path = Paths.get(file);
-		if (!Files.exists(path)) path = Paths.get(templateFile); // the template SHOULD EXIST
-
-		try (BufferedReader reader = Files.newBufferedReader(path)) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (line.trim().isEmpty()) continue; // skip blank lines
-				lines.add(line);
-			}
-		} catch (IOException e) {
-			System.out.println("Something went wrong while loading all product containers.");
-			e.printStackTrace();
-		}
-
 		return lines;
 	}
 }

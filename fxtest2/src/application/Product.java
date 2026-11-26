@@ -15,8 +15,10 @@ package application;
  * </ul>
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
+ * @since 1.3 the price text comes from Money
  * @see ProductContainer
+ * @see Money
  */
 public class Product {
     /** auto-generated id to keep track of a product item even after modification */
@@ -117,12 +119,11 @@ public class Product {
     public boolean isMade()				{ return madeFrom != null; }
     
     /**
-     * gets the price as text for the screens, example: ₱30.00
-     * <p>\u20B1 is the peso sign, written as an escape so the file encoding can't break it
+     * gets the price as text for the screens, with the peso sign and two decimals
      *
-     * @return the price with the peso sign and two decimals
+     * @return the formatted price, see Money#format(double)
      */
-    public String getFormattedPrice()	{ return String.format("\u20B1%.2f", price); }
+    public String getFormattedPrice()	{ return Money.format(price); }
     
     /** @param stock the new stock amount */
     public void setStock(int stock)		{ this.stock = stock;}

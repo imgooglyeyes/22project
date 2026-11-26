@@ -6,19 +6,23 @@ import java.util.List;
 import application.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 /**
  * a label and a combo box to pick which harvest product another product is made from
  *
  * <p>the first choice is "None (harvest item)", which means the product has no source.
  * the create and edit windows both use this, so the picker looks and works the same in both.
- * it only shows the products it is given, the rules about what is allowed are in FarmSystem
+ * it only shows the products it is given, the rules about what is allowed are in FarmSystem.
+ * the label has the same width as the labelled text fields, so the rows of a form line up
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.0
+ * @version 1.1
+ * @since 1.1 the label has the field-label style and the width of LabelledTextField
  * @see application.FarmSystem#getHarvestProducts(Integer)
  */
 public class MadeFromPicker extends HBox {
@@ -40,6 +44,8 @@ public class MadeFromPicker extends HBox {
 	public MadeFromPicker(List<Product> harvestProducts, Integer selectedId) {
 		super(10); // sets the spacing to 10px
 		Label label = new Label("Made from:");
+		label.getStyleClass().add("field-label");
+		label.setMinWidth(LabelledTextField.LABEL_WIDTH);
 
 		ObservableList<String> names = FXCollections.observableArrayList();
 		names.add(NONE); // always the first choice
@@ -53,7 +59,10 @@ public class MadeFromPicker extends HBox {
 
 		this.comboBox = new ComboBox<>(names);
 		comboBox.setValue(selectedName);
+		comboBox.setMaxWidth(Double.MAX_VALUE); // fills the row like the text fields
+		HBox.setHgrow(comboBox, Priority.ALWAYS);
 
+		setAlignment(Pos.CENTER_LEFT);
 		this.getChildren().addAll(label, comboBox);
 	}
 

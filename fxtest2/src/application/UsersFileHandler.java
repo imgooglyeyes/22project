@@ -1,30 +1,30 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * saves and loads the user container
  *
- * <p>files live in src/data, and if a file is missing the matching one in src/templatedata is used instead
+ * <p>files live in src/data, and if a file is missing the matching one in src/templatedata is used instead.
+ * reading, writing and copying files is done by FileUtil
  *
  * <p>file formats, one user per line, fields separated by |
  * <ul>
  * <li>users.txt: username|password|firstName|lastName|userType|status
  * </ul>
- * status is active, pending or rejected, old lines with only 5 fields still load as active
+ * status is active, pending or rejected, old lines with only 5 fields still load as active.
+ * only problems are printed, a save or a reset that worked is silent
  *
  * @author Jian Carranza, Matthew Prado
- * @version 1.2
+ * @version 1.4
+ * @since 1.2 the status field was added
+ * @since 1.3 the prints of a save and a reset that worked were removed
+ * @since 1.4 the file helpers moved to FileUtil
  * @see UserContainer
  * @see User
+ * @see FileUtil
  */
 
 public class UsersFileHandler {
@@ -61,8 +61,7 @@ public class UsersFileHandler {
 						u.getStatus()
 					);
 				}
-				writeLines(USERDATA, lines);
-				System.out.println("Saved user data.");
+				FileUtil.writeLines(USERDATA, lines);
 			}
 		} catch (IOException e) {
 			System.out.println("Something went wrong while saving user data.");
@@ -80,7 +79,7 @@ public class UsersFileHandler {
 	public static UserContainer load() {
 		UserContainer load = new UserContainer();
 
-		for (String line : readLines(USERDATA, TEMPLATE_USERDATA)) {
+		for (String line : FileUtil.readLines(USERDATA, TEMPLATE_USERDATA)) {
 			// -1 keeps empty fields at the end of the line
 			String[] parts = line.split("\\|", -1);
 
@@ -123,82 +122,12 @@ public class UsersFileHandler {
 	 */
 	public static boolean resetToDefaults() {
 		try {
-			copyFile(TEMPLATE_USERDATA, USERDATA);
-
-			System.out.println("Reset user data file to the template data.");
+			FileUtil.copyFile(TEMPLATE_USERDATA, USERDATA);
 			return true;
 		} catch (IOException e) {
 			System.out.println("Something went wrong while resetting to the template data.");
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	/**
-	 * copies one file and replaces the target if it already exists
-	 *
-	 * @param from path of the file to copy
-	 * @param to path of the copy, its folder is created if missing
-	 * @throws IOException if the source can't be read or the target can't be written
-	 */
-	private static void copyFile(String from, String to) throws IOException {
-		Path target = Paths.get(to);
-		Path parent = target.getParent();
-		if (parent != null){
-			Files.createDirectories(parent); // makes sure the folder exists
-		}
-		Files.copy(Paths.get(from), target, StandardCopyOption.REPLACE_EXISTING);
-	}
-
-
-	/**
-	 * writes the lines to a file, replacing the old content
-	 *
-	 * @param file path of the file to write, its folder is created if missing
-	 * @param lines the lines to write
-	 * @throws IOException if the file can't be written
-	 */
-	private static void writeLines(String file, List<String> lines) throws IOException {
-		Path path = Paths.get(file);
-		Path parent = path.getParent();
-
-		if (parent != null) {
-			Files.createDirectories(parent); // makes sure the folder exists
-		}
-
-		try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-			for (String line : lines) {
-				writer.write(line);
-				writer.newLine();
-			}
-		}
-	}
-
-	/**
-	 * reads every non-blank line of a file, uses the template if the file does not exist
-	 * <p>an io error is printed and the lines read so far are returned
-	 *
-	 * @param file path of the save file
-	 * @param templateFile path of the template used if the save file is missing
-	 * @return the non-blank lines, empty if nothing could be read
-	 */
-	private static List<String> readLines(String file, String templateFile) {
-		List<String> lines = new ArrayList<>();
-
-		Path path = Paths.get(file);
-		if (!Files.exists(path)) path = Paths.get(templateFile); // the template SHOULD EXIST
-
-		try (BufferedReader reader = Files.newBufferedReader(path)) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (line.trim().isEmpty()) continue; // skip blank lines
-				lines.add(line);
-			}
-		} catch (IOException e) {
-			System.out.println("Something went wrong while loading user data.");
-			e.printStackTrace();
-		}
-
-		return lines;
 	}
 }

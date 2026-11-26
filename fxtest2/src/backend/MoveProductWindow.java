@@ -2,39 +2,32 @@ package backend;
 
 import application.FarmSystem;
 import application.Product;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ui.Styles;
+import ui.Dialogs;
 
 /**
  * popup window to take stock of a product out of the shelf or the inventory
  *
  * <p>on the shelf the stock moves back to the inventory, in the inventory it is thrown away.
- * the window only picks the amount, FarmSystem does the checks, the stock change and the saving
+ * the window only picks the amount, FarmSystem does the checks, the stock change and the saving.
+ * throwing stock away can't be undone, so its button is a danger button.
+ * the window itself (title, buttons, theme) comes from PopupWindow
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
+ * @since 1.3 the window extends PopupWindow and uses the themed dialogs
+ * @see PopupWindow
  * @see AddProductWindow
  * @see FarmSystem#moveToInventory(Product, int)
  * @see FarmSystem#removeFromInventory(Product, int)
  */
-public class MoveProductWindow {
+public class MoveProductWindow extends PopupWindow {
 	private Label productName;
 	private Button add;
-	private Button exit;
-	private VBox vbox;
-	private HBox buttonsHBox;
-	private Scene moveScene;
-	private Stage moveWindow;
 
 	/**
 	 * creates the window, call show() to display it
@@ -48,11 +41,14 @@ public class MoveProductWindow {
 	 * @param refresh called after a successful move so the screen redraws, can be null
 	 */
 	public MoveProductWindow(Stage stage, FarmSystem farmSystem, Product targetProduct, boolean toInventory, Runnable refresh) {
+		super(stage, toInventory ? "Move Product Stocks" : "Delete Product Stocks",
+			toInventory ? "Move to the inventory" : "Delete stocks", 460, 280);
 
 		this.productName = new Label(
 			(toInventory ? "Moving " : "Deleting ") + targetProduct.getName() +
 			(toInventory ? " stocks to the inventory" : " stocks from the inventory")
 		);
+		productName.setWrapText(true);
 
 		// Create an integer Spinner
 		Spinner<Integer> spinner = new Spinner<>();
@@ -60,20 +56,13 @@ public class MoveProductWindow {
 		spinner.setValueFactory(valueFactory);
 
 		spinner.setEditable(true); // allows the user to put their own number, FarmSystem checks it again
+		spinner.setMaxWidth(Double.MAX_VALUE);
 
-		this.add = new Button("Confirm");
-		this.exit = new Button("Cancel");
+		this.add = new Button(toInventory ? "Move" : "Delete");
+		if (!toInventory) add.getStyleClass().add("danger"); // throwing stock away can't be undone
 
-		this.buttonsHBox = new HBox(10, exit, add);
-		this.vbox = new VBox(10, productName, spinner, buttonsHBox); // creates a vbox with a 10px spacing with these as children
-		vbox.setStyle("-fx-padding: 20;");
-
-		this.moveScene = new Scene(vbox, 500, 350);
-		Styles.apply(moveScene); // loads the shared stylesheet
-
-		this.moveWindow = new Stage(); // creates a new window for the stock move
-		moveWindow.setTitle(toInventory ? "Move Product Stocks" : "Delete Product Stocks");
-		moveWindow.setScene(moveScene);
+		form.getChildren().addAll(productName, fieldLabel("Amount (up to " + targetProduct.getStock() + ")"), spinner);
+		finish(add);
 
 		// asks the farm system to move the stock, stays open if it says no so the amount can be fixed
 		add.setOnAction(event -> {
@@ -93,23 +82,12 @@ public class MoveProductWindow {
 				: farmSystem.removeFromInventory(targetProduct, amount);
 
 			if (error != null) {
-				new Alert(AlertType.ERROR, error).showAndWait();
+				Dialogs.error(window, error);
 				return;
 			}
 
 			if (refresh != null) refresh.run();
-			moveWindow.close();
+			window.close();
 		});
-
-		exit.setOnAction(event -> moveWindow.close());
-
-		moveWindow.initModality(Modality.WINDOW_MODAL); // blocks the user from interacting with the window below it
-		moveWindow.initOwner(stage); // the window below it being the main stage
-	}
-
-	/** shows the window */
-	public void show() { // just to make things simpler
-		// make the new window actually appear
-		moveWindow.show();
 	}
 }

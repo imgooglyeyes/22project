@@ -8,15 +8,38 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-// saves and loads transactions.txt
-// one line per transaction, fields separated by |
-
+/**
+ * saves and loads the transaction container
+ *
+ * <p>the file lives in src/data, there is no template file, so a missing file just means no transactions yet.
+ * the reset to template data does not touch it
+ *
+ * <p>file format, one transaction per line, fields separated by |
+ * <ul>
+ * <li>transactions.txt: id|productId|productName|unitPrice|quantity|requester|status|confirmedBy|voidedBy|requestedAt|confirmedAt|voidedAt
+ * </ul>
+ * an empty field means null, a line with the wrong number of fields is skipped and printed
+ *
+ * @author Shawn Alfred Padilla
+ * @version 1.1
+ * @since 1.1 the comments were turned into javadoc
+ * @see TransactionContainer
+ * @see SaleTransaction
+ */
 public class TransactionFilesHandler {
 
-    // same folder the shelf save button already uses
+    /** save file for the transaction container, in the same folder as the product files */
     private static final String FILE = "fxtest2/src/data/transactions.txt";
 
-    // writes every transaction to the file, replacing the old content
+    /** how many fields one saved line has */
+    private static final int FIELD_COUNT = 12;
+
+    /**
+     * saves every transaction, replacing the old content of the file
+     * <p>an io error is printed and not thrown, so a failed save never crashes the app
+     *
+     * @param container the transactions to save
+     */
     public static void save(TransactionContainer container) {
         Path path = Paths.get(FILE);
 
@@ -27,7 +50,7 @@ public class TransactionFilesHandler {
                 for (SaleTransaction t : container.getTransactions()) {
                     // format: id|productId|productName|unitPrice|quantity|requester|status|confirmedBy|voidedBy|requestedAt|confirmedAt|voidedAt
                     writer.write(
-                        t.getId() + "|" +   
+                        t.getId() + "|" +
                         t.getProductId() + "|" +
                         t.getProductName() + "|" +
                         t.getUnitPrice() + "|" +
@@ -51,7 +74,12 @@ public class TransactionFilesHandler {
         }
     }
 
-    // reads the file into a new container, returns an empty one if the file doesn't exist yet
+    /**
+     * loads the transactions from the file
+     * <p>a bad line is skipped and printed, it does not stop the load
+     *
+     * @return a new container with the saved transactions, an empty one if the file does not exist yet
+     */
     public static TransactionContainer load() {
         TransactionContainer container = new TransactionContainer();
         Path path = Paths.get(FILE);
@@ -66,7 +94,7 @@ public class TransactionFilesHandler {
                 // -1 keeps empty fields at the end of the line
                 String[] parts = line.split("\\|", -1);
 
-                if (parts.length != 12) { // wrong number of fields, skip this line
+                if (parts.length != FIELD_COUNT) { // wrong number of fields, skip this line
                     System.out.println("Skipped a bad transaction line: " + line);
                     continue;
                 }
@@ -98,17 +126,32 @@ public class TransactionFilesHandler {
         return container;
     }
 
-    // null becomes empty text so it can be saved
+    /**
+     * turns a value into text for the save file
+     *
+     * @param value the value to write, can be null
+     * @return the value as text, or an empty text for null
+     */
     private static String text(Object value) {
         return value == null ? "" : value.toString();
     }
 
-    // empty text becomes null again when loading
+    /**
+     * turns an empty text back into null when loading
+     *
+     * @param value the text read from the file
+     * @return the text, or null if it is empty
+     */
     private static String nullIfEmpty(String value) {
         return value.isEmpty() ? null : value;
     }
 
-    // empty text becomes null, anything else is read as a date and time
+    /**
+     * reads a saved time
+     *
+     * @param value the text read from the file
+     * @return null if the text is empty, otherwise the date and time
+     */
     private static LocalDateTime timeOrNull(String value) {
         return value.isEmpty() ? null : LocalDateTime.parse(value);
     }
