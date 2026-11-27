@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import ui.Styles;
+import shell.SceneManager;
 
 /**
- * the home page of a guest and a customer: a welcome card, the trending products and a short note about the farm
+ * the home page of a guest and a customer containinga welcome card, the trending products and a short note about the farm
  *
  * <p>the welcome card has the buttons that fit the user: a guest gets log in and sign up,
  * a customer gets a shortcut to their requests and a note when some of them still wait for a clerk.

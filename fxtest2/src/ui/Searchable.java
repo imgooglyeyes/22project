@@ -1,5 +1,9 @@
 package ui;
 
+import shell.AppShell;
+import shell.TopBar;
+
+
 /**
  * a page that the search box of the top bar can filter
  *

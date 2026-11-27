@@ -1,9 +1,8 @@
 /*
  * shopeefarm theme
  *
- * deep forest green with calm neutral surfaces and one small lime highlight (see ui-plan.md section 6)
+ * deep forest green with calm neutral surfaces and one small lime highlight 
  * the palette is defined once on .root as looked-up colors, every rule below uses the tokens
- * and never a hex value, so the whole palette can change in one place
  *
  * fonts: plus jakarta sans is loaded by ui.Fonts, javafx css only knows normal and bold,
  * so the 500 and 600 weights are picked by their own family names
@@ -13,12 +12,6 @@
  *
  * spacing scale is 4 / 8 / 12 / 16 / 24 only, radius is 8 for cards and inputs, 12 for panels, pill for chips
  * type scale is title 22, section 16, body 14, caption 12
- *
- * rule order matters: when two rules have the same specificity the later one wins,
- * so variants (secondary, danger, tile) come after the base rule and the focus ring comes last.
- * the app shell, auth page and popup rules are at the end, they use the same order trick to win over the base rules
- *
- * every control that can be reached with tab has a visible focus ring, see the :focused rules
  */
 
 /* ---------- tokens and root ---------- */

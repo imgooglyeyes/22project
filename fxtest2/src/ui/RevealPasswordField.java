@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
+import pages.AuthPage;
 
 /**
  * a password field with an eye button that shows or hides the typed text

@@ -1,4 +1,4 @@
-package backend;
+package popup;
 
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;

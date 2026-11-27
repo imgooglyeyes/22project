@@ -1,6 +1,7 @@
-package ui;
+package tables;
 
 import application.User;
+import pages.StaffPage;
 
 /**
  * the table of users, used by the members and the sign-ups tabs of the staff page

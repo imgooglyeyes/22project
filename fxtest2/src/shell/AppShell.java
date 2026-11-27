@@ -1,12 +1,14 @@
-package ui;
+package shell;
 
 import application.User;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import ui.Searchable;
+import ui.Toast;
 
 /**
- * the one persistent frame of the app: the top bar, the side nav and the page area
+ * the top bar, the side nav and the page area (persistent frame on every page)
  *
  * <p>it is the root of the only scene of the app. SceneManager swaps the page in the
  * middle with setPage(), the top bar and the side nav stay and are only refreshed.

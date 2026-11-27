@@ -6,6 +6,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import shell.TopBar;
 
 /**
  * the bell of the top bar, a click opens the screen with the requests of the user

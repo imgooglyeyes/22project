@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,13 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import ui.Dialogs;
+import ui.Searchable;
+import ui.SegmentedToggle;
+import ui.Ui;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.UserTable;
 
 /**
  * the page where a manager sees the staff and decides on the accounts that wait for approval

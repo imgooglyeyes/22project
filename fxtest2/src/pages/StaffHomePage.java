@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import application.FarmSystem;
 import application.Money;
@@ -17,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import shell.SceneManager;
 
 /**
  * the dashboard of a clerk and a manager: a welcome and tiles with what needs attention

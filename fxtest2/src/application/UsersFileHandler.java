@@ -22,9 +22,8 @@ import java.util.List;
  * status is active, pending or rejected, old lines with only 5 fields still load as active.
  *
  * @author Jian Carranza, Matthew Prado
- * @version 1.4
- * @since 1.2 the status field was added
- * @since 1.2 the status field was added
+ * @version 1.2
+ * @since 1.1 the status field was added
  * @see UserContainer
  * @see User
  */

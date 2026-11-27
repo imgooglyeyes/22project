@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 /**
- * holds the business rules for products, stock moves and sales, screens call these instead of changing data themselves
+ * holds the business logic for products, stock moves and sales, screens call these instead of changing data themselves
  *
  * <p>each method returns null when it worked, or a short error message when it didn't.
  * role checks are not done here, the screens decide who sees which button.

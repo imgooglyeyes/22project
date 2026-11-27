@@ -1,4 +1,4 @@
-package ui;
+package shell;
 
 import application.User;
 import javafx.geometry.Insets;
@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import ui.Icons;
+import ui.NavItem;
 
 /**
  * the white sidebar with one nav item for every page the user can open

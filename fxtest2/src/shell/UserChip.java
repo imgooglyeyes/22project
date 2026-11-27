@@ -1,4 +1,4 @@
-package ui;
+package shell;
 
 import application.User;
 import javafx.geometry.Pos;
@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import ui.Icons;
 
 /**
  * the user part of the top bar

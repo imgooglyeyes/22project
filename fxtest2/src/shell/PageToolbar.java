@@ -1,4 +1,4 @@
-package ui;
+package shell;
 
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
@@ -9,6 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import pages.MarketplacePage;
+import ui.Ui;
 
 /**
  * the bar at the top of a page: the title on the left, the actions on the right and the filters under them

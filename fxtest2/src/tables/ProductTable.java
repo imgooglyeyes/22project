@@ -1,7 +1,9 @@
-package ui;
+package tables;
 
 import application.FarmSystem;
 import application.Product;
+import pages.InventoryPage;
+import pages.ProductsPage;
 
 /**
  * the table of products, used by the inventory page and the products page

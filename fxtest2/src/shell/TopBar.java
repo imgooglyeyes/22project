@@ -1,4 +1,4 @@
-package ui;
+package shell;
 
 import java.net.URL;
 
@@ -15,9 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import ui.BellButton;
+import ui.Icons;
+import ui.Searchable;
 
 /**
- * the dark green bar at the top of the app: the logo, the search box, the bell and the user chip
+ * the dark green bar at the top of the app with the logo, the search box, the bell and the user chip
  *
  * <p>the logo goes to the home page when it is clicked, and the app name is shown instead if the logo file is missing.
  * the search box works on pages that implement Searchable, it is disabled on every other page.

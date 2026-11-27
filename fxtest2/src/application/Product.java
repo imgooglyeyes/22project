@@ -113,7 +113,6 @@ public class Product {
     
     /**
      * gets the source product
-     *
      * @return the id of the source product, or null if this is a harvest item
      * @since 1.1
      */
@@ -153,7 +152,6 @@ public class Product {
     
     /**
      * sets the source product, used when the source is deleted or the made-from is edited
-     *
      * @param madeFrom id of the source product, null to make this a harvest item
      * @since 1.2
      */

@@ -1,14 +1,21 @@
-package ui;
+package pages;
 
 import application.FarmSystem;
 import application.Product;
 import application.ProductContainer;
-import backend.ProductCreationWindow;
-import backend.ProductEditingWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import popup.ProductCreationWindow;
+import popup.ProductEditingWindow;
+import ui.Dialogs;
+import ui.Searchable;
+import ui.SegmentedToggle;
+import ui.Ui;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.ProductTable;
 
 /**
  * the page where a manager creates, edits and deletes products, and puts all product data back to the template data

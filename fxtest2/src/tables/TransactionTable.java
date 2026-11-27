@@ -1,4 +1,4 @@
-package ui;
+package tables;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +8,9 @@ import application.SaleTransaction;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import pages.HistoryPage;
+import pages.MyRequestsPage;
+import pages.TransactionsPage;
 
 /**
  * the table of sale transactions, used by the transactions, history and my requests pages

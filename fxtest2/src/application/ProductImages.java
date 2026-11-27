@@ -14,12 +14,11 @@ import javafx.scene.image.Image;
 /**
  * copies, finds and deletes the picture files of the products
  *
- * <p>a picture is saved in src/data/images under a generated name, and only that name is stored in the product.
+ * <p>a picture is saved in src/data/images under a generated name, and only that name is stored in the product
  * a name is looked up in src/data/images first, then in src/templatedata/images, so the pictures of the
  * template products work the same way the template save files do
  *
- * <p>loaded pictures are cached by name, a new import always gets a new name so the cache can't go stale.
- * only problems are printed, nothing here crashes the app
+ * <p>loaded pictures are cached by name, a new import always gets a new name so the cache can't go stale
  *
  * @author Shawn Alfred Padilla
  * @version 1.0

@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import ui.Fonts;
-import ui.SceneManager;
+import shell.SceneManager;
 
 /**
  * starts the shopeefarm app

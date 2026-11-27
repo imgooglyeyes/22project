@@ -3,6 +3,10 @@ package ui;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
+import pages.AuthPage;
+import pages.MarketplacePage;
+import pages.StaffPage;
+import shell.SceneManager;
 
 /**
  * small helpers that more than one page and popup used to copy

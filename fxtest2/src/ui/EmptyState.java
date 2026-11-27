@@ -6,9 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import pages.MarketplacePage;
 
 /**
- * the message shown in place of a list that has nothing to show, with an optional button
+ * the message shown in place of a list that has nothing to show
  *
  * <p>it is a title, a short explanation and a button that leads the person somewhere useful,
  * so an empty page is never a dead end. the look comes from css classes, there are no inline colors

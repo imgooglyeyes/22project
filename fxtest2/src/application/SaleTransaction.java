@@ -7,17 +7,16 @@ import java.time.format.DateTimeFormatter;
  * one purchase request made by a customer, it can be confirmed or voided by staff
  *
  * <p>it stores a copy of the product name and the unit price at request time,
- * so the record stays correct even if the product is edited or deleted later.
- * this class only holds data and status, it never changes stock, FarmSystem does that
+ * so the record stays correct even if the product is edited or deleted later
+ * this class only holds data and status, it NEVER CHANGES STOCK, FarmSystem does that
  *
- * <p>the status goes one way: requested, then confirmed, and either of them can be voided once.
- * confirmedBy and voidedBy stay filled after a void, so a voided sale still shows who confirmed it.
- * AVAILABLE_ID is moved past every loaded id, so a new transaction never reuses an id
+ * <p>the status goes one way: requested, then confirmed, and either of them can be voided once
+ * confirmedBy and voidedBy stay filled after a void, so a voided sale still shows who confirmed it
+ * AVAILABLE_ID is moved past every loaded id, so a new transaction NEVER REUSES AN ID
  *
  * @author Shawn Alfred Padilla
- * @version 1.2
- * @since 1.1 the comments were turned into javadoc
- * @since 1.2 the total text comes from Money
+ * @version 1.1
+ * @since 1.1 the total text comes from Money
  * @see TransactionContainer
  * @see TransactionFilesHandler
  * @see FarmSystem

@@ -8,9 +8,8 @@ import java.util.ArrayList;
  * <p>other classes are responsible for checking a username with isUsernameTaken before adding a user
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.3
+ * @version 1.2
  * @since 1.2 countByStatus was added for the staff home tiles
- * @since 1.3 the pointless return at the end of add was removed
  * @see User
  */
 public class UserContainer {
@@ -102,7 +101,6 @@ public class UserContainer {
 	 *
 	 * @param status active, pending or rejected
 	 * @return how many users have the status
-	 * @since 1.2
 	 */
 	public int countByStatus(String status) {
 		int count = 0;

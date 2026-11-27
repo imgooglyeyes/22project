@@ -4,6 +4,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import pages.MarketplacePage;
 
 /**
  * a pill shaped toggle where exactly one option is selected at a time

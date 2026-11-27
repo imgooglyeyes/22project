@@ -1,10 +1,14 @@
-package ui;
+package pages;
 
 import application.SaleTransaction;
 import application.User;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import ui.Searchable;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.TransactionTable;
 
 /**
  * the page where a clerk sees the requests they took action on, a manager can open the history of any staff member

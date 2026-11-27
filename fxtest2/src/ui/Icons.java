@@ -10,7 +10,7 @@ import javafx.scene.transform.Scale;
  * the svg paths of the icons used by the app shell and the pages
  *
  * <p>every path is drawn on a 24 x 24 grid. most come from the material icons set (apache 2.0),
- * the tractor is drawn by hand because the set has none. the nodes are made with of(),
+ * the tractor is referenced online because the set has none. the nodes are made with of(),
  * which returns a group around the svg path so the layout size is always the size asked for
  *
  * <p>the svg path node has the style class "icon", so css can recolor it with -fx-fill,

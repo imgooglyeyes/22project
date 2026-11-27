@@ -10,6 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import shell.AppShell;
+import shell.SceneManager;
 
 /**
  * a short success message that fades in at the bottom of the page and fades out by itself

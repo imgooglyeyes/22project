@@ -1,4 +1,4 @@
-package ui;
+package shell;
 
 import java.net.URL;
 import java.util.Optional;
@@ -18,6 +18,20 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import pages.AuthPage;
+import pages.CashPage;
+import pages.HistoryPage;
+import pages.HomePage;
+import pages.InventoryPage;
+import pages.MarketplacePage;
+import pages.MyRequestsPage;
+import pages.ProductsPage;
+import pages.StaffHomePage;
+import pages.StaffPage;
+import pages.TransactionsPage;
+import tables.DataTable;
+import ui.Dialogs;
+import ui.Styles;
 
 /**
  * creates and opens every page, and holds the shared containers

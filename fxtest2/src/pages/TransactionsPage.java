@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import application.FarmSystem;
 import application.SaleTransaction;
@@ -7,6 +7,13 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import ui.Dialogs;
+import ui.Searchable;
+import ui.SegmentedToggle;
+import ui.Ui;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.TransactionTable;
 
 /**
  * the page where clerks and managers see every transaction and confirm or void it

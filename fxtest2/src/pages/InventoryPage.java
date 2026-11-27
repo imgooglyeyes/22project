@@ -1,14 +1,19 @@
-package ui;
+package pages;
 
 import application.FarmSystem;
 import application.Product;
 import application.ProductContainer;
-import backend.AddProductWindow;
-import backend.MoveProductWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import popup.AddProductWindow;
+import popup.MoveProductWindow;
+import ui.Searchable;
+import ui.Ui;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.ProductTable;
 
 /**
  * the page that shows the products in the inventory

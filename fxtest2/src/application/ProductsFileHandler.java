@@ -13,15 +13,15 @@ import java.util.List;
 /**
  * saves and loads the three product containers (database, inventory, shelf)
  *
- * <p>this class replaces ProductFilesHandler. files live in src/data, and if a
- * file is missing the matching one in src/templatedata is used instead
+ * <p>files live in src/data, and if a file is missing the matching one in
+ * src/templatedata is used instead
  *
  * <p>file formats, one product per line, fields separated by |
  * <ul>
  * <li>productsDB.txt: id|name|description|price|madeFrom|image
  * <li>inventory.txt and shelf.txt: id|stock
  * </ul>
- * madeFrom is a product id, it is empty for a harvest item.
+ * madeFrom is a product id, it is empty for a harvest item
  * image is a picture file name, it is empty for no picture
  *
  * <p>a null container is never written, so its file is left alone.

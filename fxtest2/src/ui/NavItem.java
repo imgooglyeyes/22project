@@ -6,6 +6,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import shell.SceneManager;
+import shell.SideNav;
 
 /**
  * one entry of the side nav: an icon, a label and, for a locked entry, a small lock

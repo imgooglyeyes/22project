@@ -7,6 +7,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.stage.Window;
+import shell.SceneManager;
 
 /**
  * the themed dialogs of the app, so a page or a popup does not build its own alert

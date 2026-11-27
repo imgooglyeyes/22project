@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,17 +10,21 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import ui.Searchable;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.DataTable;
 
 /**
  * the page for clerks and managers to see the cash balance and every cash entry
  *
- * <p>there is no cash file or model, the entries are worked out from the transactions.
+ * <p>there is no cash file or model, the entries are worked out from the transactions
  * a confirmed sale is money in, a voided confirmed sale is money out,
- * and a request voided before it was confirmed never moved any money, so it has no entry.
+ * and a request voided before it was confirmed never moved any money, so it has no entry
  * every entry shows the customer, the staff member who handled it, the amount and the time
  *
- * <p>the balance card comes from FarmSystem, so it is the same number as the staff home tile.
- * the search box of the top bar filters by product, customer and staff.
+ * <p>the balance card comes from FarmSystem, so it is the same number as the staff home tile
+ * the search box of the top bar filters by product, customer and staff
  * the page is created again every time it opens, so it is always up to date
  *
  * @author Jian Carranza, Shawn Alfred Padilla

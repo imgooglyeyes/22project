@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,10 @@ import application.User;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import ui.EmptyState;
+import shell.PageToolbar;
+import shell.SceneManager;
+import tables.TransactionTable;
 
 /**
  * the page where a customer sees only their own purchase requests and their status

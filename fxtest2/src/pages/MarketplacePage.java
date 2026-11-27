@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,9 +8,6 @@ import application.Product;
 import application.ProductContainer;
 import application.TransactionFilesHandler;
 import application.User;
-import backend.AddProductWindow;
-import backend.MoveProductWindow;
-import backend.RequestToBuyWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,6 +20,16 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import popup.AddProductWindow;
+import popup.MoveProductWindow;
+import popup.RequestToBuyWindow;
+import ui.EmptyState;
+import ui.ProductCard;
+import ui.Searchable;
+import ui.SegmentedToggle;
+import ui.Ui;
+import shell.PageToolbar;
+import shell.SceneManager;
 
 /**
  * the marketplace, a grid of product cards for everything on the shelf

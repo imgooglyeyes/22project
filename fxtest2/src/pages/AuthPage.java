@@ -1,4 +1,4 @@
-package ui;
+package pages;
 
 import application.User;
 import application.UserContainer;
@@ -23,6 +23,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import ui.RevealPasswordField;
+import ui.Ui;
+import shell.SceneManager;
 
 /**
  * the log in and sign up page, a white card on the forest green gradient with a tab toggle
