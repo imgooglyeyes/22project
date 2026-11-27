@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import popup.AddProductWindow;
 import popup.MoveProductWindow;
 import popup.RequestToBuyWindow;
+import ui.Dialogs;
 import ui.EmptyState;
 import ui.ProductCard;
 import ui.Searchable;
@@ -49,14 +50,19 @@ import shell.SceneManager;
  * when the shelf is empty or nothing matches the search and filter, an empty state with a button
  * takes the place of the grid. the page is created again every time it opens
  *
+ * <p>adding to the shelf with an empty inventory shows a warning instead of an empty window,
+ * the next step depends on the role because only managers can restock
+ *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @since 1.1 toasts for the add, move, request and save actions, the bell is updated after a request
  * @since 1.2 show and the after code moved to Ui
+ * @since 1.3 a warning with a next step when the inventory is empty
  * @see ProductCard
  * @see PageToolbar
  * @see Searchable
  * @see Ui
+ * @see Dialogs#warning(javafx.stage.Window, String, String)
  * @see SceneManager#showShelf()
  */
 public class MarketplacePage extends BorderPane implements Searchable {
@@ -346,8 +352,22 @@ public class MarketplacePage extends BorderPane implements Searchable {
         return null;
     }
 
-    /** opens the window that moves inventory stock to the shelf */
+    /**
+     * opens the window that moves inventory stock to the shelf
+     * <p>an empty inventory has nothing to move, so a warning is shown instead of an empty window.
+     * managers can restock themselves, clerks have to ask a manager
+     */
     private void openAddWindow() {
+        if (inventoryData.getProducts().isEmpty()) {
+            Dialogs.warning(stage,
+                "The inventory is empty, there is nothing to put on the shelf",
+                manager.canManageInventory()
+                    ? "Open Inventory and restock a product first, then come back here"
+                    : "Ask a manager to restock the inventory, then come back here"
+            );
+            return;
+        }
+
         new AddProductWindow(
             stage, farmSystem, inventoryData, true,
             Ui.afterAction(manager, this::refresh, "Stock added to the shelf")

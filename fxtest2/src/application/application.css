@@ -24,6 +24,7 @@
     -sf-mint-50: #E6F5EB;     /* row hover, soft backgrounds */
     -sf-lime: #C8F169;        /* trending badge, dark text only */
     -sf-amber: #F2A93B;       /* low stock, warnings, dark text only */
+    -sf-amber-50: #FDF3E1;    /* warning note background, dark text only */
     -sf-bg: #F4F7F1;          /* page background */
     -sf-surface: #FFFFFF;     /* cards, sidebar, tables */
     -sf-border: #E1E8DD;      /* card and table borders */
@@ -308,6 +309,28 @@
 .chip-danger {
     -fx-background-color: -sf-danger;
     -fx-text-fill: white;
+}
+
+/* ---------- warning note ---------- */
+
+/* an inline warning with what is wrong and what to do next, ink on soft amber is far above the contrast minimum */
+.warning-note {
+    -fx-background-color: -sf-amber-50;
+    -fx-background-radius: 8px;
+    -fx-border-color: -sf-amber;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 12px;
+}
+
+.warning-note .warning-message {
+    -fx-text-fill: -sf-ink;
+    -fx-font-family: "Plus Jakarta Sans SemiBold";
+}
+
+.warning-note .warning-next {
+    -fx-text-fill: -sf-ink;
+    -fx-font-size: 12px;
 }
 
 /* ---------- cards ---------- */

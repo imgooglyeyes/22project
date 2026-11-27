@@ -21,11 +21,12 @@ import java.util.LinkedHashMap;
  * the home pages use it for the trending list and the staff tiles
  *
  * @author Shawn Alfred Padilla
- * @version 1.9
+ * @version 1.10
  * @since 1.6 trending products, pending request count, low stock and cash balance were added
  * @since 1.7 the sales total and the handled count of a staff member were added for the clerk dashboard
  * @since 1.8 voidTransaction no longer prints when the product is gone
  * @since 1.9 canReturnStock tells the page if a void can return the stock
+ * @since 1.10 getShelfStock lets a page warn before a confirm that can't work
  * @see SaleTransaction
  * @see ProductsFileHandler
  */
@@ -414,6 +415,20 @@ public class FarmSystem {
         transactionData.add(new SaleTransaction(shelfProduct, quantity, customer));
         TransactionFilesHandler.save(transactionData);
         return null;
+    }
+
+    /**
+     * gets how many of a product are on the shelf right now
+     * <p>pages use this to warn before a confirm that can't work, and to tell when the stock runs low after a sale.
+     * a product that is not on the shelf has 0 stock, the shelf container removes a product when it reaches 0
+     *
+     * @param productId the id of the product
+     * @return the shelf stock, 0 if the product is not on the shelf
+     * @since 1.10
+     */
+    public int getShelfStock(int productId) {
+        Product shelfProduct = shelfData.getProductById(productId);
+        return shelfProduct == null ? 0 : shelfProduct.getStock();
     }
 
     /**

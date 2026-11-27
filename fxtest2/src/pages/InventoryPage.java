@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import popup.AddProductWindow;
 import popup.MoveProductWindow;
+import ui.Dialogs;
 import ui.Searchable;
 import ui.Ui;
 import shell.PageToolbar;
@@ -23,19 +24,22 @@ import tables.ProductTable;
  * and answers a change that worked with a toast.
  * the search box of the top bar filters the rows by name
  *
- * <p>the page is created again every time it opens, and the popup windows tell it to redraw after a change,
+ * <p>a restock with an empty product database shows a warning that says to create a product first.
+ * the page is created again every time it opens, and the popup windows tell it to redraw after a change,
  * the code they run comes from Ui.afterAction
  *
  * @author Jian Carranza, Shawn Alfred Padilla
- * @version 2.3
+ * @version 2.4
  * @since 2.0 the page replaces the old inventory scene and uses the shared product table
  * @since 2.1 toasts for the restock and the delete stocks actions
  * @since 2.2 the unused stage field was removed, the constructor parameter is still used by the popups
  * @since 2.3 the after code moved to Ui, so the manager field was removed too
+ * @since 2.4 a warning with a next step when the database has no products to restock
  * @see ProductTable
  * @see AddProductWindow
  * @see MoveProductWindow
  * @see Ui
+ * @see Dialogs#warning(javafx.stage.Window, String, String)
  */
 public class InventoryPage extends BorderPane implements Searchable {
 
@@ -71,10 +75,21 @@ public class InventoryPage extends BorderPane implements Searchable {
         FarmSystem farmSystem = manager.getFarmSystem();
 
         // adds new stock of a product from the database
-        restockButton.setOnAction(event -> new AddProductWindow(
-            stage, farmSystem, database, false,
-            Ui.afterAction(manager, this::refresh, "Stock added to the inventory")
-        ).show());
+        restockButton.setOnAction(event -> {
+            // nothing to restock from, tell the manager where to go instead of opening an empty window
+            if (database.getProducts().isEmpty()) {
+                Dialogs.warning(stage,
+                    "The product database is empty, there is nothing to restock",
+                    "Open Products and create a product first, then come back here"
+                );
+                return;
+            }
+
+            new AddProductWindow(
+                stage, farmSystem, database, false,
+                Ui.afterAction(manager, this::refresh, "Stock added to the inventory")
+            ).show();
+        });
 
         // removes stocks from the inventory
         deleteButton.setOnAction(event -> {

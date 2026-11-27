@@ -19,9 +19,12 @@ import tables.TransactionTable;
  * the page where clerks and managers see every transaction and confirm or void it
  *
  * <p>the rules (stock checks, saving) are in FarmSystem, this page only asks and shows the result.
- * FarmSystem returns null when it worked, or an error message that is shown in an error dialog,
- * so selling more than the shelf has is blocked and explained. a confirm or a void that worked
- * is answered with a toast and the bell of the top bar is counted again
+ * FarmSystem returns null when it worked, or an error message that is shown in an error dialog.
+ * a confirm or a void that worked is answered with a toast and the bell of the top bar is counted again
+ *
+ * <p>a confirm that can't work because the shelf has less than the request needs is stopped before the
+ * confirm question, with a warning that says what to do next. a confirm that worked and left the shelf
+ * low adds a short note to its toast, so the staff member knows to add more stock
  *
  * <p>voiding a confirmed sale of a product that was deleted can't return the stock, so the confirm dialog
  * and the toast say so, the cash is still taken back. FarmSystem#canReturnStock(SaleTransaction) is the rule
@@ -30,15 +33,18 @@ import tables.TransactionTable;
  * filters by product and by customer. the page is created again every time it opens
  *
  * @author Shawn Alfred Padilla
- * @version 1.2
+ * @version 1.3
  * @since 1.1 toasts for confirm and void, the bell is updated after both
  * @since 1.2 the void messages tell when the stock can't be returned, owner moved to Ui
+ * @since 1.3 a warning with a next step before a confirm that can't work, and a low stock note on the toast
  * @see TransactionTable
  * @see Searchable
  * @see Ui
+ * @see Dialogs#warning(javafx.stage.Window, String, String)
  * @see FarmSystem#confirm(SaleTransaction, String)
  * @see FarmSystem#voidTransaction(SaleTransaction, String)
  * @see FarmSystem#canReturnStock(SaleTransaction)
+ * @see FarmSystem#getShelfStock(int)
  */
 public class TransactionsPage extends BorderPane implements Searchable {
 
@@ -158,10 +164,26 @@ public class TransactionsPage extends BorderPane implements Searchable {
 
     // ---------- actions ----------
 
-    /** confirms the selected request, this is when stock leaves the shelf */
+    /**
+     * confirms the selected request, this is when stock leaves the shelf
+     * <p>the shelf is checked first, a request that needs more than the shelf has is not confirmed,
+     * the staff member gets a warning with the choices instead of a confirm question that would fail
+     */
     private void confirmSelected() {
         SaleTransaction t = table.getSelected();
         if (t == null) return;
+
+        // stop here if the shelf can't cover the request, FarmSystem checks it again anyway
+        int onShelf = farmSystem.getShelfStock(t.getProductId());
+        if (onShelf < t.getQuantity()) {
+            String message = onShelf == 0
+                ? t.getProductName() + " has no stock on the shelf, the request needs " + t.getQuantity()
+                : "Only " + onShelf + " of " + t.getProductName() + " left on the shelf, the request needs " + t.getQuantity();
+
+            Dialogs.warning(Ui.windowOf(this), message,
+                "Add stock to the shelf from the inventory, or void this request so the customer can order again");
+            return;
+        }
 
         boolean proceed = Dialogs.confirm(Ui.windowOf(this),
             "Confirm " + t.getQuantity() + "x " + t.getProductName() +
@@ -175,8 +197,21 @@ public class TransactionsPage extends BorderPane implements Searchable {
         refresh();
         manager.refreshBell(); // one request less is waiting
 
-        if (error != null) Dialogs.error(Ui.windowOf(this), error);
-        else manager.toast("Sale confirmed, " + t.getFormattedTotal() + " received");
+        if (error != null) {
+            Dialogs.error(Ui.windowOf(this), error, "The shelf may have changed, check it and try again");
+            return;
+        }
+
+        // tell the staff member when the sale left the shelf low or empty
+        String toast = "Sale confirmed, " + t.getFormattedTotal() + " received";
+        int left = farmSystem.getShelfStock(t.getProductId());
+
+        if (left == 0) {
+            toast += ", none left on the shelf, add more from the inventory";
+        } else if (left <= FarmSystem.LOW_STOCK_THRESHOLD) {
+            toast += ", only " + left + " left on the shelf, add more from the inventory";
+        }
+        manager.toast(toast);
     }
 
     /**
@@ -206,7 +241,7 @@ public class TransactionsPage extends BorderPane implements Searchable {
         manager.refreshBell(); // a waiting request that is voided is not waiting anymore
 
         if (error != null) {
-            Dialogs.error(Ui.windowOf(this), error);
+            Dialogs.error(Ui.windowOf(this), error, "The transaction may have changed, check the list and try again");
         } else if (!wasConfirmed) {
             manager.toast("Request voided");
         } else if (stockReturns) {

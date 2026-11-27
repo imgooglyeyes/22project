@@ -14,13 +14,17 @@ import shell.SceneManager;
  *
  * <p>a dialog is its own window, so it does not get the stylesheet by itself. theme() copies the stylesheets
  * of the owner and adds the root class, which gives the dialog the color tokens that the stylesheet defines on .root.
- * success messages are toasts, so dialogs are only kept for errors and for confirmations of things that can't be undone
+ * success messages are toasts, so dialogs are only kept for errors, warnings and for confirmations of things that can't be undone
+ *
+ * <p>a warning or an error can come with a next step, a short line that tells the person what to do about the problem
  *
  * @author Shawn Alfred Padilla
- * @version 1.1
+ * @version 1.2
  * @since 1.1 the unused info dialog was removed, toasts replaced it
+ * @since 1.2 warning and the next step line were added
  * @see SceneManager
  * @see Toast
+ * @see WarningNote
  */
 public class Dialogs {
 
@@ -47,9 +51,48 @@ public class Dialogs {
      * @param message what went wrong
      */
     public static void error(Window owner, String message) {
-        Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
+        error(owner, message, null);
+    }
+
+    /**
+     * shows an error with a line that tells the person what to do next
+     *
+     * @param owner the window the dialog belongs to
+     * @param message what went wrong
+     * @param nextStep what the person can do about it, null or empty for none
+     * @since 1.2
+     */
+    public static void error(Window owner, String message, String nextStep) {
+        Alert alert = new Alert(AlertType.ERROR, withNextStep(message, nextStep), ButtonType.OK);
         theme(alert, owner, "Something went wrong");
         alert.showAndWait();
+    }
+
+    /**
+     * shows a warning for an action that can't go on, with a line that tells the person what to do next
+     * <p>use it when nothing is broken but the action is not possible right now, like an empty inventory
+     *
+     * @param owner the window the dialog belongs to
+     * @param message why the action can't go on
+     * @param nextStep what the person can do about it, null or empty for none
+     * @since 1.2
+     */
+    public static void warning(Window owner, String message, String nextStep) {
+        Alert alert = new Alert(AlertType.WARNING, withNextStep(message, nextStep), ButtonType.OK);
+        theme(alert, owner, "Heads up");
+        alert.showAndWait();
+    }
+
+    /**
+     * puts the next step under the message
+     *
+     * @param message the problem
+     * @param nextStep what to do about it, can be null
+     * @return the message alone if there is no next step, or both with a blank line between
+     */
+    private static String withNextStep(String message, String nextStep) {
+        if (nextStep == null || nextStep.isEmpty()) return message;
+        return message + "\n\nWhat to do next: " + nextStep;
     }
 
     /**
