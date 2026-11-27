@@ -1,18 +1,20 @@
-0|0|Mature Coconut|30.0|10|shawneee|Confirmed|Matt||2026-11-18T09:12:00|2026-11-18T09:40:00|
-1|1|Virgin Coconut Oil (250ml)|230.0|2|mariaclara|Confirmed|Matt||2026-11-18T10:05:00|2026-11-18T10:30:00|
-2|6|Young Coconut|35.0|6|juandc|Confirmed|Ana||2026-11-19T08:20:00|2026-11-19T08:45:00|
-3|10|Palay (25kg)|450.0|1|liza|Confirmed|Jian||2026-11-19T13:00:00|2026-11-19T13:25:00|
-4|11|Well-Milled White Rice (5kg)|280.0|3|shawneee|Confirmed|Ana||2026-11-20T09:30:00|2026-11-20T10:00:00|
-5|13|Saba Banana (1kg)|45.0|8|mariaclara|Confirmed|Matt||2026-11-20T11:15:00|2026-11-20T11:40:00|
-6|20|Cacao Tablea (250g)|180.0|2|juandc|Confirmed|Jian||2026-11-21T14:10:00|2026-11-21T14:30:00|
-7|3|Coconut Milk (400ml)|68.0|5|liza|Voided|Matt|Jian|2026-11-21T15:00:00|2026-11-21T15:20:00|2026-11-22T09:00:00
-8|15|Carabao Mango (1kg)|120.0|4|shawneee|Voided||Ana|2026-11-22T08:30:00||2026-11-22T10:00:00
-9|22|Barako Coffee Beans (Roasted) (250g)|220.0|2|mariaclara|Confirmed|Ana||2026-11-22T16:00:00|2026-11-22T16:25:00|
-10|0|Mature Coconut|30.0|6|juandc|Confirmed|Matt||2026-11-23T08:50:00|2026-11-23T09:10:00|
-11|26|Ube Halaya (350g)|140.0|3|liza|Confirmed|Ana||2026-11-23T12:00:00|2026-11-23T12:30:00|
-12|13|Saba Banana (1kg)|45.0|5|shawneee|Confirmed|Jian||2026-11-24T09:00:00|2026-11-24T09:15:00|
-13|2|Virgin Coconut Oil (500ml)|365.0|1|mariaclara|Voided||Matt|2026-11-24T16:40:00||2026-11-24T17:00:00
-14|6|Young Coconut|35.0|4|mariaclara|Requested|||2026-11-25T10:20:00||
-15|17|Calamansi (500g)|60.0|6|juandc|Requested|||2026-11-25T14:45:00||
-16|1|Virgin Coconut Oil (250ml)|230.0|3|liza|Requested|||2026-11-26T08:30:00||
-17|14|Banana Chips (200g)|70.0|4|shawneee|Requested|||2026-11-26T09:05:00||
+0|0|Mature Coconut|30.0|10|shawneee|Confirmed|Matt||2026-11-18T09:12|2026-11-18T09:40|
+1|1|Virgin Coconut Oil (250ml)|230.0|2|mariaclara|Confirmed|Matt||2026-11-18T10:05|2026-11-18T10:30|
+2|6|Young Coconut|35.0|6|juandc|Confirmed|Ana||2026-11-19T08:20|2026-11-19T08:45|
+3|10|Palay (25kg)|450.0|1|liza|Confirmed|Jian||2026-11-19T13:00|2026-11-19T13:25|
+4|11|Well-Milled White Rice (5kg)|280.0|3|shawneee|Confirmed|Ana||2026-11-20T09:30|2026-11-20T10:00|
+5|13|Saba Banana (1kg)|45.0|8|mariaclara|Confirmed|Matt||2026-11-20T11:15|2026-11-20T11:40|
+6|20|Cacao Tablea (250g)|180.0|2|juandc|Confirmed|Jian||2026-11-21T14:10|2026-11-21T14:30|
+7|3|Coconut Milk (400ml)|68.0|5|liza|Voided|Matt|Jian|2026-11-21T15:00|2026-11-21T15:20|2026-11-22T09:00
+8|15|Carabao Mango (1kg)|120.0|4|shawneee|Voided||Ana|2026-11-22T08:30||2026-11-22T10:00
+9|22|Barako Coffee Beans (Roasted) (250g)|220.0|2|mariaclara|Confirmed|Ana||2026-11-22T16:00|2026-11-22T16:25|
+10|0|Mature Coconut|30.0|6|juandc|Confirmed|Matt||2026-11-23T08:50|2026-11-23T09:10|
+11|26|Ube Halaya (350g)|140.0|3|liza|Confirmed|Ana||2026-11-23T12:00|2026-11-23T12:30|
+12|13|Saba Banana (1kg)|45.0|5|shawneee|Confirmed|Jian||2026-11-24T09:00|2026-11-24T09:15|
+13|2|Virgin Coconut Oil (500ml)|365.0|1|mariaclara|Voided||Matt|2026-11-24T16:40||2026-11-24T17:00
+14|6|Young Coconut|35.0|4|mariaclara|Requested|||2026-11-25T10:20||
+15|17|Calamansi (500g)|60.0|6|juandc|Requested|||2026-11-25T14:45||
+16|1|Virgin Coconut Oil (250ml)|230.0|3|liza|Requested|||2026-11-26T08:30||
+17|14|Banana Chips (200g)|70.0|4|shawneee|Requested|||2026-11-26T09:05||
+18|14|Banana Chips (200g)|70.0|10|shawneee|Requested|||2026-11-27T08:22:10.707849600||
+19|7|Fresh Coconut Sap (500ml)|80.0|6|shawneee|Requested|||2026-11-27T08:22:27.496049400||
